@@ -55,9 +55,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  errorText: _showErrors && nameController.text.trim().isEmpty
-                      ? 'Full name is required'
-                      : null,
+                  errorText:
+                      _showErrors && nameController.text.trim().isEmpty
+                          ? 'Full name is required'
+                          : null,
                 ),
                 onChanged: (value) {
                   if (_showErrors) {
@@ -73,9 +74,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  errorText: _showErrors && emailController.text.trim().isEmpty
-                      ? 'Email is required'
-                      : null,
+                  errorText:
+                      _showErrors && emailController.text.trim().isEmpty
+                          ? 'Email is required'
+                          : null,
                 ),
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (value) {
@@ -92,9 +94,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  errorText: _showErrors && passwordController.text.trim().isEmpty
-                      ? 'Password is required'
-                      : null,
+                  errorText:
+                      _showErrors && passwordController.text.trim().isEmpty
+                          ? 'Password is required'
+                          : null,
                 ),
                 obscureText: true,
                 onChanged: (value) {
@@ -111,9 +114,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  errorText: _showErrors && phoneController.text.trim().isEmpty
-                      ? 'Phone number is required'
-                      : null,
+                  errorText:
+                      _showErrors && phoneController.text.trim().isEmpty
+                          ? 'Phone number is required'
+                          : null,
                 ),
                 keyboardType: TextInputType.phone,
                 onChanged: (value) {
@@ -127,7 +131,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 onPressed: () async {
                   setState(() {
                     _showErrors = true;
-                    _showManualOtpLink = false; // Reset the manual link visibility
+                    _showManualOtpLink =
+                        false; // Reset the manual link visibility
                   });
 
                   print('Name: ${nameController.text}');
@@ -140,7 +145,11 @@ class _SignupScreenState extends State<SignupScreen> {
                       passwordController.text.trim().isEmpty ||
                       phoneController.text.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please fill in all fields with valid values')),
+                      const SnackBar(
+                        content: Text(
+                          'Please fill in all fields with valid values',
+                        ),
+                      ),
                     );
                     return;
                   }
@@ -153,13 +162,18 @@ class _SignupScreenState extends State<SignupScreen> {
                       phoneController.text.trim(),
                     );
                     print('Signup Response: $response');
-                    if (response['message']?.contains('successfully') ?? false) {
+                    if (response['message']?.contains('successfully') ??
+                        false) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Registration successful! Please check your email for OTP.'),
+                          content: Text(
+                            'Registration successful! Please check your email for OTP.',
+                          ),
                         ),
                       );
-                      print('Attempting to navigate to VerifyOtpScreen with email: ${emailController.text.trim()}');
+                      print(
+                        'Attempting to navigate to VerifyOtpScreen with email: ${emailController.text.trim()}',
+                      );
                       bool navigated = false;
                       try {
                         final result = await Navigator.pushNamed(
@@ -167,23 +181,27 @@ class _SignupScreenState extends State<SignupScreen> {
                           AppRoutes.verifyOtp,
                           arguments: emailController.text.trim(),
                         );
-                        navigated = result != null; // Check if navigation succeeded
+                        navigated =
+                            result != null; // Check if navigation succeeded
                       } catch (e) {
                         print('Navigation Error: $e');
                       }
                       if (!navigated) {
                         setState(() {
-                          _showManualOtpLink = true; // Show manual link if navigation fails
+                          _showManualOtpLink =
+                              true; // Show manual link if navigation fails
                         });
                       }
                     } else {
-                      throw Exception('Unexpected response: ${response['message'] ?? 'No message'}');
+                      throw Exception(
+                        'Unexpected response: ${response['message'] ?? 'No message'}',
+                      );
                     }
                   } catch (e) {
                     print('Signup Error: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Error: $e')));
                   }
                 },
                 child: const Text('Sign Up'),
@@ -198,16 +216,29 @@ class _SignupScreenState extends State<SignupScreen> {
                   style: TextStyle(color: Color(0xFF007BFF)),
                 ),
               ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.tutor);
+                },
+                child: const Text(
+                  'Want to teach? Register as a tutor',
+                  style: TextStyle(color: Color(0xFF007BFF)),
+                ),
+              ),
               if (_showManualOtpLink) // Only show if navigation fails
                 TextButton(
                   onPressed: () {
                     if (emailController.text.trim().isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please enter an email to verify OTP')),
+                        const SnackBar(
+                          content: Text('Please enter an email to verify OTP'),
+                        ),
                       );
                       return;
                     }
-                    print('Manually navigating to VerifyOtpScreen with email: ${emailController.text.trim()}');
+                    print(
+                      'Manually navigating to VerifyOtpScreen with email: ${emailController.text.trim()}',
+                    );
                     Navigator.pushNamed(
                       context,
                       AppRoutes.verifyOtp,
