@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -224,4 +226,24 @@ class ApiService {
   }
 
   //submit tutor certificate
+
+  //show profile
+  static Future<Map<String, dynamic>> getProfile() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/account/profile'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else if (response.statusCode == 401) {
+      throw Exception('Unauthorized - ${response.body}');
+    } else if (response.statusCode == 500) {
+      throw Exception('Internal Server Error - ${response.body}');
+    } else {
+      throw Exception('Failed to load profile infor');
+    }
+  }
+
+  //
 }
