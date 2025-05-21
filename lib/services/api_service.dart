@@ -42,7 +42,7 @@ class ApiService {
   static Future<Map<String, dynamic>> register(String name, String email, String password, String phone) async {
     try {
       final requestBody = {
-        'fullName': name, // Changed from 'name' to 'fullName'
+        'fullName': name,
         'email': email,
         'password': password,
         'phone': phone,
@@ -98,6 +98,58 @@ class ApiService {
       throw Exception('OTP verification failed: Internal server error - ${response.body}');
     } else {
       throw Exception('Failed to verify OTP: ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  static Future<Map<String, dynamic>> getCourses() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/courses'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('Courses API Response Status: ${response.statusCode}');
+      print('Courses API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else {
+        throw Exception('Failed to fetch courses: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      print('Courses API Error: $e');
+      rethrow;
+    }
+  }
+
+  static Future<Map<String, dynamic>> getAccountDetails(String accountId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/courses/account/$accountId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('Account Details API Response Status: ${response.statusCode}');
+      print('Account Details API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else {
+        throw Exception('Failed to fetch account details: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      print('Account Details API Error: $e');
+      rethrow;
     }
   }
 }
