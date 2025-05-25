@@ -6,6 +6,7 @@ import 'package:tutor/features/admin/screens/reports_screen.dart';
 import 'package:tutor/features/certification/register_tutor_screen.dart';
 import 'package:tutor/features/admin/screens/review_certification_screen.dart';
 import 'package:tutor/features/certification/submit_certificate_screen.dart';
+import 'package:tutor/features/details/screens/tutor_details_screen.dart';
 import 'package:tutor/features/tutor/screens/course_creation_screen.dart';
 import 'package:tutor/features/tutor/screens/tutor_course_screen.dart';
 import 'package:tutor/features/tutor/widgets/tutor_main.dart';
@@ -13,7 +14,7 @@ import '../features/authentication/screens/login_screen.dart';
 import '../features/authentication/screens/signup_screen.dart';
 import '../features/authentication/screens/verify_otp_screen.dart';
 import '../features/home/screens/home_screen.dart';
-// import '../features/details/screens/tutor_profile_screen.dart'; // New import
+// import '../features/details/screens/tutor_details_screen.dart'; // New import
 import '../features/details/screens/course_detail_screen.dart'; // New import
 
 class AppRoutes {
@@ -55,11 +56,11 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => const ReviewCertificationScreen(),
         );
-      // case tutorProfile:
-      //   final args = settings.arguments as String?;
-      //   return MaterialPageRoute(
-      //     builder: (_) => TutorProfileScreen(accountId: args),
-      //   );
+      case tutorProfile:
+        final args = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => TutorDetailsScreen(accountId: args),
+        );
       case tutorMain:
         return MaterialPageRoute(builder: (_) => const TutorMain());
       case tutorInfo:

@@ -318,39 +318,39 @@ class ApiService {
 
   // === COURSE METHODS ===
 
-  // POST method: Create Course
-  static Future<Map<String, dynamic>> createCourse(Map<String, dynamic> courseData) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/courses'),
-        headers: _getHeaders(),
-        body: jsonEncode(courseData),
-      );
-
-      print('Create Course API Response Status: ${response.statusCode}');
-      print('Create Course API Response Body: ${response.body}');
-
-      if (response.statusCode == 201) {
-        try {
-          return jsonDecode(response.body) as Map<String, dynamic>;
-        } catch (e) {
-          print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
-        }
-      } else if (response.statusCode == 400) {
-        throw Exception('Invalid course data - ${response.body}');
-      } else if (response.statusCode == 409) {
-        throw Exception('Course already exists - ${response.body}');
-      } else if (response.statusCode == 500) {
-        throw Exception('Internal server error - ${response.body}');
-      } else {
-        throw Exception('Failed to create course: ${response.statusCode} - ${response.body}');
-      }
-    } catch (e) {
-      print('Create Course API Error: $e');
-      rethrow;
-    }
-  }
+  // // POST method: Create Course
+  // static Future<Map<String, dynamic>> createCourse(Map<String, dynamic> courseData) async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('$baseUrl/api/courses'),
+  //       headers: _getHeaders(),
+  //       body: jsonEncode(courseData),
+  //     );
+  //
+  //     print('Create Course API Response Status: ${response.statusCode}');
+  //     print('Create Course API Response Body: ${response.body}');
+  //
+  //     if (response.statusCode == 201) {
+  //       try {
+  //         return jsonDecode(response.body) as Map<String, dynamic>;
+  //       } catch (e) {
+  //         print('JSON Parse Error: $e');
+  //         throw Exception('Invalid response format from server - ${response.body}');
+  //       }
+  //     } else if (response.statusCode == 400) {
+  //       throw Exception('Invalid course data - ${response.body}');
+  //     } else if (response.statusCode == 409) {
+  //       throw Exception('Course already exists - ${response.body}');
+  //     } else if (response.statusCode == 500) {
+  //       throw Exception('Internal server error - ${response.body}');
+  //     } else {
+  //       throw Exception('Failed to create course: ${response.statusCode} - ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     print('Create Course API Error: $e');
+  //     rethrow;
+  //   }
+  // }
 
   // GET method: Get All Courses
   static Future<List<CourseItem>> getAllCourses() async {
@@ -808,6 +808,185 @@ class ApiService {
     } catch (e) {
       print('Courses API Error: $e');
       rethrow;
+    }
+  }
+
+  //show profile
+  static Future<TutorProfile> getProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    //get token
+    final token = prefs.getString('token') ?? '';
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/account/profile'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return TutorProfile.fromJson(data);
+    } else if (response.statusCode == 401) {
+      throw Exception('Unauthorized - ${response.body}');
+    } else if (response.statusCode == 500) {
+      throw Exception('Internal Server Error - ${response.body}');
+    } else {
+      throw Exception('Failed to load profile infor');
+    }
+  }
+
+  //create course
+  static Future<Course> createCourse({
+    required String name,
+    required String description,
+    String? image,
+    required double price,
+  }) async {
+    final token = await SharedPrefs.getToken();
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/courses/create'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'name': name,
+          'description': description,
+          'image': image,
+          'price': price,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        return data['message'];
+      } else {
+        final errorData = jsonDecode(response.body) as Map<String, dynamic>;
+        throw Exception(errorData['message'] ?? 'Failed to create course');
+      }
+    } catch (e) {
+      throw Exception('Error creating course: ${e.toString()}');
+
+    }
+  }
+
+  //submit tutor certificate
+  static Future<Certification> submitCertification({
+    required String name,
+    required String description,
+    required List<File> imageFiles,
+    required int experience,
+  }) async {
+    //get token to authorize through SharedPreferences
+    final token = await SharedPrefs.getToken();
+    List<String> imageUrls = [];
+    try {
+      if (imageFiles.isEmpty) {
+        throw Exception('At least one image is required');
+      }
+      // Tải từng ảnh lên Supabase Storage
+      for (var imageFile in imageFiles) {
+        try {
+          final fileName =
+              '${DateTime.now().millisecondsSinceEpoch}_${imageFile.path.split('/').last}';
+          final uploadResponse = await Supabase.instance.client.storage
+              .from('images')
+              .upload(fileName, imageFile);
+          final imageUrl = Supabase.instance.client.storage
+              .from('images')
+              .getPublicUrl(fileName);
+
+          // Kiểm tra URL hợp lệ
+          final urlResponse = await http.head(Uri.parse(imageUrl));
+          if (urlResponse.statusCode != 200) {
+            throw Exception('Generated image URL is not accessible: $imageUrl');
+          }
+          imageUrls.add(imageUrl);
+        } catch (e) {
+          throw Exception('Failed to upload image: $e');
+        }
+      }
+      // Gửi request API
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/certifications/register'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'name': name,
+          'description': description,
+          'image': imageUrls,
+          'experience': experience,
+        }),
+      );
+      if (response.statusCode == 201) {
+        final body = jsonDecode(response.body);
+        return Certification.fromJson(body['data']['certification']);
+      } else {
+        final errorData = jsonDecode(response.body) as Map<String, dynamic>;
+        throw Exception(
+          errorData['message'] ?? 'Failed to submit certification',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error submitting certification: ${e.toString()}');
+    }
+  }
+
+
+  //register tutor
+  static Future<Map<String, dynamic>> registerTutor(
+      String fullName,
+      String email,
+      String password,
+      String phone,
+      ) async {
+    //create request body
+    final requestBody = {
+      'fullName': fullName,
+      'email': email,
+      'password': password,
+      'phone': phone,
+    };
+
+    //print to debug request body
+    print('Register Tutor request body: ${jsonEncode(requestBody)}');
+
+    //send request body with POST
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/certifications/tutor/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    //print response
+    print('Register Tutor API Response Status: ${response.statusCode}');
+    print('Register Tutor API Response Body: ${response.body}');
+
+    //response handling
+    if (response.statusCode == 201) {
+      try {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } catch (e) {
+        print('JSON Parse Error: $e');
+        throw Exception(
+          'Invalid response format from server - ${response.body}',
+        );
+      }
+    } else if (response.statusCode == 400) {
+      throw Exception('Registration failed: Invalid input - ${response.body}');
+    } else if (response.statusCode == 500) {
+      throw Exception(
+        'Registration failed: Internal server error - ${response.body}',
+      );
+    } else {
+      throw Exception(
+        'Failed to register tutor: ${response.statusCode} - ${response.body}',
+      );
     }
   }
 }
