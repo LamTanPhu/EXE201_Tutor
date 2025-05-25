@@ -6,16 +6,16 @@ import 'package:tutor/features/details/widgets/tutor_widgets/tutor_courses_widge
 import 'package:tutor/features/details/widgets/tutor_widgets/tutor_certifications_widget.dart';
 import 'package:tutor/features/details/widgets/tutor_widgets/tutor_feedback_widget.dart';
 
-class TutorProfileScreen extends StatefulWidget {
+class TutorDetailsScreen extends StatefulWidget {
   final String? accountId;
 
-  const TutorProfileScreen({super.key, this.accountId});
+  const TutorDetailsScreen({super.key, this.accountId});
 
   @override
-  State<TutorProfileScreen> createState() => _TutorProfileScreenState();
+  State<TutorDetailsScreen> createState() => _TutorProfileScreenState();
 }
 
-class _TutorProfileScreenState extends State<TutorProfileScreen>
+class _TutorProfileScreenState extends State<TutorDetailsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Map<String, dynamic>? _teacherData;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tutor/common/utils/shared_prefs.dart';
 import 'package:tutor/routes/app_routes.dart';
 import 'package:tutor/services/api_service.dart';
 import 'package:tutor/features/authentication/widgets/login_widgets/login_header_widget.dart';
@@ -31,6 +32,7 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
         );
+        await SharedPrefs.saveToken(token); // Save token to shared preferences
         Navigator.pushNamed(context, AppRoutes.home);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +87,16 @@ class LoginScreen extends StatelessWidget {
                             onSignUp: () {
                               Navigator.pushNamed(context, AppRoutes.signup);
                             },
+                          ),
+                          const SizedBox(height: 16),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, AppRoutes.tutor);
+                            },
+                            child: const Text(
+                              'Become a Tutor? Sign Up as Tutor',
+                              style: TextStyle(color: Color(0xFF007BFF)),
+                            ),
                           ),
                           const SizedBox(height: 40),
                         ],
