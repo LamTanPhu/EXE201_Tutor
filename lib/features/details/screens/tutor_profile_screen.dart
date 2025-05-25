@@ -58,66 +58,74 @@ class _TutorProfileScreenState extends State<TutorProfileScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tutor Profile'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _teacherData == null
-          ? const Center(child: Text('No data available'))
-          : Column(
-        children: [
-          TutorHeroWidget(
-            fullName: _teacherData?['account']['fullName'] ?? 'Unknown Tutor',
-            role: _teacherData?['account']['role'] ?? 'Tutor',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.blue[50]!,
+              Colors.white,
+            ],
           ),
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: TabBar(
-              controller: _tabController,
-              labelColor: Colors.blue,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.blue,
-              indicatorWeight: 3.0,
-              labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-              tabs: const [
-                Tab(text: 'Profile'),
-                Tab(text: 'Courses'),
-                Tab(text: 'Certifications'),
-                Tab(text: 'Feedback'),
-              ],
+        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _teacherData == null
+            ? const Center(child: Text('No data available'))
+            : Column(
+          children: [
+            TutorHeroWidget(
+              fullName: _teacherData?['account']['fullName'] ?? 'Unknown Tutor',
+              role: _teacherData?['account']['role'] ?? 'Tutor',
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                TutorProfileWidget(
-                  fullName: _teacherData?['account']['fullName'] ?? 'N/A',
-                  role: _teacherData?['account']['role'] ?? 'N/A',
-                  bio: _teacherData?['account']['bio'] ??
-                      'Experienced tutor with a passion for teaching and helping students succeed.',
-                  email: _teacherData?['account']['email'] ?? 'N/A',
-                  phone: _teacherData?['account']['phone'] ?? 'N/A',
-                  status: _teacherData?['account']['status'] ?? 'N/A',
-                ),
-                TutorCoursesWidget(
-                  courses: _teacherData?['courses'] ?? [],
-                ),
-                TutorCertificationsWidget(
-                  certifications: _teacherData?['certifications'] ?? [],
-                ),
-                const TutorFeedbackWidget(),
-              ],
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.blue,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: Colors.blue,
+                indicatorWeight: 3.0,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+                tabs: const [
+                  Tab(text: 'Profile'),
+                  Tab(text: 'Courses'),
+                  Tab(text: 'Certifications'),
+                  Tab(text: 'Feedback'),
+                ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  TutorProfileWidget(
+                    fullName: _teacherData?['account']['fullName'] ?? 'N/A',
+                    role: _teacherData?['account']['role'] ?? 'N/A',
+                    bio: _teacherData?['account']['bio'] ??
+                        'Experienced tutor with a passion for teaching and helping students succeed.',
+                    email: _teacherData?['account']['email'] ?? 'N/A',
+                    phone: _teacherData?['account']['phone'] ?? 'N/A',
+                    status: _teacherData?['account']['status'] ?? 'N/A',
+                  ),
+                  TutorCoursesWidget(
+                    courses: _teacherData?['courses'] ?? [],
+                  ),
+                  TutorCertificationsWidget(
+                    certifications: _teacherData?['certifications'] ?? [],
+                  ),
+                  const TutorFeedbackWidget(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

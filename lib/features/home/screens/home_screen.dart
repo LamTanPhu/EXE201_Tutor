@@ -21,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
   double _currentPriceFilter = 1000000;
   TextEditingController _searchController = TextEditingController();
 
-  // Filter options
   final List<String> orderByOptions = ['Newest', 'Popularity', 'Ratings', 'Price'];
 
   @override
@@ -106,16 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(_isTeacherMode ? 'Teachers' : 'Courses'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        elevation: 1,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.tune),
@@ -165,51 +160,70 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          HomeSearchBarWidget(
-            controller: _searchController,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.blue[50]!,
+              Colors.white,
+            ],
           ),
-          Expanded(
-            child: _filteredItems.isEmpty
-                ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search_off, size: 48, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text('No results found', style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-            )
-                : GridView.builder(
-              padding: const EdgeInsets.all(12),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.6,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: _filteredItems.length,
-              itemBuilder: (context, index) {
-                final item = _filteredItems[index];
-                return HomeGridItemWidget(
-                  item: item,
-                  isTeacherMode: _isTeacherMode,
-                  onTap: () {
-                    if (_isTeacherMode) {
-                      Navigator.pushNamed(context, '/tutor-profile',
-                          arguments: item['account']['_id']);
-                    } else {
-                      Navigator.pushNamed(context, '/course-details',
-                          arguments: item['course']);
-                    }
-                  },
-                );
-              },
+        ),
+        child: Column(
+          children: [
+            HomeSearchBarWidget(
+              controller: _searchController,
             ),
-          ),
-        ],
+            Expanded(
+              child: _filteredItems.isEmpty
+                  ? const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.search_off, size: 48, color: Colors.grey),
+                    SizedBox(height: 16),
+                    Text(
+                      'No results found',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+                  : GridView.builder(
+                padding: const EdgeInsets.all(12),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.6,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                itemCount: _filteredItems.length,
+                itemBuilder: (context, index) {
+                  final item = _filteredItems[index];
+                  return HomeGridItemWidget(
+                    item: item,
+                    isTeacherMode: _isTeacherMode,
+                    onTap: () {
+                      if (_isTeacherMode) {
+                        Navigator.pushNamed(context, '/tutor-profile',
+                            arguments: item['account']['_id']);
+                      } else {
+                        Navigator.pushNamed(context, '/course-details',
+                            arguments: item['course']);
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

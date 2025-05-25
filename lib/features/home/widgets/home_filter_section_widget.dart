@@ -19,7 +19,12 @@ class HomeFilterSectionWidget extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+              letterSpacing: 0.2,
+            ),
           ),
           const SizedBox(height: 10),
           content,
