@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/features/details/widgets/tutor_widgets/tutor_contact_info_widget.dart';
+import 'package:tutor/features/details/widgets/tutor_widgets/gradient_button_widget.dart';
 
 class TutorProfileWidget extends StatelessWidget {
   final String fullName;
@@ -23,88 +24,100 @@ class TutorProfileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Profile',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.purple[100],
-                child: Text(
-                  fullName.isNotEmpty ? fullName[0] : 'T',
-                  style: const TextStyle(color: Colors.purple),
+              Text(
+                'Profile',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                  letterSpacing: 0.2,
                 ),
               ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(height: 12),
+              Row(
                 children: [
-                  Text(
-                    fullName,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.grey[100],
+                    child: Text(
+                      fullName.isNotEmpty ? fullName[0] : 'T',
+                      style: const TextStyle(color: Colors.blue),
+                    ),
                   ),
-                  Text(
-                    'Role: $role',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        fullName,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        'Role: $role',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
+              Text(
+                'Bio',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                bio,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  height: 1.5,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Contact Information',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TutorContactInfoWidget(label: 'Email', value: email),
+              TutorContactInfoWidget(label: 'Phone', value: phone),
+              TutorContactInfoWidget(label: 'Status', value: status),
+              const SizedBox(height: 20),
+              Center(
+                child: GradientButtonWidget(
+                  text: 'Contact Tutor',
+                  onTap: () {},
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Bio',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            bio,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600], height: 1.5),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Contact Information',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          TutorContactInfoWidget(label: 'Email', value: email),
-          TutorContactInfoWidget(label: 'Phone', value: phone),
-          TutorContactInfoWidget(label: 'Status', value: status),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'Contact Tutor',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

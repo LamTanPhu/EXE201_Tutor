@@ -34,10 +34,6 @@ class VerifyOtpScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Verify OTP'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,

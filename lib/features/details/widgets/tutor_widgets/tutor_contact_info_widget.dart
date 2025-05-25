@@ -17,14 +17,22 @@ class TutorContactInfoWidget extends StatelessWidget {
             width: 80,
             child: Text(
               '$label:',
-              style: TextStyle(
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: Colors.grey[700],
+                letterSpacing: 0.2,
               ),
             ),
           ),
           Expanded(
-            child: Text(value),
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: 14,
+                color: Colors.black87,
+                letterSpacing: 0.2,
+              ),
+            ),
           ),
         ],
       ),
