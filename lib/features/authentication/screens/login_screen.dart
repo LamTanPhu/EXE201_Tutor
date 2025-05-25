@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutor/common/utils/shared_prefs.dart';
 import 'package:tutor/routes/app_routes.dart';
 import 'package:tutor/services/api_service.dart';
 
@@ -70,6 +72,8 @@ class LoginScreen extends StatelessWidget {
                     // Handle successful login
                     final token = response['token'];
                     final user = response['user'];
+                    final role = user['role'];
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -77,12 +81,34 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     );
+
+                    //save token and role
+                    final prefs = await SharedPreferences.getInstance();
+                    await SharedPrefs.saveToken(token);
+                    await prefs.setString('role', role);
+                    await prefs.setString('fullName', user['fullName']);
                     // Navigate to home screen
-                    Navigator.pushNamed(context, AppRoutes.home);
+                    // Navigator.pushNamed(context, AppRoutes.home);
+                    //Navigate base on account's role
+                    switch (role) {
+                      case 'Admin':
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.adminDashboard,
+                        );
+                        break;
+                      case 'Tutor':
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.tutorMain,
+                        );
+                      default:
+                        Navigator.pushNamed(context, AppRoutes.home);
+                    }
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Error: $e')));
                   }
                 },
                 child: const Text('Login'),
@@ -94,6 +120,15 @@ class LoginScreen extends StatelessWidget {
                 },
                 child: const Text(
                   'Don’t have an account? Sign Up',
+                  style: TextStyle(color: Color(0xFF007BFF)),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.tutor);
+                },
+                child: const Text(
+                  'Become a Tutor? Sign Up as Tutor',
                   style: TextStyle(color: Color(0xFF007BFF)),
                 ),
               ),
