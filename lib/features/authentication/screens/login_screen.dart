@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutor/common/utils/shared_prefs.dart';
 import 'package:tutor/routes/app_routes.dart';
 import 'package:tutor/services/api_service.dart';
 import 'package:tutor/features/authentication/widgets/login_widgets/login_header_widget.dart';
@@ -97,6 +99,16 @@ class LoginScreen extends StatelessWidget {
                 const Center(
                   child: CircularProgressIndicator(),
                 ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.tutor);
+                },
+                child: const Text(
+                  'Become a Tutor? Sign Up as Tutor',
+                  style: TextStyle(color: Color(0xFF007BFF)),
+                ),
+              ),
             ],
           );
         },
