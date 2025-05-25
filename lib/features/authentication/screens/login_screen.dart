@@ -12,8 +12,11 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+    final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
     Future<void> handleLogin() async {
+      if (isLoading.value) return; // Prevent multiple taps
+      isLoading.value = true;
       try {
         final response = await ApiService.login(
           emailController.text,
@@ -33,6 +36,8 @@ class LoginScreen extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
+      } finally {
+        isLoading.value = false;
       }
     }
 
@@ -43,45 +48,58 @@ class LoginScreen extends StatelessWidget {
         foregroundColor: Colors.black,
         elevation: 0,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue[50]!,
-              Colors.white,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 40),
-                  const LoginHeaderWidget(),
-                  const SizedBox(height: 40),
-                  LoginFormWidget(
-                    emailController: emailController,
-                    passwordController: passwordController,
-                    onLogin: handleLogin,
+      body: ValueListenableBuilder<bool>(
+        valueListenable: isLoading,
+        builder: (context, loading, child) {
+          return Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.blue[50]!,
+                      Colors.white,
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                  LoginFooterWidget(
-                    onSignUp: () {
-                      Navigator.pushNamed(context, AppRoutes.signup);
-                    },
+                ),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 40),
+                          const LoginHeaderWidget(),
+                          const SizedBox(height: 40),
+                          LoginFormWidget(
+                            emailController: emailController,
+                            passwordController: passwordController,
+                            onLogin: handleLogin,
+                          ),
+                          const SizedBox(height: 24),
+                          LoginFooterWidget(
+                            onSignUp: () {
+                              Navigator.pushNamed(context, AppRoutes.signup);
+                            },
+                          ),
+                          const SizedBox(height: 40),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 40),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
+              if (loading)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
