@@ -10,7 +10,7 @@ class TutorWorkingScreen extends StatelessWidget {
       {
         'title': 'Submit Certification',
         'icon': Icons.upload_file_rounded,
-        'route': AppRoutes.ceritification_upload,
+        'route': AppRoutes.ceritificationUpload,
       },
       {
         'title': 'View Certificiations',
@@ -24,7 +24,7 @@ class TutorWorkingScreen extends StatelessWidget {
       },{
         'title': 'Courses',
         'icon': Icons.book_online_rounded,
-        'route': AppRoutes.course_create,
+        'route': AppRoutes.courseCreate,
       },
     ];
     return Padding(
