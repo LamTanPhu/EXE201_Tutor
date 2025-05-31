@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tutor/common/models/tutor_profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutor/common/models/account.dart';
+import 'package:tutor/features/account/widgets/certification_card_widget.dart';
+import 'package:tutor/features/account/widgets/profile_avatar_widget.dart';
+import 'package:tutor/features/account/widgets/profile_card_widget.dart';
+import 'package:tutor/routes/app_routes.dart';
 import 'package:tutor/services/api_service.dart';
-
 
 class TutorProfileScreen extends StatefulWidget {
   const TutorProfileScreen({super.key});
@@ -11,19 +15,56 @@ class TutorProfileScreen extends StatefulWidget {
 }
 
 class _TutorProfileScreenState extends State<TutorProfileScreen> {
-  late Future<TutorProfile> profile;
+  late Future<Account> profile;
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _fullNameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  bool _isEditing = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     profile = ApiService.getProfile();
+    _fullNameController = TextEditingController();
+    _emailController = TextEditingController();
+    _phoneController = TextEditingController();
   }
 
-@override
+  void _toggleEditMode(Account profile) {
+    setState(() {
+      if (!_isEditing) {
+        _fullNameController.text = profile.fullName ?? '';
+        _emailController.text = profile.email ?? '';
+        _phoneController.text = profile.phone ?? '';
+      }
+      _isEditing = !_isEditing;
+    });
+  }
+
+  void _addCertification() {
+    Navigator.pushNamed(context, AppRoutes.ceritificationUpload);
+  }
+
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    //remove all
+    await prefs.clear();
+    //navigate to login
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tutor Profile')),
-      body: FutureBuilder<TutorProfile>(
+      appBar: AppBar(
+        title: const Text('Tutor Profile'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+      ),
+      body: FutureBuilder<Account>(
         future: profile,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -36,26 +77,49 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
           }
 
           final profile = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage(profile.avatar),
-                ),
-                const SizedBox(height: 16),
-                Text('Full Name: ${profile.fullName}'),
-                Text('Email: ${profile.email}'),
-                Text('Phone: ${profile.phone}'),
-                Text('Balance: ${profile.balance.toStringAsFixed(0)} VND'),
-               
-              ],
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ProfileAvatarWidget(avatarUrl: profile.avatar),
+                  const SizedBox(height: 24),
+                  ProfileCardWidget(
+                    profile: profile,
+                    isEditing: _isEditing,
+                    fullNameController: _fullNameController,
+                    emailController: _emailController,
+                    phoneController: _phoneController,
+                    formKey: _formKey,
+                  ),
+
+                  const SizedBox(height: 24),
+                  CertificationCardWidget(
+                    onAddCertification: _addCertification,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => logout(context),
+                      child: Icon(Icons.logout),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    // TODO: implement dispose
+    super.dispose();
   }
 }

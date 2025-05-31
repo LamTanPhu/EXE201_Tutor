@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tutor/common/widgets/image_prveview_list.dart';
+import 'package:tutor/common/widgets/input_field.dart';
+import 'package:tutor/common/widgets/pick_image_button.dart';
 import 'package:tutor/services/api_service.dart';
 
 class SubmitCertificationScreen extends StatefulWidget {
@@ -21,7 +24,31 @@ class _SubmitCertificationScreenState extends State<SubmitCertificationScreen> {
   final List<File> _imageFiles = [];
 
   bool isLoading = false;
+  bool _isFormValid = false;
   String? resultMessage;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    nameController.addListener(_validateForm);
+    descriptionController.addListener(_validateForm);
+    experienceController.addListener(_validateForm);
+  }
+
+  void _validateForm() {
+    final isValid =
+        nameController.text.isNotEmpty &&
+        descriptionController.text.isNotEmpty &&
+        experienceController.text.isNotEmpty &&
+        int.tryParse(experienceController.text) != null;
+
+    if (_isFormValid != isValid) {
+      setState(() {
+        _isFormValid = isValid;
+      });
+    }
+  }
 
   Future<void> _pickImages() async {
     final picker = ImagePicker();
@@ -43,7 +70,6 @@ class _SubmitCertificationScreenState extends State<SubmitCertificationScreen> {
 
     try {
       //take the image link
-
       final cert = await ApiService.submitCertification(
         name: nameController.text,
         description: descriptionController.text,
@@ -77,80 +103,57 @@ class _SubmitCertificationScreenState extends State<SubmitCertificationScreen> {
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
+              InputFieldWidget(
                 controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name of the certicaiton',
-                ),
-                validator: (value) => value!.isEmpty ? 'required' : null,
+                label: 'Name of the certification',
               ),
-              TextFormField(
+              InputFieldWidget(
                 controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                validator: (value) => value!.isEmpty ? 'required' : null,
+                label: 'Description',
+                keyboardType: TextInputType.multiline,
+                maxLines: 3,
               ),
-              TextFormField(
+              InputFieldWidget(
                 controller: experienceController,
+                label: 'Experience',
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Experience'),
-                validator: (value) => value!.isEmpty ? 'required' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'Enter a price';
+                  final price = double.tryParse(value);
+                  if (price == null || price < 0)
+                    return 'Price must be a positive number';
+                  return null;
+                },
               ),
-              ElevatedButton(
-                onPressed: _pickImages,
-                child: const Text('Pick image'),
+              ImagePreviewList(
+                imageFiles: _imageFiles,
+                onRemove: (index) {
+                  setState(() {
+                    _imageFiles.removeAt(index);
+                  });
+                },
+                onTap: _pickImages,
               ),
-              if (_imageFiles.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _imageFiles.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              _imageFiles[index],
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.remove_circle,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _imageFiles.removeAt(index);
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
               const SizedBox(height: 20),
               isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                    onPressed: _submit,
-                    child: const Text('Submit'),
+                  ? const Center(child: CircularProgressIndicator())
+                   : SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isFormValid ? _submit : null,
+                        child: const Text('Submit'),
+                      ),
                   ),
               if (resultMessage != null) ...[
                 const SizedBox(height: 16),
                 Text(
                   resultMessage!,
-                  style: const TextStyle(color: Colors.green),
+                  style: TextStyle(
+                    color:
+                        resultMessage!.startsWith('Error')
+                            ? Colors.red
+                            : Colors.green,
+                  ),
                 ),
               ],
             ],
