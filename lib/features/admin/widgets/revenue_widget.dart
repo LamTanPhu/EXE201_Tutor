@@ -2,6 +2,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:tutor/common/models/statistic_data.dart';
+import 'package:tutor/common/utils/currency.dart';
 import 'package:tutor/services/api_service.dart';
 
 class RevenueWidget extends StatefulWidget {
@@ -44,11 +45,15 @@ class _RevenueWidgetState extends State<RevenueWidget> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else if (snapshot.hasData && snapshot.data!.revenue.isNotEmpty) {
+                } else if (snapshot.hasData &&
+                    snapshot.data!.revenue.isNotEmpty) {
                   final revenue = snapshot.data!.revenue;
-                  final revenueData = revenue.map((r) => r.revenue ?? 0).toList();
+                  final revenueData =
+                      revenue.map((r) => r.revenue ?? 0).toList();
                   if (revenueData.length != 12) {
-                    return const Text('Invalid revenue data: Expected 12 months');
+                    return const Text(
+                      'Invalid revenue data: Expected 12 months',
+                    );
                   }
                   return SizedBox(
                     height: 200,
@@ -74,7 +79,7 @@ class _RevenueWidgetState extends State<RevenueWidget> {
                               reservedSize: 40,
                               getTitlesWidget: (value, meta) {
                                 return Text(
-                                  '\$${value.toInt()}',
+                                  '${CurrencyUtils.formatVND(value)}',
                                   style: const TextStyle(fontSize: 10),
                                 );
                               },
@@ -97,7 +102,7 @@ class _RevenueWidgetState extends State<RevenueWidget> {
                                   'Sep',
                                   'Oct',
                                   'Nov',
-                                  'Dec'
+                                  'Dec',
                                 ];
                                 return Text(
                                   months[value.toInt()],
@@ -119,49 +124,8 @@ class _RevenueWidgetState extends State<RevenueWidget> {
                 return const Text('No revenue data available');
               },
             ),
+
             // Fallback table
-            const SizedBox(height: 16),
-            FutureBuilder<RevenueData>(
-              future: _revenueFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox.shrink();
-                } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.revenue.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-                final revenue = snapshot.data!.revenue;
-                return Table(
-                  border: TableBorder.all(),
-                  children: [
-                    const TableRow(
-                      decoration: BoxDecoration(color: Colors.grey),
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Text('Month', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Text('Revenue', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                    ...revenue.map((month) => TableRow(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Text(month.month?.toString() ?? 'N/A'),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Text('\$${month.revenue?.toStringAsFixed(2) ?? '0.00'}'),
-                            ),
-                          ],
-                        )),
-                  ],
-                );
-              },
-            ),
           ],
         ),
       ),

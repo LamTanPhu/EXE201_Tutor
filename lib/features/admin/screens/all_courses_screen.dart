@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:tutor/common/models/course.dart';
 import 'package:tutor/common/models/course_item.dart';
+import 'package:tutor/common/utils/currency.dart';
 import 'package:tutor/services/api_service.dart';
 
 class GetAllCoursesScreen extends StatefulWidget {
@@ -40,7 +41,7 @@ class _GetAllCoursesScreenState extends State<GetAllCoursesScreen> {
                 ),
               const SizedBox(height: 8),
               Text('Description: ${courseItem.course.description ?? 'N/A'}'),
-              Text('Price: \$${courseItem.course.price?.toStringAsFixed(2) ?? '0.00'}'),
+              Text('Price: ${CurrencyUtils.formatVND(courseItem.course.price)}'),
               Text('Created by: ${courseItem.account.fullName ?? 'Unknown'}'),
               Text('Email: ${courseItem.account.email ?? 'N/A'}'),
               Text('Active: ${courseItem.course.isActive != null ? (courseItem.course.isActive! ? 'Yes' : 'No') : 'N/A'}'),

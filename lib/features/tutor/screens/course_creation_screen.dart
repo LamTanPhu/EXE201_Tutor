@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:tutor/common/widgets/image_preview.dart';
+import 'package:tutor/common/widgets/input_field.dart';
 import 'package:tutor/services/api_service.dart';
 
 class CreateCourseScreen extends StatefulWidget {
@@ -12,9 +17,44 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _imageController = TextEditingController();
   final _priceController = TextEditingController();
+  File? _selectedImage;
+
   bool _isLoading = false;
+  bool _isFormValid = false;
+
+  String? resultMessage;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    _nameController.addListener(_validateForm);
+    _descriptionController.addListener(_validateForm);
+    _priceController.addListener(_validateForm);
+  }
+
+  Future<void> _pickImages() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() => _selectedImage = File(pickedFile.path));
+    }
+  }
+
+  void _validateForm() {
+    final isValid =
+        _nameController.text.isNotEmpty &&
+        _descriptionController.text.isNotEmpty &&
+        _priceController.text.isNotEmpty &&
+        double.tryParse(_priceController.text) != null;
+
+    if (_isFormValid != isValid) {
+      setState(() {
+        _isFormValid = isValid;
+      });
+    }
+  }
 
   Future<void> _createCourse() async {
     if (!_formKey.currentState!.validate()) return;
@@ -26,13 +66,12 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     try {
       final name = _nameController.text;
       final description = _descriptionController.text;
-      final image = _imageController.text.isNotEmpty ? _imageController.text : null;
       final price = double.parse(_priceController.text);
 
       await ApiService.createCourse(
         name: name,
         description: description,
-        image: image,
+        image: _selectedImage?.path,
         price: price,
       );
 
@@ -44,9 +83,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     } finally {
       if (mounted) {
@@ -61,7 +100,6 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
-    _imageController.dispose();
     _priceController.dispose();
     super.dispose();
   }
@@ -78,65 +116,45 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Create a new course',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
+                InputFieldWidget(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Course Name'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter course name';
-                    }
-                    return null;
-                  },
+                  label: "Name of Coure",
                 ),
-                TextFormField(
+                InputFieldWidget(
                   controller: _descriptionController,
-                  decoration: const InputDecoration(labelText: 'Description'),
+                  label: "Description",
                   maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter description';
-                    }
-                    return null;
-                  },
                 ),
-                TextFormField(
-                  controller: _imageController,
-                  decoration: const InputDecoration(labelText: 'Image URL (Optional)'),
-                  validator: (value) {
-                    if (value != null && value.isNotEmpty) {
-                      if (!Uri.parse(value).isAbsolute) {
-                        return 'Please enter a valid URL';
-                      }
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
+                InputFieldWidget(
                   controller: _priceController,
-                  decoration: const InputDecoration(labelText: 'Price'),
+                  label: "Price",
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter price';
                     }
-                    if (double.tryParse(value) == null || double.parse(value) < 0) {
+                    if (double.tryParse(value) == null ||
+                        double.parse(value) < 0) {
                       return 'Please enter a valid price';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
+                ImagePreviewWidget(
+                  imageFile: _selectedImage,
+                  onTap: _pickImages,
+                ),
+                const SizedBox(height: 24),
                 _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
-                        onPressed: _createCourse,
+                    ? const CircularProgressIndicator()
+                    : SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isFormValid ? _createCourse : null,
                         child: const Text('Create Course'),
                       ),
+                    ),
               ],
             ),
           ),

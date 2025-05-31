@@ -84,7 +84,7 @@ class AppRoutes {
         );
 
       case adminDashboard:
-        return MaterialPageRoute(builder: (_) => const AdminDashboardScreen());
+        return MaterialPageRoute(builder: (_) => const BottomNavLayoutWidget(role: Role.admin));
       case certifApprove:
         return MaterialPageRoute(
           builder: (_) => const ReviewCertificationScreen(),

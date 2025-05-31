@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutor/common/models/account.dart';
 import 'package:tutor/features/account/widgets/certification_card_widget.dart';
 import 'package:tutor/features/account/widgets/profile_avatar_widget.dart';
 import 'package:tutor/features/account/widgets/profile_card_widget.dart';
+import 'package:tutor/routes/app_routes.dart';
 import 'package:tutor/services/api_service.dart';
 
 class TutorProfileScreen extends StatefulWidget {
@@ -41,22 +43,17 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
   }
 
   void _addCertification() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Add Certification'),
-            content: const Text(
-              'Feature to upload certification comming soon!',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-    );
+    Navigator.pushNamed(context, AppRoutes.ceritificationUpload);
+  }
+
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    //remove all
+    await prefs.clear();
+    //navigate to login
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
   }
 
   @override
@@ -98,7 +95,16 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                   ),
 
                   const SizedBox(height: 24),
-                  CertificationCardWidget(onAddCertification: _addCertification)
+                  CertificationCardWidget(
+                    onAddCertification: _addCertification,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => logout(context),
+                      child: Icon(Icons.logout),
+                    ),
+                  ),
                 ],
               ),
             ),

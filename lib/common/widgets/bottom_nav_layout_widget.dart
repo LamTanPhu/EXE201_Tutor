@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/common/enums/role.dart';
+import 'package:tutor/features/account/account_management_screen.dart';
 import 'package:tutor/features/account/tutor_profile_screen.dart';
 import 'package:tutor/features/admin/screens/admin_dashboard_screen.dart';
 import 'package:tutor/features/admin/screens/all_courses_screen.dart';
 import 'package:tutor/features/admin/screens/reports_screen.dart';
+import 'package:tutor/features/admin/screens/review_certification_screen.dart';
 import 'package:tutor/features/certification/submit_certificate_screen.dart';
 import 'package:tutor/features/home/screens/about_us_screen.dart';
 import 'package:tutor/features/home/screens/home_screen.dart';
 import 'package:tutor/features/tutor/screens/course_creation_screen.dart';
 import 'package:tutor/features/tutor/screens/tutor_course_screen.dart';
+import 'package:tutor/features/tutor/screens/tutor_dashboard_screen.dart';
 import 'package:tutor/features/tutor/screens/tutor_working_screen.dart';
 
 class BottomNavLayoutWidget extends StatefulWidget {
@@ -32,13 +35,16 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
     switch (widget.role) {
       case Role.tutor:
         _pages = [
-          TutorWorkingScreen(),
+          TutorDashboardScreen(),
           CreateCourseScreen(),
           SubmitCertificationScreen(),
           TutorProfileScreen(),
         ];
         _items = const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Courses'),
           BottomNavigationBarItem(icon: Icon(Icons.upload_file), label: 'Cert'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
@@ -55,20 +61,29 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
 
       case Role.admin:
         _pages = [
-          AdminDashboardScreen(),
-          GetAllCoursesScreen(),
           ReportsScreen(),
+          GetAllCoursesScreen(),
+          AccountManagementScreen(),
+          ReviewCertificationScreen(),
         ];
         _items = const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            icon: Icon(Icons.show_chart),
+            label: 'Dasboard',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.library_books),
             label: 'Courses',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.report), label: 'Reports'),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.manage_accounts),
+            label: 'Accounts',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.check_circle),
+            label: 'Cert',
+          ),
         ];
         break;
     }
