@@ -37,6 +37,12 @@ class StatusData {
       statuses: (json as Map<String, dynamic>).map((key, value) => MapEntry(key, value as int)),
     );
   }
+
+  int get active => statuses['Active'] ?? 0;
+  int get inactive => statuses['InActive'] ?? 0;
+
+    @override
+  String toString() => 'StatusData($statuses)';
 }
 
 class TopAccount {
@@ -55,4 +61,15 @@ class TopAccount {
       completedCourses: json['completedCourses'] as int?,
     );
   }
+}
+
+
+class DashboardCombinedData {
+  final StatusData accountStatus;
+  final StatusData courseStatus;
+
+  DashboardCombinedData({
+    required this.accountStatus,
+    required this.courseStatus,
+  });
 }

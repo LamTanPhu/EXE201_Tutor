@@ -3,21 +3,20 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:tutor/common/models/account.dart';
 import 'package:tutor/common/models/certification.dart';
 import 'package:tutor/common/models/course.dart';
 import 'package:tutor/common/models/course_item.dart';
 import 'package:tutor/common/models/statistic_data.dart';
 import 'package:tutor/common/models/tutor.dart';
-import 'package:tutor/common/models/tutor_certification.dart';
-import 'package:tutor/common/models/tutor_profile.dart';
 import 'package:tutor/common/utils/shared_prefs.dart';
 
 // TODO: Make baseUrl configurable (e.g., via environment variables or a config file)
 
 class ApiService {
-  static const String baseUrl = 'https://exe202-booking-tutor-backend.onrender.com';
+  static const String baseUrl =
+      'https://exe202-booking-tutor-backend.onrender.com';
 
   // Helper method to centralize headers (can be expanded for auth tokens later)
   static Map<String, String> _getHeaders() {
@@ -36,7 +35,10 @@ class ApiService {
   // === AUTHENTICATION METHODS ===
 
   // POST method: Login
-  static Future<Map<String, dynamic>> login(String email, String password) async {
+  static Future<Map<String, dynamic>> login(
+    String email,
+    String password,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/auth/login'),
@@ -49,18 +51,26 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
-        throw Exception('Login failed: Invalid input or account not active - ${response.body}');
+        throw Exception(
+          'Login failed: Invalid input or account not active - ${response.body}',
+        );
       } else if (response.statusCode == 401) {
         throw Exception('Login failed: Invalid credentials - ${response.body}');
       } else if (response.statusCode == 404) {
         throw Exception('Login failed: Account not found - ${response.body}');
       } else if (response.statusCode == 500) {
-        throw Exception('Login failed: Internal server error - ${response.body}');
+        throw Exception(
+          'Login failed: Internal server error - ${response.body}',
+        );
       } else {
-        throw Exception('Failed to login: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to login: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Login API Error: $e');
@@ -69,7 +79,12 @@ class ApiService {
   }
 
   // POST method: Register
-  static Future<Map<String, dynamic>> register(String name, String email, String password, String phone) async {
+  static Future<Map<String, dynamic>> register(
+    String name,
+    String email,
+    String password,
+    String phone,
+  ) async {
     try {
       final requestBody = {
         'fullName': name,
@@ -94,16 +109,26 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
-        throw Exception('Registration failed: Invalid input - ${response.body}');
+        throw Exception(
+          'Registration failed: Invalid input - ${response.body}',
+        );
       } else if (response.statusCode == 409) {
-        throw Exception('Registration failed: Email already exists - ${response.body}');
+        throw Exception(
+          'Registration failed: Email already exists - ${response.body}',
+        );
       } else if (response.statusCode == 500) {
-        throw Exception('Registration failed: Internal server error - ${response.body}');
+        throw Exception(
+          'Registration failed: Internal server error - ${response.body}',
+        );
       } else {
-        throw Exception('Failed to register: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to register: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Register API Error: $e');
@@ -112,7 +137,10 @@ class ApiService {
   }
 
   // POST method: Verify OTP
-  static Future<Map<String, dynamic>> verifyOtp(String email, String otp) async {
+  static Future<Map<String, dynamic>> verifyOtp(
+    String email,
+    String otp,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/auth/verify-otp'),
@@ -128,16 +156,26 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
-        throw Exception('OTP verification failed: Invalid or expired OTP - ${response.body}');
+        throw Exception(
+          'OTP verification failed: Invalid or expired OTP - ${response.body}',
+        );
       } else if (response.statusCode == 404) {
-        throw Exception('OTP verification failed: Account not found - ${response.body}');
+        throw Exception(
+          'OTP verification failed: Account not found - ${response.body}',
+        );
       } else if (response.statusCode == 500) {
-        throw Exception('OTP verification failed: Internal server error - ${response.body}');
+        throw Exception(
+          'OTP verification failed: Internal server error - ${response.body}',
+        );
       } else {
-        throw Exception('Failed to verify OTP: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to verify OTP: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Verify OTP API Error: $e');
@@ -148,7 +186,9 @@ class ApiService {
   // === CERTIFICATION METHODS ===
 
   // POST method: Register Certification
-  static Future<Map<String, dynamic>> registerCertification(Map<String, dynamic> certificationData) async {
+  static Future<Map<String, dynamic>> registerCertification(
+    Map<String, dynamic> certificationData,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/certifications/register'),
@@ -156,7 +196,9 @@ class ApiService {
         body: jsonEncode(certificationData),
       );
 
-      print('Register Certification API Response Status: ${response.statusCode}');
+      print(
+        'Register Certification API Response Status: ${response.statusCode}',
+      );
       print('Register Certification API Response Body: ${response.body}');
 
       if (response.statusCode == 201) {
@@ -164,7 +206,9 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid certification data - ${response.body}');
@@ -173,7 +217,9 @@ class ApiService {
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to register certification: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to register certification: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Register Certification API Error: $e');
@@ -182,7 +228,9 @@ class ApiService {
   }
 
   // POST method: Register Tutor Certification
-  static Future<Map<String, dynamic>> registerTutorCertification(Map<String, dynamic> tutorCertificationData) async {
+  static Future<Map<String, dynamic>> registerTutorCertification(
+    Map<String, dynamic> tutorCertificationData,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/certifications/tutor/register'),
@@ -190,7 +238,9 @@ class ApiService {
         body: jsonEncode(tutorCertificationData),
       );
 
-      print('Register Tutor Certification API Response Status: ${response.statusCode}');
+      print(
+        'Register Tutor Certification API Response Status: ${response.statusCode}',
+      );
       print('Register Tutor Certification API Response Body: ${response.body}');
 
       if (response.statusCode == 201) {
@@ -198,16 +248,22 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid tutor certification data - ${response.body}');
       } else if (response.statusCode == 409) {
-        throw Exception('Tutor certification already exists - ${response.body}');
+        throw Exception(
+          'Tutor certification already exists - ${response.body}',
+        );
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to register tutor certification: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to register tutor certification: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Register Tutor Certification API Error: $e');
@@ -216,7 +272,9 @@ class ApiService {
   }
 
   // POST method: Verify Tutor Certification OTP
-  static Future<Map<String, dynamic>> verifyTutorCertificationOtp(Map<String, dynamic> otpData) async {
+  static Future<Map<String, dynamic>> verifyTutorCertificationOtp(
+    Map<String, dynamic> otpData,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/certifications/tutor/verify-otp'),
@@ -224,15 +282,21 @@ class ApiService {
         body: jsonEncode(otpData),
       );
 
-      print('Verify Tutor Certification OTP API Response Status: ${response.statusCode}');
-      print('Verify Tutor Certification OTP API Response Body: ${response.body}');
+      print(
+        'Verify Tutor Certification OTP API Response Status: ${response.statusCode}',
+      );
+      print(
+        'Verify Tutor Certification OTP API Response Body: ${response.body}',
+      );
 
       if (response.statusCode == 200) {
         try {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid OTP - ${response.body}');
@@ -241,7 +305,9 @@ class ApiService {
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to verify OTP: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to verify OTP: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Verify Tutor Certification OTP API Error: $e');
@@ -286,7 +352,9 @@ class ApiService {
         print('Certification $certificationId approved successfully');
       } else {
         final errorData = jsonDecode(response.body) as Map<String, dynamic>;
-        throw Exception(errorData['message'] ?? 'Failed to check certification');
+        throw Exception(
+          errorData['message'] ?? 'Failed to check certification',
+        );
       }
     } catch (e) {
       print('Check Certification API Error: $e');
@@ -308,7 +376,10 @@ class ApiService {
         print('Certification $certificationId approved to teach successfully');
       } else {
         final errorData = jsonDecode(response.body) as Map<String, dynamic>;
-        throw Exception(errorData['message'] ?? 'Failed to approve certification for teaching');
+        throw Exception(
+          errorData['message'] ??
+              'Failed to approve certification for teaching',
+        );
       }
     } catch (e) {
       print('Check Certification to Teach API Error: $e');
@@ -368,7 +439,9 @@ class ApiService {
         final List<dynamic> coursesJson = data['data']['courses'];
         return coursesJson.map((json) => CourseItem.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to fetch courses: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to fetch courses: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Get All Courses API Error: $e');
@@ -392,14 +465,18 @@ class ApiService {
           return jsonDecode(response.body) as List<dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('No feedback found for course - ${response.body}');
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to fetch course feedback: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to fetch course feedback: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Course Feedback API Error: $e');
@@ -408,7 +485,9 @@ class ApiService {
   }
 
   // PATCH method: Complete Course
-  static Future<Map<String, dynamic>> completeCourse(String orderDetailId) async {
+  static Future<Map<String, dynamic>> completeCourse(
+    String orderDetailId,
+  ) async {
     try {
       final response = await http.patch(
         Uri.parse('$baseUrl/api/tutor/complete-course/$orderDetailId'),
@@ -424,7 +503,9 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid request data - ${response.body}');
@@ -433,7 +514,9 @@ class ApiService {
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to complete course: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to complete course: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Complete Course API Error: $e');
@@ -444,7 +527,9 @@ class ApiService {
   // === FEEDBACK METHODS ===
 
   // POST method: Submit Feedback
-  static Future<Map<String, dynamic>> submitFeedback(Map<String, dynamic> feedbackData) async {
+  static Future<Map<String, dynamic>> submitFeedback(
+    Map<String, dynamic> feedbackData,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/feedback'),
@@ -460,14 +545,18 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid feedback data - ${response.body}');
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to submit feedback: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to submit feedback: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Submit Feedback API Error: $e');
@@ -478,7 +567,9 @@ class ApiService {
   // === ORDER METHODS ===
 
   // POST method: Create Order
-  static Future<Map<String, dynamic>> createOrder(Map<String, dynamic> orderData) async {
+  static Future<Map<String, dynamic>> createOrder(
+    Map<String, dynamic> orderData,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/orders'),
@@ -494,14 +585,18 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid order data - ${response.body}');
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to create order: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to create order: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Create Order API Error: $e');
@@ -525,14 +620,18 @@ class ApiService {
           return jsonDecode(response.body) as List<dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('No orders found - ${response.body}');
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to fetch orders: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to fetch orders: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Orders API Error: $e');
@@ -541,7 +640,10 @@ class ApiService {
   }
 
   // PATCH method: Pay Order
-  static Future<Map<String, dynamic>> payOrder(String orderId, Map<String, dynamic> paymentData) async {
+  static Future<Map<String, dynamic>> payOrder(
+    String orderId,
+    Map<String, dynamic> paymentData,
+  ) async {
     try {
       final response = await http.patch(
         Uri.parse('$baseUrl/api/orders/$orderId/pay'),
@@ -557,7 +659,9 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid payment data - ${response.body}');
@@ -566,7 +670,9 @@ class ApiService {
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to pay order: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to pay order: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Pay Order API Error: $e');
@@ -577,7 +683,9 @@ class ApiService {
   // === ACCOUNT METHODS ===
 
   // GET method: Get Account Details
-  static Future<Map<String, dynamic>> getAccountDetails(String accountId) async {
+  static Future<Map<String, dynamic>> getAccountDetails(
+    String accountId,
+  ) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/api/courses/account/$accountId'),
@@ -592,10 +700,14 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else {
-        throw Exception('Failed to fetch account details: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to fetch account details: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Account Details API Error: $e');
@@ -619,14 +731,18 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('Profile not found - ${response.body}');
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to fetch account profile: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to fetch account profile: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Account Profile API Error: $e');
@@ -635,7 +751,9 @@ class ApiService {
   }
 
   // PUT method: Update Account Profile
-  static Future<Map<String, dynamic>> updateAccountProfile(Map<String, dynamic> profileData) async {
+  static Future<Map<String, dynamic>> updateAccountProfile(
+    Map<String, dynamic> profileData,
+  ) async {
     try {
       final response = await http.put(
         Uri.parse('$baseUrl/api/account/profile'),
@@ -643,7 +761,9 @@ class ApiService {
         body: jsonEncode(profileData),
       );
 
-      print('Update Account Profile API Response Status: ${response.statusCode}');
+      print(
+        'Update Account Profile API Response Status: ${response.statusCode}',
+      );
       print('Update Account Profile API Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -651,7 +771,9 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid profile data - ${response.body}');
@@ -660,7 +782,9 @@ class ApiService {
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to update account profile: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to update account profile: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Update Account Profile API Error: $e');
@@ -686,14 +810,18 @@ class ApiService {
           return jsonDecode(response.body) as List<dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('No order details found - ${response.body}');
       } else if (response.statusCode == 500) {
         throw Exception('Internal server error - ${response.body}');
       } else {
-        throw Exception('Failed to fetch tutor order details: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to fetch tutor order details: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Tutor Order Details API Error: $e');
@@ -715,7 +843,9 @@ class ApiService {
         return RevenueData.fromJson(data);
       } else {
         final errorData = jsonDecode(response.body);
-        throw Exception(errorData['message'] ?? 'Failed to load revenue report');
+        throw Exception(
+          errorData['message'] ?? 'Failed to load revenue report',
+        );
       }
     } catch (e) {
       print('Revenue Report API Error: $e');
@@ -735,7 +865,9 @@ class ApiService {
         return StatusData.fromJson(data);
       } else {
         final errorData = jsonDecode(response.body);
-        throw Exception(errorData['message'] ?? 'Failed to load account status report');
+        throw Exception(
+          errorData['message'] ?? 'Failed to load account status report',
+        );
       }
     } catch (e) {
       print('Account Status Report API Error: $e');
@@ -755,7 +887,9 @@ class ApiService {
         return StatusData.fromJson(data);
       } else {
         final errorData = jsonDecode(response.body);
-        throw Exception(errorData['message'] ?? 'Failed to load course status report');
+        throw Exception(
+          errorData['message'] ?? 'Failed to load course status report',
+        );
       }
     } catch (e) {
       print('Course Status Report API Error: $e');
@@ -776,7 +910,9 @@ class ApiService {
         return TopAccount.fromJson(data);
       } else {
         final errorData = jsonDecode(response.body) as Map<String, dynamic>;
-        throw Exception(errorData['message'] ?? 'Failed to load top account report');
+        throw Exception(
+          errorData['message'] ?? 'Failed to load top account report',
+        );
       }
     } catch (e) {
       print('Top Account Report API Error: $e');
@@ -800,10 +936,14 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else {
-        throw Exception('Failed to fetch courses: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to fetch courses: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Courses API Error: $e');
@@ -812,11 +952,10 @@ class ApiService {
   }
 
   //show profile
-  static Future<TutorProfile> getProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-
+  static Future<Account> getProfile() async {
     //get token
-    final token = prefs.getString('token') ?? '';
+    final token = await SharedPrefs.getToken();
+    print("token: $token");
     final response = await http.get(
       Uri.parse('$baseUrl/api/account/profile'),
       headers: {
@@ -825,14 +964,13 @@ class ApiService {
       },
     );
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return TutorProfile.fromJson(data);
-    } else if (response.statusCode == 401) {
-      throw Exception('Unauthorized - ${response.body}');
-    } else if (response.statusCode == 500) {
-      throw Exception('Internal Server Error - ${response.body}');
+      final json = jsonDecode(response.body);
+      return Account.fromJson(json);
     } else {
-      throw Exception('Failed to load profile infor');
+      final errorData = jsonDecode(response.body);
+      throw Exception(
+        errorData['message'] ?? 'Login failed: ${response.statusCode}',
+      );
     }
   }
 
@@ -869,7 +1007,6 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Error creating course: ${e.toString()}');
-
     }
   }
 
@@ -937,14 +1074,13 @@ class ApiService {
     }
   }
 
-
   //register tutor
   static Future<Map<String, dynamic>> registerTutor(
-      String fullName,
-      String email,
-      String password,
-      String phone,
-      ) async {
+    String fullName,
+    String email,
+    String password,
+    String phone,
+  ) async {
     //create request body
     final requestBody = {
       'fullName': fullName,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutor/common/utils/shared_prefs.dart';
 import 'package:tutor/routes/app_routes.dart';
 import 'package:tutor/services/api_service.dart';
@@ -25,15 +26,31 @@ class LoginScreen extends StatelessWidget {
         );
         final token = response['token'];
         final user = response['user'];
+        final role = user['role'];
+        final fullName = user['fullName'];
+
+        await SharedPrefs.saveToken(token); //save token
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('role', role); // save role
+        await prefs.setString('fullName', fullName); // save fullName
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Login successful! Token: $token\nUser: ${user['fullName']}',
+              'Login successful! Welcome, $fullName',
             ),
           ),
         );
-        await SharedPrefs.saveToken(token); // Save token to shared preferences
-        Navigator.pushNamed(context, AppRoutes.home);
+        //get user role to navigate
+        switch(role){
+          case 'Admin':
+          Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard);
+          break;
+          case 'Tutor':
+          Navigator.pushReplacementNamed(context, AppRoutes.tutorMain);
+          break;
+          default:
+          Navigator.pushNamed(context, AppRoutes.home);
+        }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),

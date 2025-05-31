@@ -3,7 +3,7 @@ class Course {
   final String name;
   final String description;
   final String image;
-  final int price;
+  final double price;
   final bool? isActive;
   final String? createBy;
   final DateTime? createdAt;
