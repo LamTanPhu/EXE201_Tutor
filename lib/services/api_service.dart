@@ -1125,4 +1125,36 @@ class ApiService {
       );
     }
   }
+
+  static Future<List<dynamic>> getCourseChapters(String courseId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/chapters/course/$courseId'),
+        headers: _getHeaders(),
+      );
+
+      print('Course Chapters API Response Status: ${response.statusCode}');
+      print('Course Chapters API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as List<dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 404) {
+        throw Exception('No chapters found for course - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to fetch course chapters: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Course Chapters API Error: $e');
+      rethrow;
+    }
+  }
 }
