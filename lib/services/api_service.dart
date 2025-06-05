@@ -752,12 +752,26 @@ class ApiService {
 
   // PUT method: Update Account Profile
   static Future<Map<String, dynamic>> updateAccountProfile(
-    Map<String, dynamic> profileData,
+    String fullName,
+    String email,
+    String phone,
+    String avatar,
   ) async {
+    final profileData = {
+      'fullName': fullName,
+      'email': email,
+      'phone': phone,
+      'avatar': avatar,
+    };
     try {
+      final token = await SharedPrefs.getToken();
+
       final response = await http.put(
         Uri.parse('$baseUrl/api/account/profile'),
-        headers: _getHeaders(),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
         body: jsonEncode(profileData),
       );
 
@@ -955,7 +969,6 @@ class ApiService {
   static Future<Account> getProfile() async {
     //get token
     final token = await SharedPrefs.getToken();
-    print("token: $token");
     final response = await http.get(
       Uri.parse('$baseUrl/api/account/profile'),
       headers: {
@@ -985,7 +998,7 @@ class ApiService {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/api/courses/create'),
+        Uri.parse('$baseUrl/api/courses'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -1000,12 +1013,14 @@ class ApiService {
 
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
-        return data['message'];
+        return Course.fromJson(data);
       } else {
         final errorData = jsonDecode(response.body) as Map<String, dynamic>;
         throw Exception(errorData['message'] ?? 'Failed to create course');
       }
     } catch (e) {
+      print('Create Course API Error: $e');
+
       throw Exception('Error creating course: ${e.toString()}');
     }
   }

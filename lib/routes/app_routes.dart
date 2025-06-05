@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tutor/common/enums/role.dart';
 import 'package:tutor/common/widgets/bottom_nav_layout_widget.dart';
 import 'package:tutor/features/account/tutor_profile_screen.dart';
+import 'package:tutor/features/admin/screens/account_detail_screen.dart';
 import 'package:tutor/features/admin/screens/admin_dashboard_screen.dart';
 import 'package:tutor/features/admin/screens/all_courses_screen.dart';
 import 'package:tutor/features/admin/screens/reports_screen.dart';
@@ -41,6 +42,7 @@ class AppRoutes {
   static const String certifApprove = '/admin/certifi';
   static const String allCourses = '/admin/courses';
   static const String reports = '/admin/reports';
+  static const String accountDetail = '/admin/accounts/';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -65,7 +67,9 @@ class AppRoutes {
           builder: (_) => TutorDetailsScreen(accountId: args),
         );
       case tutorMain:
-        return MaterialPageRoute(builder: (_) => const BottomNavLayoutWidget(role: Role.tutor));
+        return MaterialPageRoute(
+          builder: (_) => const BottomNavLayoutWidget(role: Role.tutor),
+        );
       case tutorInfo:
         return MaterialPageRoute(builder: (_) => const TutorProfileScreen());
       case ceritificationUpload:
@@ -84,7 +88,9 @@ class AppRoutes {
         );
 
       case adminDashboard:
-        return MaterialPageRoute(builder: (_) => const BottomNavLayoutWidget(role: Role.admin));
+        return MaterialPageRoute(
+          builder: (_) => const BottomNavLayoutWidget(role: Role.admin),
+        );
       case certifApprove:
         return MaterialPageRoute(
           builder: (_) => const ReviewCertificationScreen(),
@@ -95,6 +101,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ReportsScreen());
       case courseCreate:
         return MaterialPageRoute(builder: (_) => const CreateCourseScreen());
+      case accountDetail:
+        return MaterialPageRoute(builder: (_) => const AccountDetailScreen());
       default:
         return MaterialPageRoute(
           builder:
