@@ -63,7 +63,7 @@ class AccountDetailScreen extends StatelessWidget {
           bottom: const TabBar(
             tabs: [
               Tab(text: "Infor"),
-              Tab(text: "Licenses"),
+              Tab(text: "Certifications"),
               Tab(text: "Courses"),
             ],
           ),

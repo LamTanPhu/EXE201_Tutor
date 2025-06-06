@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/common/enums/role.dart';
+import 'package:tutor/common/theme/app_colors.dart';
 import 'package:tutor/features/admin/screens/account_management_screen.dart';
 import 'package:tutor/features/account/tutor_profile_screen.dart';
-import 'package:tutor/features/admin/screens/admin_dashboard_screen.dart';
 import 'package:tutor/features/admin/screens/all_courses_screen.dart';
 import 'package:tutor/features/admin/screens/reports_screen.dart';
 import 'package:tutor/features/admin/screens/review_certification_screen.dart';
-import 'package:tutor/features/certification/submit_certificate_screen.dart';
 import 'package:tutor/features/home/screens/about_us_screen.dart';
 import 'package:tutor/features/home/screens/home_screen.dart';
-import 'package:tutor/features/tutor/screens/course_creation_screen.dart';
 import 'package:tutor/features/tutor/screens/course_screen.dart';
-import 'package:tutor/features/tutor/screens/tutor_course_screen.dart';
 import 'package:tutor/features/tutor/screens/tutor_dashboard_screen.dart';
-import 'package:tutor/features/tutor/screens/tutor_working_screen.dart';
 
 class BottomNavLayoutWidget extends StatefulWidget {
   final Role role;
@@ -78,7 +74,7 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
 
           BottomNavigationBarItem(
             icon: Icon(Icons.manage_accounts),
-            label: 'Accounts',
+            label: 'Tutors',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.check_circle),
@@ -104,9 +100,10 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
         items: _items,
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.lightPrimary,
         type: BottomNavigationBarType.fixed,
+        backgroundColor: AppColors.white,
       ),
     );
   }
