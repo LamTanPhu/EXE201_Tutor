@@ -214,8 +214,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushNamed(context, '/tutor-profile',
                             arguments: item['account']['_id']);
                       } else {
-                        Navigator.pushNamed(context, '/course-details',
-                            arguments: item['course']);
+                        Navigator.pushNamed(
+                          context,
+                          '/course-details',
+                          arguments: {
+                            'courseId': item['course']['_id'], // Pass the course ID
+                            'courseData': {
+                              'course': item['course'], // Wrap in 'course' key
+                            },
+                          },
+                        );
                       }
                     },
                   );
