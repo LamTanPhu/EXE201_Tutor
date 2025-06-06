@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tutor/common/models/course.dart';
 import 'package:tutor/common/widgets/image_preview.dart';
 import 'package:tutor/common/widgets/input_field.dart';
 import 'package:tutor/services/api_service.dart';
+import 'package:tutor/services/supabase_service.dart';
 
 class CreateCourseScreen extends StatefulWidget {
   const CreateCourseScreen({super.key});
@@ -18,7 +20,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
-  File? _selectedImage;
+  String? _selectedImage;
 
   bool _isLoading = false;
   bool _isFormValid = false;
@@ -32,13 +34,30 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     _nameController.addListener(_validateForm);
     _descriptionController.addListener(_validateForm);
     _priceController.addListener(_validateForm);
+    _validateForm();
   }
 
-  Future<void> _pickImages() async {
+  Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() => _selectedImage = File(pickedFile.path));
+      final file = File(pickedFile.path);
+      final uploadedUrl = await SupabaseService.uploadImage(file);
+
+      if (uploadedUrl != null) {
+        setState(() {
+          _selectedImage = uploadedUrl; // chỉ lưu URL
+        });
+        _validateForm();
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to upload image')));
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No image selected')));
     }
   }
 
@@ -47,7 +66,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         _nameController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty &&
         _priceController.text.isNotEmpty &&
-        double.tryParse(_priceController.text) != null;
+        double.tryParse(_priceController.text) != null &&
+        _selectedImage != null;
+  print('Validating: isValid = $isValid');
 
     if (_isFormValid != isValid) {
       setState(() {
@@ -71,7 +92,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       await ApiService.createCourse(
         name: name,
         description: description,
-        image: _selectedImage?.path,
+        image: _selectedImage,
         price: price,
       );
 
@@ -79,7 +100,16 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Course created successfully')),
         );
-        Navigator.pop(context, true); // Trả về true để báo hiệu tạo thành công
+        final course = Course(
+          name: name,
+          description: description,
+          image: _selectedImage ?? '',
+          price: price,
+        );
+        // Đảm bảo pop sau khi SnackBar đã hiển thị
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) Navigator.pop(context, course);
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -143,7 +173,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 const SizedBox(height: 16),
                 ImagePreviewWidget(
                   imageFile: _selectedImage,
-                  onTap: _pickImages,
+                  onTap: _pickImage,
                 ),
                 const SizedBox(height: 24),
                 _isLoading

@@ -1,8 +1,7 @@
 // features/reports/widgets/revenue_widget.dart
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:tutor/common/models/statistic_data.dart';
-import 'package:tutor/common/utils/currency.dart';
+import 'package:tutor/features/admin/widgets/barchart_widget.dart';
 import 'package:tutor/services/api_service.dart';
 
 class RevenueWidget extends StatefulWidget {
@@ -45,87 +44,33 @@ class _RevenueWidgetState extends State<RevenueWidget> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else if (snapshot.hasData &&
-                    snapshot.data!.revenue.isNotEmpty) {
-                  final revenue = snapshot.data!.revenue;
-                  final revenueData =
-                      revenue.map((r) => r.revenue ?? 0).toList();
-                  if (revenueData.length != 12) {
-                    return const Text(
-                      'Invalid revenue data: Expected 12 months',
-                    );
-                  }
-                  return SizedBox(
-                    height: 200,
-                    child: BarChart(
-                      BarChartData(
-                        alignment: BarChartAlignment.spaceAround,
-                        barGroups: List.generate(12, (index) {
-                          return BarChartGroupData(
-                            x: index,
-                            barRods: [
-                              BarChartRodData(
-                                toY: revenueData[index],
-                                color: const Color(0xFF42A5F5),
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            ],
-                          );
-                        }),
-                        titlesData: FlTitlesData(
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 40,
-                              getTitlesWidget: (value, meta) {
-                                return Text(
-                                  '${CurrencyUtils.formatVND(value)}',
-                                  style: const TextStyle(fontSize: 10),
-                                );
-                              },
-                            ),
-                            axisNameWidget: const Text('Revenue (VND)'),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              getTitlesWidget: (value, meta) {
-                                const months = [
-                                  'Jan',
-                                  'Feb',
-                                  'Mar',
-                                  'Apr',
-                                  'May',
-                                  'Jun',
-                                  'Jul',
-                                  'Aug',
-                                  'Sep',
-                                  'Oct',
-                                  'Nov',
-                                  'Dec',
-                                ];
-                                return Text(
-                                  months[value.toInt()],
-                                  style: const TextStyle(fontSize: 10),
-                                );
-                              },
-                            ),
-                            axisNameWidget: const Text('Month'),
-                          ),
-                          topTitles: const AxisTitles(),
-                          rightTitles: const AxisTitles(),
-                        ),
-                        borderData: FlBorderData(show: false),
-                        gridData: const FlGridData(show: false),
-                      ),
-                    ),
+                } else if (snapshot.hasData && snapshot.data!.revenue.isNotEmpty) {
+                  final revenueList = snapshot.data!.revenue;
+
+                  final values = List.generate(
+                    12,
+                    (index) => revenueList.firstWhere(
+                      (item) => item.month == index,
+                      orElse: () => MonthlyRevenue(month: index, revenue: 0),
+                    ).revenue,
                   );
+
+                  final labels = [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                  ];
+
+                  return BarChartWidget(
+                    values: values,
+                    labels: labels,
+                    xAxisLabel: 'Month',
+                    yAxisLabel: 'Revenue (₫)',
+                  );
+                } else {
+                  return const Text('No revenue data available');
                 }
-                return const Text('No revenue data available');
               },
             ),
-
-            // Fallback table
           ],
         ),
       ),

@@ -5,7 +5,7 @@ class Course {
   final String image;
   final double price;
   final bool? isActive;
-  final String? createBy;
+  final String? createdBy;
   final DateTime? createdAt;
 
   Course({
@@ -15,7 +15,7 @@ class Course {
     required this.image,
     required this.price,
     this.isActive,
-    this.createBy,
+    this.createdBy,
     this.createdAt,
   });
 
@@ -26,7 +26,7 @@ class Course {
       description: json['description'] ?? '',
       image: json['image'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
-      createBy: json['createdBy'] ?? '',
+      createdBy: json['createdBy'] ?? '',
       isActive: json['isActive'] ?? false,
       createdAt:
           json['createdAt'] != null

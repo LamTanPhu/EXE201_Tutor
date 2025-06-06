@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutor/common/models/account.dart';
+import 'package:tutor/features/account/edit_profile.dart';
 import 'package:tutor/features/account/widgets/certification_card_widget.dart';
 import 'package:tutor/features/account/widgets/profile_avatar_widget.dart';
 import 'package:tutor/features/account/widgets/profile_card_widget.dart';
@@ -16,30 +17,11 @@ class TutorProfileScreen extends StatefulWidget {
 
 class _TutorProfileScreenState extends State<TutorProfileScreen> {
   late Future<Account> profile;
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController _fullNameController;
-  late TextEditingController _emailController;
-  late TextEditingController _phoneController;
-  bool _isEditing = false;
 
   @override
   void initState() {
     super.initState();
     profile = ApiService.getProfile();
-    _fullNameController = TextEditingController();
-    _emailController = TextEditingController();
-    _phoneController = TextEditingController();
-  }
-
-  void _toggleEditMode(Account profile) {
-    setState(() {
-      if (!_isEditing) {
-        _fullNameController.text = profile.fullName ?? '';
-        _emailController.text = profile.email ?? '';
-        _phoneController.text = profile.phone ?? '';
-      }
-      _isEditing = !_isEditing;
-    });
   }
 
   void _addCertification() {
@@ -48,21 +30,55 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
 
   Future<void> logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    //remove all
     await prefs.clear();
-    //navigate to login
-    Navigator.of(
+    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+  }
+
+  void _navigateToEditProfile(Account profileData) async {
+    await Navigator.push(
       context,
-    ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+      MaterialPageRoute(
+        builder: (context) => EditProfileScreen(
+          fullName: profileData.fullName ?? '',
+          email: profileData.email ?? '',
+          phone: profileData.phone ?? '',
+          avatar: profileData.avatar ?? '',
+          onSave: (fullName, email, phone, avatar) async {
+            await ApiService.updateAccountProfile(fullName, email, phone, avatar);
+            setState(() {
+              profile = ApiService.getProfile();
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Profile updated successfully')),
+            );
+          },
+        ),
+      ),
+    );
+    setState(() {
+      profile = ApiService.getProfile();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tutor Profile'),
+        title: const Text('Account Profile'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        actions: [
+          FutureBuilder<Account>(
+            future: profile,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const SizedBox();
+              return IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () => _navigateToEditProfile(snapshot.data!),
+              );
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<Account>(
         future: profile,
@@ -76,24 +92,23 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
             return const Center(child: Text('No profile data found.'));
           }
 
-          final profile = snapshot.data!;
+          final profileData = snapshot.data!;
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ProfileAvatarWidget(avatarUrl: profile.avatar),
+                  ProfileAvatarWidget(avatarUrl: profileData.avatar),
                   const SizedBox(height: 24),
                   ProfileCardWidget(
-                    profile: profile,
-                    isEditing: _isEditing,
-                    fullNameController: _fullNameController,
-                    emailController: _emailController,
-                    phoneController: _phoneController,
-                    formKey: _formKey,
+                    profile: profileData,
+                    isEditing: false,
+                    fullNameController: TextEditingController(text: profileData.fullName),
+                    emailController: TextEditingController(text: profileData.email),
+                    phoneController: TextEditingController(text: profileData.phone),
+                    formKey: GlobalKey<FormState>(),
                   ),
-
                   const SizedBox(height: 24),
                   CertificationCardWidget(
                     onAddCertification: _addCertification,
@@ -102,7 +117,7 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () => logout(context),
-                      child: Icon(Icons.logout),
+                      child: const Icon(Icons.logout),
                     ),
                   ),
                 ],
@@ -112,14 +127,5 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
         },
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _fullNameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    // TODO: implement dispose
-    super.dispose();
   }
 }

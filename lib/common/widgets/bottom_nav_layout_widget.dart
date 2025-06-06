@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/common/enums/role.dart';
-import 'package:tutor/features/account/account_management_screen.dart';
+import 'package:tutor/features/admin/screens/account_management_screen.dart';
 import 'package:tutor/features/account/tutor_profile_screen.dart';
 import 'package:tutor/features/admin/screens/admin_dashboard_screen.dart';
 import 'package:tutor/features/admin/screens/all_courses_screen.dart';
@@ -10,6 +10,7 @@ import 'package:tutor/features/certification/submit_certificate_screen.dart';
 import 'package:tutor/features/home/screens/about_us_screen.dart';
 import 'package:tutor/features/home/screens/home_screen.dart';
 import 'package:tutor/features/tutor/screens/course_creation_screen.dart';
+import 'package:tutor/features/tutor/screens/course_screen.dart';
 import 'package:tutor/features/tutor/screens/tutor_course_screen.dart';
 import 'package:tutor/features/tutor/screens/tutor_dashboard_screen.dart';
 import 'package:tutor/features/tutor/screens/tutor_working_screen.dart';
@@ -36,8 +37,7 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
       case Role.tutor:
         _pages = [
           TutorDashboardScreen(),
-          CreateCourseScreen(),
-          SubmitCertificationScreen(),
+          CourseScreen(),
           TutorProfileScreen(),
         ];
         _items = const [
@@ -46,7 +46,6 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Courses'),
-          BottomNavigationBarItem(icon: Icon(Icons.upload_file), label: 'Cert'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ];
         break;
@@ -65,6 +64,7 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
           GetAllCoursesScreen(),
           AccountManagementScreen(),
           ReviewCertificationScreen(),
+          TutorProfileScreen(),
         ];
         _items = const [
           BottomNavigationBarItem(
@@ -84,6 +84,7 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
             icon: Icon(Icons.check_circle),
             label: 'Cert',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ];
         break;
     }
