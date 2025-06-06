@@ -326,6 +326,9 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
+        print(
+          'Get Tutors API Response Status: ${response.statusCode}',
+        );
         final List<dynamic> tutorsJson = data['data']['tutors'];
         return tutorsJson.map((json) => Tutor.fromJson(json)).toList();
       } else {
@@ -1172,4 +1175,6 @@ class ApiService {
       rethrow;
     }
   }
+
+
 }
