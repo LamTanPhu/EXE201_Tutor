@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tutor/common/enums/role.dart';
 import 'package:tutor/common/widgets/bottom_nav_layout_widget.dart';
 import 'package:tutor/features/account/tutor_profile_screen.dart';
-import 'package:tutor/features/admin/screens/admin_dashboard_screen.dart';
+import 'package:tutor/features/admin/screens/account_detail_screen.dart';
 import 'package:tutor/features/admin/screens/all_courses_screen.dart';
 import 'package:tutor/features/admin/screens/reports_screen.dart';
 import 'package:tutor/features/tutor/screens/register_tutor_screen.dart';
@@ -11,8 +11,6 @@ import 'package:tutor/features/certification/submit_certificate_screen.dart';
 import 'package:tutor/features/details/screens/tutor_details_screen.dart';
 import 'package:tutor/features/home/screens/about_us_screen.dart';
 import 'package:tutor/features/tutor/screens/course_creation_screen.dart';
-import 'package:tutor/features/tutor/screens/tutor_course_screen.dart';
-import 'package:tutor/features/tutor/screens/tutor_working_screen.dart';
 import '../features/authentication/screens/login_screen.dart';
 import '../features/authentication/screens/signup_screen.dart';
 import '../features/authentication/screens/verify_otp_screen.dart';
@@ -39,6 +37,7 @@ class AppRoutes {
   static const String certifApprove = '/admin/certifi';
   static const String allCourses = '/admin/courses';
   static const String reports = '/admin/reports';
+  static const String accountDetail = '/admin/accounts/';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -63,7 +62,9 @@ class AppRoutes {
           builder: (_) => TutorDetailsScreen(accountId: args),
         );
       case tutorMain:
-        return MaterialPageRoute(builder: (_) => const BottomNavLayoutWidget(role: Role.tutor));
+        return MaterialPageRoute(
+          builder: (_) => const BottomNavLayoutWidget(role: Role.tutor),
+        );
       case tutorInfo:
         return MaterialPageRoute(builder: (_) => const TutorProfileScreen());
       case ceritificationUpload:
@@ -79,7 +80,9 @@ class AppRoutes {
           ),
         );
       case adminDashboard:
-        return MaterialPageRoute(builder: (_) => const BottomNavLayoutWidget(role: Role.admin));
+        return MaterialPageRoute(
+          builder: (_) => const BottomNavLayoutWidget(role: Role.admin),
+        );
       case certifApprove:
         return MaterialPageRoute(
           builder: (_) => const ReviewCertificationScreen(),
@@ -90,6 +93,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ReportsScreen());
       case courseCreate:
         return MaterialPageRoute(builder: (_) => const CreateCourseScreen());
+      case accountDetail:
+        return MaterialPageRoute(builder: (_) => const AccountDetailScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(body: Center(child: Text('Route not found'))),

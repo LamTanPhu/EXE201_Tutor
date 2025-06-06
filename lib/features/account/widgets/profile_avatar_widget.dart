@@ -7,12 +7,11 @@ class ProfileAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: 60,
-      backgroundImage: NetworkImage(
-        avatarUrl ?? 'https://icons8.com/icon/nXduhA13SMUu/person',
-      ),
-      backgroundColor: Colors.grey[200] ,
+return CircleAvatar(
+      radius: 50,
+      backgroundImage: (avatarUrl != null && avatarUrl!.isNotEmpty)
+          ? NetworkImage(avatarUrl!)
+          : const AssetImage('assets/avatar.svg') as ImageProvider,
     );
   }
 }

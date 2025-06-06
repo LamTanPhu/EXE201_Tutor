@@ -14,15 +14,15 @@ final List<MonthlyRevenue> revenue;
 }
 
 class MonthlyRevenue{
-  final int? month;
-  final double? revenue;
+  final int month;
+  final double revenue;
 
-  MonthlyRevenue({this.month, this.revenue});
+  MonthlyRevenue({required this.month, required this.revenue});
 
   factory MonthlyRevenue.fromJson(Map<String, dynamic> json) {
     return MonthlyRevenue(
-      month: json['month'] as int?,
-      revenue: (json['revenue'] as num?)?.toDouble(),
+      month: json['month'],
+      revenue: (json['revenue'] as num).toDouble(),
     );
   }
 }
