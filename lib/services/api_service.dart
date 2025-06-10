@@ -718,6 +718,37 @@ class ApiService {
     }
   }
 
+  //GET Method: Get Chapter's content
+  static Future<List<dynamic>> getChapterContent(String chapterId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/contents/chapter/$chapterId'),
+        headers: _getHeaders(),
+      );
+      print('Chapter Content API Response Status: ${response.statusCode}');
+      print('Chapter Content API Response Body: ${response.body}');
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as List<dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 404) {
+        throw Exception('No content found for chapter - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to fetch chapter content: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Chapter Content API Error: $e');
+      rethrow;
+    }
+  }
+
   // GET method: Get Account Profile
   static Future<Map<String, dynamic>> getAccountProfile() async {
     try {
