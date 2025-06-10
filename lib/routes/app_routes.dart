@@ -9,6 +9,7 @@ import 'package:tutor/features/tutor/screens/register_tutor_screen.dart';
 import 'package:tutor/features/admin/screens/review_certification_screen.dart';
 import 'package:tutor/features/certification/submit_certificate_screen.dart';
 import 'package:tutor/features/details/screens/tutor_details_screen.dart';
+import 'package:tutor/features/details/screens/chapter_details_screen.dart';
 import 'package:tutor/features/home/screens/about_us_screen.dart';
 import 'package:tutor/features/tutor/screens/course_creation_screen.dart';
 import '../features/authentication/screens/login_screen.dart';
@@ -30,7 +31,7 @@ class AppRoutes {
   static const String courseDetails = '/course-details';
   static const String tutorMain = '/tutor/home';
   static const String studentMain = '/student/home';
-  static const String ceritificationUpload = 'tutor/cert/submit';
+  static const String ceritificationUpload = '/tutor/cert/submit';
   static const String tutorCourse = '/tutor/courses';
   static const String courseCreate = '/courses/create';
   static const String adminDashboard = '/admin/dashboard';
@@ -38,6 +39,7 @@ class AppRoutes {
   static const String allCourses = '/admin/courses';
   static const String reports = '/admin/reports';
   static const String accountDetail = '/admin/accounts/';
+  static const String chapterDetails = '/chapter-details';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -95,6 +97,11 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const CreateCourseScreen());
       case accountDetail:
         return MaterialPageRoute(builder: (_) => const AccountDetailScreen());
+      case chapterDetails:
+        final args = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => ChapterDetailsScreen(chapterId: args ?? 'unknown'),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(body: Center(child: Text('Route not found'))),

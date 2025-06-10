@@ -3,6 +3,7 @@ import 'package:tutor/services/api_service.dart';
 import 'package:tutor/features/home/widgets/home_search_bar_widget.dart';
 import 'package:tutor/features/home/widgets/home_filter_bottom_sheet_widget.dart';
 import 'package:tutor/features/home/widgets/home_grid_item_widget.dart';
+import 'package:tutor/features/home/widgets/home_bottom_nav_bar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,13 +13,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isTeacherMode = false;
+  bool _isTeacherMode = true; // Default to tutor mode
   List<dynamic> _items = [];
   List<dynamic> _filteredItems = [];
   String _sortOption = 'name';
   String _selectedOrderBy = 'Newest';
-  double _maxPrice = 1000000;
-  double _currentPriceFilter = 1000000;
+  double _maxPrice = 5000000; // Updated to match API max price
+  double _currentPriceFilter = 5000000;
+  int _maxExperience = 5; // Max experience from API data
+  int _currentExperienceFilter = 5; // Default to max experience
   TextEditingController _searchController = TextEditingController();
 
   final List<String> orderByOptions = ['Newest', 'Popularity', 'Ratings', 'Price'];
@@ -95,6 +98,11 @@ class _HomeScreenState extends State<HomeScreen> {
           if (price > _currentPriceFilter) {
             return false;
           }
+        } else {
+          final experience = item['certifications']?.first['experience'] ?? 0;
+          if (experience > _currentExperienceFilter) {
+            return false;
+          }
         }
 
         return true;
@@ -124,13 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   selectedOrderBy: _selectedOrderBy,
                   currentPriceFilter: _currentPriceFilter,
                   maxPrice: _maxPrice,
+                  maxExperience: _maxExperience,
+                  currentExperienceFilter: _currentExperienceFilter,
                   orderByOptions: orderByOptions,
-                  onModeChanged: (value) {
-                    setState(() {
-                      _isTeacherMode = value;
-                      _fetchData();
-                    });
-                  },
                   onOrderByChanged: (value) {
                     setState(() {
                       _selectedOrderBy = value;
@@ -143,13 +147,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       _currentPriceFilter = value;
                     });
                   },
-                  onPriceFilterApplied: () {
+                  onExperienceFilterChanged: (value) {
+                    setState(() {
+                      _currentExperienceFilter = value;
+                    });
+                  },
+                  onApplyFilters: () {
                     _filterItems();
                   },
                   onClearFilters: () {
                     setState(() {
                       _selectedOrderBy = 'Newest';
                       _currentPriceFilter = _maxPrice;
+                      _currentExperienceFilter = _maxExperience;
                       _searchController.clear();
                       _filterItems();
                     });
@@ -218,9 +228,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           '/course-details',
                           arguments: {
-                            'courseId': item['course']['_id'], // Pass the course ID
+                            'courseId': item['course']['_id'],
                             'courseData': {
-                              'course': item['course'], // Wrap in 'course' key
+                              'course': item['course'],
                             },
                           },
                         );
@@ -232,6 +242,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: HomeBottomNavBarWidget(
+        selectedIndex: _isTeacherMode ? 1 : 0,
+        onItemTapped: (index) {
+          setState(() {
+            _isTeacherMode = index == 1;
+            _fetchData();
+          });
+        },
       ),
     );
   }

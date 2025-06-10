@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/services/api_service.dart';
 
+import '../../../../routes/app_routes.dart';
+
 class CourseChapters extends StatelessWidget {
   final String courseId;
 
   const CourseChapters({super.key, required this.courseId});
-
-  // Hardcoded chapter content (to be replaced with API later)
-  Map<String, String> _getHardcodedContent(String chapterId) {
-    return {
-      "683c067d2ce769793e7b68df": "This is the content for Chapter 1. It covers the basics of the topic with some detailed explanations and examples to help you get started. Feel free to explore and learn!",
-      "683c06982ce769793e7b68e3": "This is the content for Chapter 2. It dives deeper into advanced concepts, including practical applications and tips for mastering the subject. Enjoy your learning journey!",
-    };
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +41,22 @@ class CourseChapters extends StatelessWidget {
                   itemCount: chapters.length,
                   itemBuilder: (context, index) {
                     final chapter = chapters[index];
-                    return _ChapterItem(
-                      chapter: chapter,
-                      chapterNumber: index + 1,
-                      content: _getHardcodedContent(chapter['_id'] as String)[chapter['_id']] ??
-                          'No content available yet.',
+                    return FutureBuilder<List<dynamic>>(
+                      future: ApiService.getChapterContent(chapter['_id'] as String),
+                      builder: (context, contentSnapshot) {
+                        String content = 'No content available yet.';
+                        if (contentSnapshot.connectionState == ConnectionState.done &&
+                            contentSnapshot.hasData &&
+                            contentSnapshot.data!.isNotEmpty) {
+                          content = contentSnapshot.data![0]['contentDescription'] ?? 'No content available';
+                        }
+                        return _ChapterItem(
+                          chapter: chapter,
+                          chapterNumber: index + 1,
+                          content: content,
+                          chapterId: chapter['_id'] as String,
+                        );
+                      },
                     );
                   },
                 ),
@@ -64,16 +69,17 @@ class CourseChapters extends StatelessWidget {
   }
 }
 
-// Separate StatefulWidget for each chapter item to manage expansion state
 class _ChapterItem extends StatefulWidget {
   final Map<String, dynamic> chapter;
   final int chapterNumber;
   final String content;
+  final String chapterId;
 
   const _ChapterItem({
     required this.chapter,
     required this.chapterNumber,
     required this.content,
+    required this.chapterId,
   });
 
   @override
@@ -114,7 +120,7 @@ class _ChapterItemState extends State<_ChapterItem> with SingleTickerProviderSta
   Widget build(BuildContext context) {
     return ExpansionTile(
       leading: CircleAvatar(
-        child: Text('${widget.chapterNumber}'), // Chapter number (position)
+        child: Text('${widget.chapterNumber}'),
       ),
       title: Text(widget.chapter['title'] ?? 'Untitled Chapter'),
       trailing: RotationTransition(
@@ -127,9 +133,25 @@ class _ChapterItemState extends State<_ChapterItem> with SingleTickerProviderSta
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text(
-            widget.content,
-            style: Theme.of(context).textTheme.bodySmall,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.content,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.chapterDetails,
+                    arguments: widget.chapterId,
+                  );
+                },
+                child: const Text('View Details'),
+              ),
+            ],
           ),
         ),
       ],
