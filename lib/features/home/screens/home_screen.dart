@@ -18,11 +18,12 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> _filteredItems = [];
   String _sortOption = 'name';
   String _selectedOrderBy = 'Newest';
-  double _maxPrice = 5000000; // Updated to match API max price
+  double _maxPrice = 5000000;
   double _currentPriceFilter = 5000000;
-  int _maxExperience = 5; // Max experience from API data
-  int _currentExperienceFilter = 5; // Default to max experience
+  int _maxExperience = 5;
+  int _currentExperienceFilter = 5;
   TextEditingController _searchController = TextEditingController();
+  int _selectedIndex = 0; // Track the selected tab
 
   final List<String> orderByOptions = ['Newest', 'Popularity', 'Ratings', 'Price'];
 
@@ -108,6 +109,32 @@ class _HomeScreenState extends State<HomeScreen> {
         return true;
       }).toList();
     });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        setState(() {
+          _isTeacherMode = true; // Switch to Teacher mode
+          _fetchData();
+        });
+        break;
+      case 1:
+        setState(() {
+          _isTeacherMode = false; // Switch to Course mode
+          _fetchData();
+        });
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/forum'); // Navigate to ForumScreen
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/tutor-profile'); // Navigate to Profile
+        break;
+    }
   }
 
   @override
@@ -244,13 +271,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: HomeBottomNavBarWidget(
-        selectedIndex: _isTeacherMode ? 1 : 0,
-        onItemTapped: (index) {
-          setState(() {
-            _isTeacherMode = index == 1;
-            _fetchData();
-          });
-        },
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
     );
   }

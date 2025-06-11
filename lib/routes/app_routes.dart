@@ -12,11 +12,12 @@ import 'package:tutor/features/details/screens/tutor_details_screen.dart';
 import 'package:tutor/features/details/screens/chapter_details_screen.dart';
 import 'package:tutor/features/home/screens/about_us_screen.dart';
 import 'package:tutor/features/tutor/screens/course_creation_screen.dart';
-import '../features/authentication/screens/login_screen.dart';
-import '../features/authentication/screens/signup_screen.dart';
-import '../features/authentication/screens/verify_otp_screen.dart';
-import '../features/home/screens/home_screen.dart';
-import '../features/details/screens/course_detail_screen.dart';
+import 'package:tutor/features/authentication/screens/login_screen.dart';
+import 'package:tutor/features/authentication/screens/signup_screen.dart';
+import 'package:tutor/features/authentication/screens/verify_otp_screen.dart';
+import 'package:tutor/features/home/screens/home_screen.dart';
+import 'package:tutor/features/details/screens/course_detail_screen.dart';
+import 'package:tutor/features/forum/screens/forum_screen.dart'; // New import
 
 class AppRoutes {
   static const String login = '/login';
@@ -40,6 +41,7 @@ class AppRoutes {
   static const String reports = '/admin/reports';
   static const String accountDetail = '/admin/accounts/';
   static const String chapterDetails = '/chapter-details';
+  static const String forum = '/forum'; // New route
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -102,6 +104,8 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => ChapterDetailsScreen(chapterId: args ?? 'unknown'),
         );
+      case forum: // New case for ForumScreen
+        return MaterialPageRoute(builder: (_) => const ForumScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(body: Center(child: Text('Route not found'))),
