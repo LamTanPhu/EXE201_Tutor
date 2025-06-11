@@ -15,12 +15,12 @@ class HomeBottomNavBarWidget extends StatelessWidget {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.school),
-          label: 'Courses',
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: 'Tutor',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.school),
+          label: 'Courses',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.forum),

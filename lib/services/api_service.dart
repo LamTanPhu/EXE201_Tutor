@@ -1207,5 +1207,74 @@ class ApiService {
     }
   }
 
+// GET method: Get All Forum Posts
+  static Future<List<dynamic>> getForumPosts() async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/forum'),
+        headers: headers,
+      );
 
+      print('Get Forum Posts API Response Status: ${response.statusCode}');
+      print('Get Forum Posts API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as List<dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 404) {
+        throw Exception('No forum posts found - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to fetch forum posts: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Get Forum Posts API Error: $e');
+      rethrow;
+    }
+  }
+  // POST method: Create Forum Post
+  static Future<Map<String, dynamic>> createForumPost(
+      String title,
+      String content,
+      ) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/forum'),
+        headers: headers,
+        body: jsonEncode({'title': title, 'content': content}),
+      );
+
+      print('Create Forum Post API Response Status: ${response.statusCode}');
+      print('Create Forum Post API Response Body: ${response.body}');
+
+      if (response.statusCode == 201) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 400) {
+        throw Exception('Invalid forum post data - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to create forum post: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Create Forum Post API Error: $e');
+      rethrow;
+    }
+  }
 }
