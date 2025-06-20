@@ -17,7 +17,9 @@ import 'package:tutor/features/authentication/screens/signup_screen.dart';
 import 'package:tutor/features/authentication/screens/verify_otp_screen.dart';
 import 'package:tutor/features/home/screens/home_screen.dart';
 import 'package:tutor/features/details/screens/course_detail_screen.dart';
-import 'package:tutor/features/forum/screens/forum_screen.dart'; // New import
+import 'package:tutor/features/forum/screens/forum_screen.dart';
+
+import '../features/details/screens/forum_details_screen.dart'; // New import
 
 class AppRoutes {
   static const String login = '/login';
@@ -42,6 +44,8 @@ class AppRoutes {
   static const String accountDetail = '/admin/accounts/';
   static const String chapterDetails = '/chapter-details';
   static const String forum = '/forum'; // New route
+  static const String forumDetails = '/forum-details';
+
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -106,6 +110,11 @@ class AppRoutes {
         );
       case forum: // New case for ForumScreen
         return MaterialPageRoute(builder: (_) => const ForumScreen());
+      case forumDetails:
+        final args = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => ForumDetailsScreen(postId: args ?? 'unknown'),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(body: Center(child: Text('Route not found'))),

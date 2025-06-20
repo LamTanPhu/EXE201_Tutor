@@ -1277,4 +1277,63 @@ class ApiService {
       rethrow;
     }
   }
+
+  static Future<Map<String, dynamic>> getForumPostById(String postId) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/forum/$postId'),
+        headers: headers,
+      );
+
+      print('Get Forum Post by ID API Response Status: ${response.statusCode}');
+      print('Get Forum Post by ID API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 404) {
+        throw Exception('Forum post not found - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to fetch forum post: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Get Forum Post by ID API Error: $e');
+      rethrow;
+    }
+  }
+
+  static Future<Map<String, dynamic>> likeForumPost(String postId) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.patch(Uri.parse('$baseUrl/api/forum/$postId/like'), headers: headers);
+      print('Like Forum Post API Response Status: ${response.statusCode}');
+      print('Like Forum Post API Response Body: ${response.body}');
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 400) {
+        throw Exception('Invalid request - ${response.body}');
+      } else {
+        throw Exception('Failed to like forum post: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      print('Like Forum Post API Error: $e');
+      rethrow;
+    }
+  }
+
+
 }
