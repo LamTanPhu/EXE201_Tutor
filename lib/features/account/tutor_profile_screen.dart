@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutor/common/models/account.dart';
+import 'package:tutor/common/theme/app_colors.dart';
+import 'package:tutor/common/utils/currency.dart';
 import 'package:tutor/features/account/edit_profile.dart';
 import 'package:tutor/features/account/widgets/certification_card_widget.dart';
 import 'package:tutor/features/account/widgets/profile_avatar_widget.dart';
@@ -31,28 +33,69 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
   Future<void> logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+  }
+
+    void _handleLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Đăng xuất'),
+        content: const Text('Bạn có chắc muốn đăng xuất?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                await logout(context); // Call the logout function
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Lỗi khi đăng xuất: $e')),
+                  );
+                }
+              }
+            },
+            child: const Text(
+              'Đăng xuất',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _navigateToEditProfile(Account profileData) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfileScreen(
-          fullName: profileData.fullName ?? '',
-          email: profileData.email ?? '',
-          phone: profileData.phone ?? '',
-          avatar: profileData.avatar ?? '',
-          onSave: (fullName, email, phone, avatar) async {
-            await ApiService.updateAccountProfile(fullName, email, phone, avatar);
-            setState(() {
-              profile = ApiService.getProfile();
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile updated successfully')),
-            );
-          },
-        ),
+        builder:
+            (context) => EditProfileScreen(
+              fullName: profileData.fullName ?? '',
+              email: profileData.email ?? '',
+              phone: profileData.phone ?? '',
+              avatar: profileData.avatar ?? '',
+              onSave: (fullName, email, phone, avatar) async {
+                await ApiService.updateAccountProfile(
+                  fullName,
+                  email,
+                  phone,
+                  avatar,
+                );
+                setState(() {
+                  profile = ApiService.getProfile();
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Profile updated successfully')),
+                );
+              },
+            ),
       ),
     );
     setState(() {
@@ -64,16 +107,18 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Account Profile'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        automaticallyImplyLeading: false,
+        title: const Text('Tài khoản của bạn'),
+        backgroundColor: AppColors.white,
+        foregroundColor: AppColors.primary,
+        elevation: 0,
         actions: [
           FutureBuilder<Account>(
             future: profile,
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const SizedBox();
               return IconButton(
-                icon: const Icon(Icons.edit),
+                icon: const Icon(Icons.settings),
                 onPressed: () => _navigateToEditProfile(snapshot.data!),
               );
             },
@@ -100,25 +145,40 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ProfileAvatarWidget(avatarUrl: profileData.avatar),
-                  const SizedBox(height: 24),
-                  ProfileCardWidget(
-                    profile: profileData,
-                    isEditing: false,
-                    fullNameController: TextEditingController(text: profileData.fullName),
-                    emailController: TextEditingController(text: profileData.email),
-                    phoneController: TextEditingController(text: profileData.phone),
-                    formKey: GlobalKey<FormState>(),
-                  ),
-                  const SizedBox(height: 24),
-                  CertificationCardWidget(
-                    onAddCertification: _addCertification,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => logout(context),
-                      child: const Icon(Icons.logout),
+                  const SizedBox(height: 12),
+                  Text(
+                    profileData.fullName ?? 'Chưa cập nhật',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const SizedBox(height: 24),
+                  ListTile(
+                    leading: const Icon(Icons.email),
+                    title: Text(profileData.email ?? "Chưa cập nhật"),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.phone),
+                    title: Text(profileData.phone ?? "Chưa cập nhật"),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.account_balance_wallet),
+                    title: Text(
+                      '${CurrencyUtils.formatVND(profileData.balance ?? 0)}',
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Colors.red,
+                    ),
+                    title: const Text(
+                      'Đăng xuất',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onTap: () => _handleLogout(context),
                   ),
                 ],
               ),
