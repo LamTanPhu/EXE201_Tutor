@@ -89,7 +89,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       final description = _descriptionController.text;
       final price = double.parse(_priceController.text);
 
-      await ApiService.createCourse(
+      final apiCourse = await ApiService.createCourse(
         name: name,
         description: description,
         image: _selectedImage,
@@ -101,6 +101,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           const SnackBar(content: Text('Course created successfully')),
         );
         final course = Course(
+          id: apiCourse.id,
           name: name,
           description: description,
           image: _selectedImage ?? '',
