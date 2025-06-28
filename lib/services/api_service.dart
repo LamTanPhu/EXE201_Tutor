@@ -1431,17 +1431,33 @@ class ApiService {
 
   static Future<Map<String, dynamic>> likeForumPost(String postId) async {
     try {
+      if (postId.length != 24 || !RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(postId)) {
+        throw Exception('Invalid postId format: $postId');
+      }
       final headers = await _getAuthHeaders();
-      final response = await http.patch(Uri.parse('$baseUrl/api/forum/$postId/like'), headers: headers);
+      final url = '$baseUrl/api/forum/$postId/like';
+
+      print('Sending PUT like request to: $url');
+      print('Headers: $headers');
+
+      // Changed from PATCH to PUT
+      final response = await http.put(Uri.parse(url), headers: headers);
+
       print('Like Forum Post API Response Status: ${response.statusCode}');
       print('Like Forum Post API Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
         try {
-          return jsonDecode(response.body) as Map<String, dynamic>;
+          final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+          return responseData;
         } catch (e) {
           print('JSON Parse Error: $e');
           throw Exception('Invalid response format from server - ${response.body}');
         }
+      } else if (response.statusCode == 404) {
+        throw Exception('Forum post not found');
+      } else if (response.statusCode == 401) {
+        throw Exception('Unauthorized - please login again');
       } else if (response.statusCode == 400) {
         throw Exception('Invalid request - ${response.body}');
       } else {
@@ -1453,5 +1469,129 @@ class ApiService {
     }
   }
 
+  // POST method: Add Forum Feedback
+  static Future<Map<String, dynamic>> addForumFeedback(
+      String postId,
+      String reply,
+      ) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/forum/$postId/feedback'),
+        headers: headers,
+        body: jsonEncode({'reply': reply}),
+      );
 
+      print('Add Forum Feedback API Response Status: ${response.statusCode}');
+      print('Add Forum Feedback API Response Body: ${response.body}');
+
+      if (response.statusCode == 201) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
+        }
+      } else if (response.statusCode == 400) {
+        throw Exception('Invalid feedback data - ${response.body}');
+      } else if (response.statusCode == 404) {
+        throw Exception('Forum post not found - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to add forum feedback: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Add Forum Feedback API Error: $e');
+      rethrow;
+    }
+  }
+
+  // GET method: Get Account Profile
+  static Future<Account> getGuestAccountProfile() async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/account/profile'),
+        headers: headers,
+      );
+
+      print('Get Account Profile API Response Status: ${response.statusCode}');
+      print('Get Account Profile API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          final data = jsonDecode(response.body) as Map<String, dynamic>;
+          return Account.fromJson(data);
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 404) {
+        throw Exception('Profile not found - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to fetch account profile: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Get Account Profile API Error: $e');
+      rethrow;
+    }
+  }
+
+  // PUT method: Update Account Profile
+  static Future<Account> updateGuestAccountProfile(
+      String fullName,
+      String email,
+      String phone,
+      String avatar,
+      ) async {
+    final profileData = {
+      'fullName': fullName,
+      'email': email,
+      'phone': phone,
+      'avatar': avatar,
+    };
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.put(
+        Uri.parse('$baseUrl/api/account/profile'),
+        headers: headers,
+        body: jsonEncode(profileData),
+      );
+
+      print('Update Account Profile API Response Status: ${response.statusCode}');
+      print('Update Account Profile API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          final data = jsonDecode(response.body) as Map<String, dynamic>;
+          return Account.fromJson(data);
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 400) {
+        throw Exception('Invalid profile data - ${response.body}');
+      } else if (response.statusCode == 404) {
+        throw Exception('Profile not found - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to update account profile: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Update Account Profile API Error: $e');
+      rethrow;
+    }
+  }
 }

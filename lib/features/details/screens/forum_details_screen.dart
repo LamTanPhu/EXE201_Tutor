@@ -15,10 +15,13 @@ class ForumDetailsScreen extends StatefulWidget {
 class ForumDetailsScreenState extends State<ForumDetailsScreen> {
   late Future<Map<String, dynamic>> futurePost;
   final TextEditingController commentController = TextEditingController();
+  bool isLiking = false; // Add loading state for like button
+  bool isSubmitting = false; // Add loading state for comment submission
 
   @override
   void initState() {
     super.initState();
+    print('Loading post with ID: ${widget.postId}');
     futurePost = ApiService.getForumPostById(widget.postId);
   }
 
@@ -39,15 +42,97 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
   }
 
   Future<void> _handleLike() async {
+    if (isLiking) return; // Prevent double-tapping
+
+    setState(() {
+      isLiking = true;
+    });
+
     try {
+      print('Attempting to like post with ID: ${widget.postId}');
       final response = await ApiService.likeForumPost(widget.postId);
+
+      // Handle different response structures
+      Map<String, dynamic> updatedPost;
+      if (response.containsKey('data') && response['data'] != null) {
+        updatedPost = response['data'] as Map<String, dynamic>;
+      } else {
+        updatedPost = response;
+      }
+
       setState(() {
-        futurePost = Future.value(response['data']);
+        futurePost = Future.value(updatedPost);
+        isLiking = false;
       });
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Post liked successfully!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to like post: $e')),
-      );
+      setState(() {
+        isLiking = false;
+      });
+
+      print('Error liking post: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to like post: ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _submitComment() async {
+    if (isSubmitting || commentController.text.isEmpty) return;
+
+    setState(() {
+      isSubmitting = true;
+    });
+
+    try {
+      final response = await ApiService.addForumFeedback(widget.postId, commentController.text);
+
+      setState(() {
+        futurePost = ApiService.getForumPostById(widget.postId); // Refresh post data
+        commentController.clear();
+        isSubmitting = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Comment added successfully!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isSubmitting = false;
+      });
+
+      print('Error submitting comment: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add comment: ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
@@ -89,25 +174,22 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: () {
-                  if (commentController.text.isNotEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Comment submission not implemented yet')),
-                    );
-                    commentController.clear();
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please enter a comment')),
-                    );
-                  }
-                },
+                onPressed: isSubmitting ? null : _submitComment,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[700],
+                  backgroundColor: isSubmitting ? Colors.grey : Colors.blue[700],
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                 ),
-                child: const Text('Submit Comment'),
+                child: isSubmitting
+                    ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+                    : const Text('Submit Comment'),
               ),
               const SizedBox(height: 16.0),
             ],
@@ -127,7 +209,25 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text('Error loading post details'));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text('Error loading post details: ${snapshot.error ?? 'Unknown error'}'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        futurePost = ApiService.getForumPostById(widget.postId);
+                      });
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
           }
 
           final post = snapshot.data!;
@@ -182,11 +282,20 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             ElevatedButton.icon(
-                              onPressed: _handleLike,
-                              icon: const Icon(Icons.arrow_upward, size: 16.0),
+                              onPressed: isLiking ? null : _handleLike,
+                              icon: isLiking
+                                  ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                                  : const Icon(Icons.arrow_upward, size: 16.0),
                               label: Text('${post['numberOfLikes'] ?? 0} Likes'),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green[600],
+                                backgroundColor: isLiking ? Colors.grey : Colors.green[600],
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                                 shape: RoundedRectangleBorder(
@@ -211,7 +320,18 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
                 ),
                 const SizedBox(height: 8.0),
                 if (feedback.isEmpty)
-                  const Center(child: Text('No comments yet', style: TextStyle(color: Colors.grey))),
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Column(
+                        children: [
+                          Icon(Icons.comment_outlined, size: 48, color: Colors.grey),
+                          SizedBox(height: 8),
+                          Text('No comments yet', style: TextStyle(color: Colors.grey)),
+                        ],
+                      ),
+                    ),
+                  ),
                 ...feedback.map((comment) => Card(
                   elevation: 2.0,
                   shape: RoundedRectangleBorder(
@@ -259,5 +379,11 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
         elevation: 6.0,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    commentController.dispose();
+    super.dispose();
   }
 }
