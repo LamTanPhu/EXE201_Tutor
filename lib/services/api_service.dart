@@ -1207,6 +1207,124 @@ class ApiService {
     }
   }
 
+//POST METHOD: CREATE CHAPTER
+  static Future<Map<String, dynamic>> createChapter(
+    String title,
+    String courseId,
+  ) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/chapters'),
+        headers: headers,
+        body: jsonEncode({'title': title, 'courseId': courseId}),
+      );
+
+      print('Create Chapter API Response Status: ${response.statusCode}');
+      print('Create Chapter API Response Body: ${response.body}');
+
+      if (response.statusCode == 201) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 400) {
+        throw Exception('Invalid chapter data - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to create chapter: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Create Chapter API Error: $e');
+      rethrow;
+    }
+  }
+
+  //GET method: Get content by chapter ID
+  static Future<List<dynamic>> getContentByChapterId(String chapterId) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/contents/chapter/$chapterId'),
+        headers: headers,
+      );
+
+      print('Get Content by Chapter ID API Response Status: ${response.statusCode}');
+      print('Get Content by Chapter ID API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as List<dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 404) {
+        throw Exception('No content found for chapter - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to fetch content by chapter ID: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Get Content by Chapter ID API Error: $e');
+      rethrow;
+    }
+  }
+
+  //POST Method: Create Content
+  static Future<Map<String, dynamic>> createContent(
+    String title,
+    String description,
+    String chapterId,
+    String courseId,
+  ) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/contents'),
+        headers: headers,
+        body: jsonEncode({
+        'title': title,
+        'contentDescription': description,
+        'chapterId': chapterId,
+        'courseId': courseId,
+        }),
+      );
+
+      print('Create Content API Response Status: ${response.statusCode}');
+      print('Create Content API Response Body: ${response.body}');
+
+      if (response.statusCode == 201) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 400) {
+        throw Exception('Invalid content data - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to create content: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Create Content API Error: $e');
+      rethrow;
+    }
+  }
+
+
 // GET method: Get All Forum Posts
   static Future<List<dynamic>> getForumPosts() async {
     try {

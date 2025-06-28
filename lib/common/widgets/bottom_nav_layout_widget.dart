@@ -8,6 +8,7 @@ import 'package:tutor/features/admin/screens/reports_screen.dart';
 import 'package:tutor/features/admin/screens/review_certification_screen.dart';
 import 'package:tutor/features/home/screens/about_us_screen.dart';
 import 'package:tutor/features/home/screens/home_screen.dart';
+import 'package:tutor/features/tutor/screens/certification_screen.dart';
 import 'package:tutor/features/tutor/screens/course_screen.dart';
 import 'package:tutor/features/tutor/screens/tutor_dashboard_screen.dart';
 
@@ -32,14 +33,15 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
     switch (widget.role) {
       case Role.tutor:
         _pages = [
-          TutorDashboardScreen(),
+          //TutorDashboardScreen(),
+          CertificationScreen(),
           CourseScreen(),
           TutorProfileScreen(),
         ];
         _items = const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            icon: Icon(Icons.bookmark),
+            label: 'Certifications',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Courses'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
