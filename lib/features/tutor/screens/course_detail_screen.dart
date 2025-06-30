@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutor/common/models/chapter.dart';
 import 'package:tutor/common/models/content.dart';
 import 'package:tutor/common/models/course.dart';
 import 'package:tutor/common/theme/app_colors.dart';
+import 'package:tutor/common/utils/date_format.dart';
 import 'package:tutor/services/api_service.dart';
 
 class CourseDetailScreen extends StatefulWidget {
@@ -17,8 +19,6 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   late Future<List<Chapter>> _chaptersFuture;
   final _chapterTitleController = TextEditingController();
   final _contentDescriptionController = TextEditingController();
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
 
   @override
   void initState() {
@@ -26,35 +26,32 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     _chaptersFuture = _fetchChapters();
   }
 
-  //fetch chapters for the course
+  @override
+  void dispose() {
+    _chapterTitleController.dispose();
+    _contentDescriptionController.dispose();
+    super.dispose();
+  }
+
   Future<List<Chapter>> _fetchChapters() async {
     try {
       if (widget.course.id.isEmpty) {
         throw Exception('Course ID is empty');
       }
       final response = await ApiService.getCourseChapters(widget.course.id);
-      final List<Chapter> chapters =
-          (response as List<dynamic>)
-              .map<Chapter>((chapter) => Chapter.fromJson(chapter))
-              .toList();
-      return chapters;
+      return response.map<Chapter>((chapter) => Chapter.fromJson(chapter)).toList();
     } catch (e) {
       throw Exception('Failed to fetch chapters: $e');
     }
   }
 
-  //fetch contents
   Future<List<Content>> _fetchContents(String chapterId) async {
     try {
       if (chapterId.isEmpty) {
         throw Exception('Chapter ID is empty');
       }
       final response = await ApiService.getChapterContent(chapterId);
-      final List<Content> contents =
-          (response as List<dynamic>)
-              .map<Content>((content) => Content.fromJson(content))
-              .toList();
-      return contents;
+      return response.map<Content>((content) => Content.fromJson(content)).toList();
     } catch (e) {
       throw Exception('Failed to fetch contents: $e');
     }
@@ -66,128 +63,113 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     });
   }
 
-  void _addChapter() {
+  void _showAddChapterDialog() {
+    _chapterTitleController.clear();
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Thêm chương mới'),
-            content: TextField(
-              controller: _chapterTitleController,
-              decoration: const InputDecoration(
-                labelText: 'Tiêu đề chương',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Hủy'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final title = _chapterTitleController.text.trim();
-                  if (title.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Vui lòng nhập tiêu đề chương'),
-                      ),
-                    );
-                    return;
-                  }
-                  try {
-                    await ApiService.createChapter(title, widget.course.id);
-                    _chapterTitleController.clear();
-                    Navigator.pop(context);
-                    _refreshChapters();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Đã thêm chương thành công'),
-                      ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Lỗi khi thêm chương: $e')),
-                    );
-                  }
-                },
-                child: const Text('Thêm'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Thêm chương mới'),
+        content: TextField(
+          controller: _chapterTitleController,
+          decoration: const InputDecoration(
+            labelText: 'Tiêu đề chương',
+            border: OutlineInputBorder(),
           ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final title = _chapterTitleController.text.trim();
+              if (title.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Vui lòng nhập tiêu đề chương')),
+                );
+                return;
+              }
+              try {
+                await ApiService.createChapter(title, widget.course.id);
+                _chapterTitleController.clear();
+                Navigator.pop(context);
+                _refreshChapters();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Đã thêm chương thành công')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Lỗi khi thêm chương: $e')),
+                );
+              }
+            },
+            child: const Text('Thêm'),
+          ),
+        ],
+      ),
     );
   }
 
-  void _addContent(String chapterId) {
+  void _showAddContentDialog(String chapterId) async {
+    _contentDescriptionController.clear();
+    final prefs = await SharedPreferences.getInstance();
+    final accountId = prefs.getString('accountId') ?? '';
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Thêm nội dung mới'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Tiêu đề nội dung',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _contentDescriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Mô tả nội dung',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Hủy'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final title = _titleController.text.trim();
-                  final description = _contentDescriptionController.text.trim();
-                  if (title.isEmpty || description.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Vui lòng nhập đầy đủ tiêu đề và mô tả nội dung',
-                        ),
-                      ),
-                    );
-                    return;
-                  }
-                  try {
-                    await ApiService.createContent(
-                      _titleController.text.trim(),
-                      description,
-                      chapterId,
-                      widget.course.id,
-                    );
-                    _contentDescriptionController.clear();
-                    Navigator.pop(context);
-                    _refreshChapters();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Đã thêm nội dung thành công'),
-                      ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Lỗi khi thêm nội dung: $e')),
-                    );
-                  }
-                },
-                child: const Text('Thêm'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Thêm nội dung mới'),
+        content: TextField(
+          controller: _contentDescriptionController,
+          decoration: const InputDecoration(
+            labelText: 'Mô tả nội dung',
+            border: OutlineInputBorder(),
           ),
+          minLines: 2,
+          maxLines: 5,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final description = _contentDescriptionController.text.trim();
+              if (description.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Vui lòng nhập mô tả nội dung')),
+                );
+                return;
+              }
+              if (accountId.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Không tìm thấy tài khoản')),
+                );
+                return;
+              }
+              try {
+                await ApiService.createContent(
+                  chapterId,
+                  description,
+                  accountId,
+                );
+                _contentDescriptionController.clear();
+                Navigator.pop(context);
+                _refreshChapters();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Đã thêm nội dung thành công')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Lỗi khi thêm nội dung: $e')),
+                );
+              }
+            },
+            child: const Text('Thêm'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -203,14 +185,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         backgroundColor: AppColors.white,
         iconTheme: const IconThemeData(color: AppColors.primary),
       ),
-      // ...existing code...
       body: FutureBuilder<List<Chapter>>(
         future: _chaptersFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
           if (snapshot.hasError) {
             return Center(
               child: Column(
@@ -226,9 +206,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               ),
             );
           }
-
           final chapters = snapshot.data ?? [];
-
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -305,44 +283,68 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       FutureBuilder<List<Content>>(
                         future: _fetchContents(chapter.id),
                         builder: (context, contentSnapshot) {
-                          if (contentSnapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (contentSnapshot.connectionState == ConnectionState.waiting) {
                             return const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: CircularProgressIndicator(),
                             );
                           }
-
                           if (contentSnapshot.hasError) {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text('Lỗi: ${contentSnapshot.error}'),
                             );
                           }
-
                           final contents = contentSnapshot.data ?? [];
                           return Column(
                             children: [
                               if (contents.isEmpty)
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
-                                  child: Text('No contents found.'),
+                                  child: Text('Không tìm thấy nội dung.'),
                                 )
                               else
                                 ...contents.map(
-                                  (content) => ListTile(
-                                    title: Text(content.title),
-                                    subtitle: Text(content.description),
+                                  (content) => Card(
+                                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    elevation: 1,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: ListTile(
+                                      leading: const Icon(Icons.article, color: AppColors.primary),
+                                      title: Text(
+                                        content.contentDescription,
+                                        style: const TextStyle(fontWeight: FontWeight.w500),
+                                      ),
+                                      subtitle: Text(
+                                        content.updatedAt != null
+                                            ? 'Cập nhật: ${DateFormat.formatDate(content.updatedAt)}'
+                                            : 'Chưa cập nhật',
+                                        style: const TextStyle(
+                                          color: AppColors.subText,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                      tileColor: Colors.white,
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    ),
                                   ),
                                 ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () => _addContent(chapter.id),
-                                  child: const Text('Thêm nội dung'),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                child: ElevatedButton.icon(
+                                  onPressed: () => _showAddContentDialog(chapter.id),
+                                  icon: const Icon(Icons.add),
+                                  label: const Text('Thêm nội dung'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                    minimumSize: const Size.fromHeight(40),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -358,7 +360,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addChapter,
+        onPressed: _showAddChapterDialog,
         icon: const Icon(Icons.add),
         label: const Text('Thêm chương'),
         backgroundColor: AppColors.primary,
