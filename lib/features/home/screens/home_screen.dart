@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.pushNamed(context, '/forum'); // Navigate to ForumScreen
         break;
       case 3:
-        Navigator.pushNamed(context, '/tutor-profile'); // Navigate to Profile
+        Navigator.pushNamed(context, '/guest'); // Navigate to Profile
         break;
     }
   }
