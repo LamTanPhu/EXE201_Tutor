@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/services/api_service.dart';
 import 'package:tutor/features/forum/widgets/forum_app_bar_widget.dart';
-import 'package:tutor/features/forum/widgets/forum_post_card_widget.dart';
+import 'package:tutor/features/details/widgets/forum_widgets/forum_post_card_details_widget.dart';
+import 'package:tutor/features/details/widgets/forum_widgets/forum_comment_list_widget.dart';
+import 'package:tutor/features/details/widgets/forum_widgets/add_comment_sheet_widget.dart';
 
 class ForumDetailsScreen extends StatefulWidget {
   final String postId;
@@ -15,13 +17,12 @@ class ForumDetailsScreen extends StatefulWidget {
 class ForumDetailsScreenState extends State<ForumDetailsScreen> {
   late Future<Map<String, dynamic>> futurePost;
   final TextEditingController commentController = TextEditingController();
-  bool isLiking = false; // Add loading state for like button
-  bool isSubmitting = false; // Add loading state for comment submission
+  bool isLiking = false;
+  bool isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
-    print('Loading post with ID: ${widget.postId}');
     futurePost = ApiService.getForumPostById(widget.postId);
   }
 
@@ -42,30 +43,19 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
   }
 
   Future<void> _handleLike() async {
-    if (isLiking) return; // Prevent double-tapping
+    if (isLiking) return;
 
-    setState(() {
-      isLiking = true;
-    });
+    setState(() => isLiking = true);
 
     try {
-      print('Attempting to like post with ID: ${widget.postId}');
       final response = await ApiService.likeForumPost(widget.postId);
-
-      // Handle different response structures
-      Map<String, dynamic> updatedPost;
-      if (response.containsKey('data') && response['data'] != null) {
-        updatedPost = response['data'] as Map<String, dynamic>;
-      } else {
-        updatedPost = response;
-      }
+      final updatedPost = response['data'] ?? response;
 
       setState(() {
         futurePost = Future.value(updatedPost);
         isLiking = false;
       });
 
-      // Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -76,11 +66,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
         );
       }
     } catch (e) {
-      setState(() {
-        isLiking = false;
-      });
-
-      print('Error liking post: $e');
+      setState(() => isLiking = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -96,15 +82,12 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
   Future<void> _submitComment() async {
     if (isSubmitting || commentController.text.isEmpty) return;
 
-    setState(() {
-      isSubmitting = true;
-    });
+    setState(() => isSubmitting = true);
 
     try {
-      final response = await ApiService.addForumFeedback(widget.postId, commentController.text);
-
+      await ApiService.addForumFeedback(widget.postId, commentController.text);
       setState(() {
-        futurePost = ApiService.getForumPostById(widget.postId); // Refresh post data
+        futurePost = ApiService.getForumPostById(widget.postId);
         commentController.clear();
         isSubmitting = false;
       });
@@ -119,11 +102,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
         );
       }
     } catch (e) {
-      setState(() {
-        isSubmitting = false;
-      });
-
-      print('Error submitting comment: $e');
+      setState(() => isSubmitting = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -145,55 +124,10 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16.0,
-            right: 16.0,
-            top: 16.0,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Add Comment',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: commentController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Comment',
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Color(0xFFF5F5F5),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: isSubmitting ? null : _submitComment,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isSubmitting ? Colors.grey : Colors.blue[700],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                ),
-                child: isSubmitting
-                    ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-                    : const Text('Submit Comment'),
-              ),
-              const SizedBox(height: 16.0),
-            ],
-          ),
+        return AddCommentSheetWidget(
+          controller: commentController,
+          onSubmit: _submitComment,
+          isSubmitting: isSubmitting,
         );
       },
     );
@@ -238,76 +172,11 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Card(
-                  elevation: 4.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          post['title'] ?? 'No title',
-                          style: const TextStyle(
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Row(
-                          children: [
-                            const Icon(Icons.person, size: 16.0, color: Colors.grey),
-                            const SizedBox(width: 4.0),
-                            Text(
-                              post['fullName'] ?? 'Unknown',
-                              style: const TextStyle(fontSize: 14.0, color: Colors.grey),
-                            ),
-                            const SizedBox(width: 8.0),
-                            Text(
-                              formatDate(post['createdAt']),
-                              style: const TextStyle(fontSize: 12.0, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12.0),
-                        Text(
-                          post['content'] ?? 'No content',
-                          style: const TextStyle(fontSize: 16.0, color: Colors.black54),
-                        ),
-                        const SizedBox(height: 16.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: isLiking ? null : _handleLike,
-                              icon: isLiking
-                                  ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                ),
-                              )
-                                  : const Icon(Icons.arrow_upward, size: 16.0),
-                              label: Text('${post['numberOfLikes'] ?? 0} Likes'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isLiking ? Colors.grey : Colors.green[600],
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                PostCardDetailsWidget(
+                  post: post,
+                  isLiking: isLiking,
+                  onLike: _handleLike,
+                  formatDate: formatDate,
                 ),
                 const SizedBox(height: 16.0),
                 Text(
@@ -319,54 +188,10 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8.0),
-                if (feedback.isEmpty)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(32.0),
-                      child: Column(
-                        children: [
-                          Icon(Icons.comment_outlined, size: 48, color: Colors.grey),
-                          SizedBox(height: 8),
-                          Text('No comments yet', style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ...feedback.map((comment) => Card(
-                  elevation: 2.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  margin: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.person, size: 16.0, color: Colors.grey),
-                            const SizedBox(width: 4.0),
-                            Text(
-                              comment['fullName'] ?? 'Unknown',
-                              style: const TextStyle(fontSize: 14.0, color: Colors.grey),
-                            ),
-                            const SizedBox(width: 8.0),
-                            Text(
-                              formatDate(comment['createdAt']),
-                              style: const TextStyle(fontSize: 12.0, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8.0),
-                        Text(
-                          comment['reply'] ?? 'No content',
-                          style: const TextStyle(fontSize: 14.0, color: Colors.black54),
-                        ),
-                      ],
-                    ),
-                  ),
-                )),
+                CommentListWidget(
+                  feedback: feedback,
+                  formatDate: formatDate,
+                ),
               ],
             ),
           );
@@ -376,7 +201,6 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
         onPressed: showAddCommentSheet,
         backgroundColor: Colors.blue[700],
         child: const Icon(Icons.comment, color: Colors.white),
-        elevation: 6.0,
       ),
     );
   }
