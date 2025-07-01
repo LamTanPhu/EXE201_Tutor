@@ -29,24 +29,22 @@ class _CourseScreenState extends State<CourseScreen> {
       final prefs = await SharedPreferences.getInstance();
       final accountId = prefs.getString('accountId');
       if (accountId == null) {
-        throw Exception('Account ID not found');
+        throw Exception('Không tìm thấy tài khoản');
       }
       final response = await ApiService.getAccountDetails(accountId);
 
-      // Check if response['data'] and response['data']['courses'] exist
-      if (response['data'] == null || response['data']['courses'] == null || response['data']['courses'] is! List) {
-        return []; // Return empty list if courses is null or not a list
+      if (response['data'] == null ||
+          response['data']['courses'] == null ||
+          response['data']['courses'] is! List) {
+        return [];
       }
 
-      // Safely map the courses
       final List<Course> courses = (response['data']['courses'] as List<dynamic>)
-          .map<Course>((course) {
-            return Course.fromJson(course);
-          })
+          .map<Course>((course) => Course.fromJson(course))
           .toList();
       return courses;
     } catch (e) {
-      throw Exception('Failed to fetch courses: $e');
+      throw Exception('Không thể tải danh sách khoá học: $e');
     }
   }
 
@@ -62,10 +60,9 @@ class _CourseScreenState extends State<CourseScreen> {
       MaterialPageRoute(builder: (_) => const CreateCourseScreen()),
     );
     if (newCourse != null) {
-      _refreshCourses(); // Refresh the course list after adding a new course
+      _refreshCourses();
     }
   }
-
 
   List<Course> _filteredCourses(List<Course> courses) {
     if (_searchText.isEmpty) return courses;
@@ -92,7 +89,7 @@ class _CourseScreenState extends State<CourseScreen> {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: TextField(
               decoration: InputDecoration(
-                hintText: 'Search courses...',
+                hintText: 'Tìm kiếm khoá học...',
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: AppColors.card,
@@ -126,7 +123,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 final filteredCourses = _filteredCourses(courses);
 
                 if (filteredCourses.isEmpty) {
-                  return const Center(child: Text('K.'));
+                  return const Center(child: Text('Không có khoá học nào.'));
                 }
 
                 return ListView.builder(
@@ -150,23 +147,36 @@ class _CourseScreenState extends State<CourseScreen> {
                           );
                         },
                         leading: course.image.isNotEmpty
-                            ? Image.network(
-                                course.image,
-                                width: 40,
-                                height: 20,
-                                fit: BoxFit.fill,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.book,
-                                        color: AppColors.primary),
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: Image.network(
+                                  course.image,
+                                  width: 60,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.book,
+                                          color: AppColors.primary),
+                                ),
                               )
-                            : const Icon(Icons.book, color: AppColors.primary),
+                            : const Icon(Icons.book, color: AppColors.primary, size: 40),
                         title: Text(
                           course.name,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Text(course.description),
+                        subtitle: Text(
+                          course.description.isNotEmpty
+                              ? course.description
+                              : 'Không có mô tả',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         trailing: Text(
                           CurrencyUtils.formatVND(course.price),
+                          style: const TextStyle(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     );
@@ -180,7 +190,7 @@ class _CourseScreenState extends State<CourseScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _goToCourseCreation,
         icon: const Icon(Icons.add),
-        label: const Text('Add'),
+        label: const Text('Thêm khoá học'),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,
       ),

@@ -326,9 +326,7 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
-        print(
-          'Get Tutors API Response Status: ${response.statusCode}',
-        );
+        print('Get Tutors API Response Status: ${response.statusCode}');
         final List<dynamic> tutorsJson = data['data']['tutors'];
         return tutorsJson.map((json) => Tutor.fromJson(json)).toList();
       } else {
@@ -732,7 +730,9 @@ class ApiService {
           return jsonDecode(response.body) as List<dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('No content found for chapter - ${response.body}');
@@ -1190,7 +1190,9 @@ class ApiService {
           return jsonDecode(response.body) as List<dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('No chapters found for course - ${response.body}');
@@ -1207,7 +1209,7 @@ class ApiService {
     }
   }
 
-//POST METHOD: CREATE CHAPTER
+  //POST METHOD: CREATE CHAPTER
   static Future<Map<String, dynamic>> createChapter(
     String title,
     String courseId,
@@ -1228,7 +1230,9 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid chapter data - ${response.body}');
@@ -1254,7 +1258,9 @@ class ApiService {
         headers: headers,
       );
 
-      print('Get Content by Chapter ID API Response Status: ${response.statusCode}');
+      print(
+        'Get Content by Chapter ID API Response Status: ${response.statusCode}',
+      );
       print('Get Content by Chapter ID API Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -1262,7 +1268,9 @@ class ApiService {
           return jsonDecode(response.body) as List<dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('No content found for chapter - ${response.body}');
@@ -1281,10 +1289,9 @@ class ApiService {
 
   //POST Method: Create Content
   static Future<Map<String, dynamic>> createContent(
-    String title,
-    String description,
     String chapterId,
-    String courseId,
+    String description,
+    String accountId,
   ) async {
     try {
       final headers = await _getAuthHeaders();
@@ -1292,10 +1299,9 @@ class ApiService {
         Uri.parse('$baseUrl/api/contents'),
         headers: headers,
         body: jsonEncode({
-        'title': title,
-        'contentDescription': description,
-        'chapterId': chapterId,
-        'courseId': courseId,
+          'chapterId': chapterId,
+          'contentDescription': description,
+          'createdBy': accountId,
         }),
       );
 
@@ -1307,7 +1313,9 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid content data - ${response.body}');
@@ -1324,8 +1332,7 @@ class ApiService {
     }
   }
 
-
-// GET method: Get All Forum Posts
+  // GET method: Get All Forum Posts
   static Future<List<dynamic>> getForumPosts() async {
     try {
       final headers = await _getAuthHeaders();
@@ -1342,7 +1349,9 @@ class ApiService {
           return jsonDecode(response.body) as List<dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('No forum posts found - ${response.body}');
@@ -1358,11 +1367,12 @@ class ApiService {
       rethrow;
     }
   }
+
   // POST method: Create Forum Post
   static Future<Map<String, dynamic>> createForumPost(
-      String title,
-      String content,
-      ) async {
+    String title,
+    String content,
+  ) async {
     try {
       final headers = await _getAuthHeaders();
       final response = await http.post(
@@ -1379,7 +1389,9 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid forum post data - ${response.body}');
@@ -1412,7 +1424,9 @@ class ApiService {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('Forum post not found - ${response.body}');
@@ -1431,7 +1445,8 @@ class ApiService {
 
   static Future<Map<String, dynamic>> likeForumPost(String postId) async {
     try {
-      if (postId.length != 24 || !RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(postId)) {
+      if (postId.length != 24 ||
+          !RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(postId)) {
         throw Exception('Invalid postId format: $postId');
       }
       final headers = await _getAuthHeaders();
@@ -1448,11 +1463,14 @@ class ApiService {
 
       if (response.statusCode == 200) {
         try {
-          final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+          final responseData =
+              jsonDecode(response.body) as Map<String, dynamic>;
           return responseData;
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('Forum post not found');
@@ -1461,7 +1479,9 @@ class ApiService {
       } else if (response.statusCode == 400) {
         throw Exception('Invalid request - ${response.body}');
       } else {
-        throw Exception('Failed to like forum post: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to like forum post: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Like Forum Post API Error: $e');
@@ -1471,9 +1491,9 @@ class ApiService {
 
   // POST method: Add Forum Feedback
   static Future<Map<String, dynamic>> addForumFeedback(
-      String postId,
-      String reply,
-      ) async {
+    String postId,
+    String reply,
+  ) async {
     try {
       final headers = await _getAuthHeaders();
       final response = await http.post(
@@ -1529,7 +1549,9 @@ class ApiService {
           return Account.fromJson(data);
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 404) {
         throw Exception('Profile not found - ${response.body}');
@@ -1548,11 +1570,11 @@ class ApiService {
 
   // PUT method: Update Account Profile
   static Future<Account> updateGuestAccountProfile(
-      String fullName,
-      String email,
-      String phone,
-      String avatar,
-      ) async {
+    String fullName,
+    String email,
+    String phone,
+    String avatar,
+  ) async {
     final profileData = {
       'fullName': fullName,
       'email': email,
@@ -1567,7 +1589,9 @@ class ApiService {
         body: jsonEncode(profileData),
       );
 
-      print('Update Account Profile API Response Status: ${response.statusCode}');
+      print(
+        'Update Account Profile API Response Status: ${response.statusCode}',
+      );
       print('Update Account Profile API Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -1576,7 +1600,9 @@ class ApiService {
           return Account.fromJson(data);
         } catch (e) {
           print('JSON Parse Error: $e');
-          throw Exception('Invalid response format from server - ${response.body}');
+          throw Exception(
+            'Invalid response format from server - ${response.body}',
+          );
         }
       } else if (response.statusCode == 400) {
         throw Exception('Invalid profile data - ${response.body}');
