@@ -76,7 +76,7 @@ class _ForumScreenState extends State<ForumScreen> {
       case 2:
         break;
       case 3:
-        Navigator.pushNamed(context, '/tutor-profile');
+        Navigator.pushNamed(context, '/guest');
         break;
     }
   }

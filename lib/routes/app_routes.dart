@@ -115,8 +115,10 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => ForumDetailsScreen(postId: args ?? 'unknown'),
         );
-      case guest: // New case for GuestProfileScreen
-        return MaterialPageRoute(builder: (_) => const GuestProfileScreen());
+      case guest:
+        return MaterialPageRoute(
+          builder: (_) => const GuestProfileScreen(),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(body: Center(child: Text('Route not found'))),
