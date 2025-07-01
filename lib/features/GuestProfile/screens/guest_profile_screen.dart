@@ -1,10 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import 'package:tutor/services/api_service.dart';
 import 'package:tutor/common/models/account.dart';
 import 'package:tutor/features/home/widgets/home_bottom_nav_bar_widget.dart';
+import 'package:tutor/features/GuestProfile/widgets/avatar_edit_widget.dart';
+import 'package:tutor/features/GuestProfile/widgets/profile_form_widget.dart';
 
 class GuestProfileScreen extends StatefulWidget {
   const GuestProfileScreen({super.key});
@@ -17,7 +19,6 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
   Account? _profile;
   bool _isLoading = true;
   bool _isEditing = false;
-  String _errorMessage = '';
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -34,7 +35,6 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
     try {
       setState(() {
         _isLoading = true;
-        _errorMessage = '';
       });
 
       final profileData = await ApiService.getGuestAccountProfile()
@@ -52,11 +52,7 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _errorMessage = 'Error: $e';
-        });
-
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error fetching profile: $e')),
         );
@@ -111,7 +107,7 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
     if (picked != null) {
       setState(() {
         _pickedImage = File(picked.path);
-        _avatarController.text = picked.path; // For future upload
+        _avatarController.text = picked.path;
       });
     }
   }
@@ -140,8 +136,6 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isSmallScreen = MediaQuery.of(context).size.width < 360;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -158,59 +152,21 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.grey[300],
-                  backgroundImage: _getAvatarImageProvider(),
-                  child: _getAvatarImageProvider() == null
-                      ? const Icon(Icons.person,
-                      size: 60, color: Colors.grey)
-                      : null,
-                ),
-                if (_isEditing)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Colors.blue,
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.edit,
-                            size: 16, color: Colors.white),
-                        onPressed: _pickImage,
-                      ),
-                    ),
-                  ),
-              ],
+            AvatarEditorWidget(
+              imageProvider: _getAvatarImageProvider(),
+              isEditing: _isEditing,
+              onEditPressed: _pickImage,
             ),
             const SizedBox(height: 24),
-            _buildEditableField('Full Name', _fullNameController),
-            const SizedBox(height: 12),
-            _buildEditableField('Email', _emailController),
-            const SizedBox(height: 12),
-            _buildEditableField('Phone', _phoneController),
-            const SizedBox(height: 12),
-            if (_isEditing)
-              _buildEditableField('Avatar URL', _avatarController),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _isEditing
-                  ? _saveProfile
-                  : () => setState(() => _isEditing = true),
-              icon: Icon(
-                  _isEditing ? Icons.save : Icons.edit_outlined),
-              label:
-              Text(_isEditing ? 'Save Changes' : 'Edit Profile'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+            ProfileFormWidget(
+              isEditing: _isEditing,
+              fullNameController: _fullNameController,
+              emailController: _emailController,
+              phoneController: _phoneController,
+              avatarController: _avatarController,
+              onEditToggle: () =>
+                  setState(() => _isEditing = true),
+              onSave: _saveProfile,
             ),
           ],
         ),
@@ -226,42 +182,6 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
           ][index]);
         },
       ),
-    );
-  }
-
-  Widget _buildEditableField(
-      String label, TextEditingController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 6),
-        _isEditing
-            ? TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10)),
-            isDense: true,
-          ),
-        )
-            : Container(
-          width: double.infinity,
-          padding:
-          const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            controller.text.isNotEmpty
-                ? controller.text
-                : 'Not set',
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
     );
   }
 }
