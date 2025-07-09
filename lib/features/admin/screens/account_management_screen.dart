@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/common/models/tutor.dart';
 import 'package:tutor/common/widgets/list_view_widget.dart';
+import 'package:tutor/features/admin/screens/account_detail_screen.dart';
 import 'package:tutor/routes/app_routes.dart';
 import 'package:tutor/services/api_service.dart';
 import 'package:tutor/common/theme/app_colors.dart';
@@ -64,10 +65,9 @@ class AccountManagementScreen extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    Navigator.pushNamed(
+                    Navigator.push(
                       context,
-                      AppRoutes.accountDetail,
-                      arguments: tutor.account,
+                      MaterialPageRoute(builder: (context) => AccountDetailScreen(accountId: tutor.account.id))
                     );
                   },
                 ),

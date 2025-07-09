@@ -196,4 +196,4 @@ class _CourseScreenState extends State<CourseScreen> {
       ),
     );
   }
-}
+} 

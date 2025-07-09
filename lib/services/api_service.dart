@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tutor/common/models/account.dart';
+import 'package:tutor/common/models/account_detail.dart';
 import 'package:tutor/common/models/certification.dart';
 import 'package:tutor/common/models/course.dart';
 import 'package:tutor/common/models/course_item.dart';
@@ -1617,6 +1618,31 @@ class ApiService {
       }
     } catch (e) {
       print('Update Account Profile API Error: $e');
+      rethrow;
+    }
+  }
+
+  //GET method: Get course by accountId
+  static Future<AccountDetail> getCourseByAccount(String accountId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/courses/account/$accountId'),
+        headers: _getHeaders(),
+      );
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        final data = jsonData['data'];
+        return AccountDetail.fromJson(data);
+      } else if (response.statusCode == 404) {
+        throw Exception({response.body});
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to fetch account profile: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
       rethrow;
     }
   }
