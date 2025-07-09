@@ -14,6 +14,7 @@ class HomeOverviewScreen extends StatefulWidget {
 class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
   dynamic _featuredCourse;
   dynamic _trendingPost;
+  dynamic _topAccount;
   bool _isLoading = true;
   int _retryCount = 0;
   static const int _maxRetries = 3;
@@ -41,14 +42,18 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
     });
     try {
       final coursesData = await ApiService.getCourses();
-      final courses = coursesData['data']['courses'];
+      final courses = coursesData['data']['courses'] ?? [];
       final posts = await ApiService.getForumPosts();
+      final topAccountData = await ApiService.getTopAccountReport();
+      print('Top Account Raw Response: $topAccountData'); // Debug log
       setState(() {
         _featuredCourse = courses.isNotEmpty ? courses.first : null;
         _trendingPost = posts.isNotEmpty ? posts.first : null;
+        _topAccount = topAccountData != null && topAccountData is Map ? topAccountData : null;
         _isLoading = false;
       });
     } catch (e) {
+      print('Fetch Overview Data Error: $e'); // Debug log
       setState(() {
         _retryCount++;
       });
@@ -66,6 +71,10 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
       if (_retryCount < _maxRetries) {
         await Future.delayed(const Duration(seconds: 2));
         await _fetchOverviewData();
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -118,143 +127,269 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
       ),
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFFB0C4DE), Color(0xFFF5F6F5)],
-              ),
-            ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Welcome to Your Learning Journey',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Discover top courses and engaging discussions to enhance your skills.',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  const Text(
-                    'Featured Course',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 200, // Adjust height as needed
-                    child: _isLoading || _featuredCourse == null
-                        ? const Center(
-                      child: CircularProgressIndicator(color: Color(0xFF4A90E2)),
-                    )
-                        : HomeGridItemWidget(
-                      item: {
-                        'course': _featuredCourse['course'],
-                        'account': {'fullName': _featuredCourse['account']['fullName']},
-                      },
-                      isTeacherMode: false,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.courseDetails,
-                          arguments: {
-                            'courseId': _featuredCourse['course']['_id'],
-                            'courseData': {'course': _featuredCourse['course']},
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  const Text(
-                    'Trending Forum Post',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _isLoading || _trendingPost == null
-                      ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF4A90E2)),
-                  )
-                      : Card(
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.forumDetails,
-                          arguments: _trendingPost['_id'],
-                        );
-                      },
-                      child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF9B59B6), Color(0xFF8E44AD)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _trendingPost['title'] ?? 'No Title',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              _trendingPost['content'] ?? 'No Content',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                              ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(color: Color(0xFF4A90E2)),
+              child: CircularProgressIndicator(
+                color: Color(0xFF4A90E2),
+                strokeWidth: 6,
+              ),
+            )
+          else
+            Builder(
+              builder: (context) {
+                try {
+                  return Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0xFFB0C4DE), Color(0xFFF5F6F5)],
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Welcome to Your Learning Journey',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            'Discover top courses and engaging discussions to enhance your skills.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          const Text(
+                            'Featured Course',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              return HomeGridItemWidget(
+                                item: {
+                                  'course': _featuredCourse?['course'],
+                                  'account': {'fullName': _featuredCourse?['account']['fullName']},
+                                },
+                                isTeacherMode: false,
+                                onTap: () {
+                                  if (_featuredCourse != null) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.courseDetails,
+                                      arguments: {
+                                        'courseId': _featuredCourse['course']['_id'],
+                                        'courseData': {'course': _featuredCourse['course']},
+                                      },
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 30),
+                          const Text(
+                            'Trending Forum Post',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          _trendingPost == null
+                              ? const Center(
+                            child: Text(
+                              'No trending post available',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
+                              : Card(
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.forumDetails,
+                                  arguments: _trendingPost['_id'],
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Color(0xFF9B59B6), Color(0xFF8E44AD)],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _trendingPost['title'] ?? 'No Title',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      _trendingPost['content'] ?? 'No Content',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white70,
+                                      ),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          const Text(
+                            'Top Learner',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          _topAccount == null ||
+                              _topAccount['fullName'] == null ||
+                              _topAccount['email'] == null
+                              ? Card(
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Color(0xFF2ECC71), Color(0xFF27AE60)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Text(
+                                'No top learner available',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          )
+                              : Card(
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.guest,
+                                  arguments: _topAccount['email'],
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Color(0xFF2ECC71), Color(0xFF27AE60)],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _topAccount['fullName'] ?? 'Unknown User',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      _topAccount['email'] ?? 'No Email',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white70,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Completed Courses: ${_topAccount['completedCourses'] ?? 0}',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white70,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } catch (e, stackTrace) {
+                  print('Render Error in HomeOverviewScreen: $e\n$stackTrace'); // Debug log
+                  return const Center(
+                    child: Text(
+                      'Error loading content. Please try again.',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
         ],
       ),

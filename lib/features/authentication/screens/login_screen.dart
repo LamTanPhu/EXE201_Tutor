@@ -53,7 +53,6 @@ class LoginScreen extends StatelessWidget {
             break;
           default:
             Navigator.pushReplacementNamed(context, AppRoutes.overview);
-            // Navigator.pushNamed(context, AppRoutes.home);
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,7 +70,7 @@ class LoginScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFB0C4DE), Color(0xFFF5F6F5)], // Softer, eye-friendly gradient
+            colors: [Color(0xFF4A90E2), Color(0xFFF5F7FA)], // Updated to bluish gradient
           ),
         ),
         child: SafeArea(
@@ -105,7 +104,7 @@ class LoginScreen extends StatelessWidget {
                             Navigator.pushNamed(context, AppRoutes.tutor);
                           },
                           style: TextButton.styleFrom(
-                            foregroundColor: const Color(0xFF4CAF50),
+                            foregroundColor: const Color(0xFF4A90E2), // Updated to blue
                           ),
                           child: const Text(
                             'Become a Tutor? Sign Up as Tutor',
