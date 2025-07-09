@@ -50,7 +50,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2), // Light overlay to stretch coloring
+        color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
@@ -72,7 +72,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF4CAF50)),
+                borderSide: const BorderSide(color: Color(0xFF4A90E2)), // Updated to blue
               ),
             ),
             keyboardType: TextInputType.emailAddress,
@@ -103,7 +103,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF4CAF50)),
+                borderSide: const BorderSide(color: Color(0xFF4A90E2)), // Updated to blue
               ),
             ),
             obscureText: _obscureText,
@@ -120,8 +120,8 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: _isPressed
-                      ? [Color(0xFF388E3C), Color(0xFF66BB6A)]
-                      : [Color(0xFF4CAF50), Color(0xFF81C784)],
+                      ? [Color(0xFF2A6395), Color(0xFF4A90E2)] // Darker blue when pressed
+                      : [Color(0xFF4A90E2), Color(0xFF87CEFA)], // Lighter blue gradient
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),

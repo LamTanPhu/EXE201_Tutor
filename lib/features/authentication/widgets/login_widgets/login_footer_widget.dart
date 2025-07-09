@@ -12,7 +12,7 @@ class LoginFooterWidget extends StatelessWidget {
       child: TextButton(
         onPressed: onSignUp,
         style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFF4CAF50),
+          foregroundColor: const Color(0xFF4A90E2), // Updated to blue
         ),
         child: const Text(
           'Don’t have an account? Sign Up',

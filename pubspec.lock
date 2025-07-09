@@ -157,10 +157,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "77f8e81d22d2a07d0dee2c62e1dda71dc1da73bf43bb2d45af09727406167964"
+      sha256: ef9908739bdd9c476353d6adff72e88fd00c625f5b959ae23f7567bd5137db0a
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.9"
+    version: "10.2.0"
   file_selector_linux:
     dependency: transitive
     description:
@@ -260,18 +260,18 @@ packages:
     dependency: transitive
     description:
       name: functions_client
-      sha256: b410e4d609522357396cd84bb9a8f6e3a4561b5f7d3ce82267f6f1c2af42f16b
+      sha256: "91bd57c5ee843957bfee68fdcd7a2e8b3c1081d448e945d33ff695fb9c2a686c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.2"
+    version: "2.4.3"
   gotrue:
     dependency: transitive
     description:
       name: gotrue
-      sha256: "04a6efacffd42773ed96dc752f19bb20a1fbc383e81ba82659072b775cf62912"
+      sha256: "941694654ab659990547798569771d8d092f2ade84a72e75bb9bbca249f3d3b1"
       url: "https://pub.dev"
     source: hosted
-    version: "2.12.0"
+    version: "2.13.0"
   gtk:
     dependency: transitive
     description:
@@ -540,10 +540,10 @@ packages:
     dependency: transitive
     description:
       name: realtime_client
-      sha256: "3a0a99b5bd0fc3b35e8ee846d9a22fa2c2117f7ef1cb73d1e5f08f6c3d09c4e9"
+      sha256: b6a825a4c80f2281ebfbbcf436a8979ae9993d4a30dbcf011b7d2b82ddde9edd
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.0"
+    version: "2.5.1"
   retry:
     dependency: transitive
     description:
@@ -729,18 +729,18 @@ packages:
     dependency: transitive
     description:
       name: supabase
-      sha256: f00172f5f0b2148ea1c573f52862d50cacb6f353f579f741fa35e51704845958
+      sha256: "56c3493114caac8ef0dc3cac5fa24a9edefeb8c22d45794814c0fe3d2feb1a98"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "2.8.0"
   supabase_flutter:
     dependency: "direct main"
     description:
       name: supabase_flutter
-      sha256: d88eccf9e46e57129725a08e72a3109b6f780921fdc27fe3d7669a11ae80906b
+      sha256: "66b8d0a7a31f45955b11ad7b65347abc61b31e10f8bdfa4428501b81f5b30fa5"
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.0"
+    version: "2.9.1"
   synchronized:
     dependency: transitive
     description:
@@ -865,10 +865,10 @@ packages:
     dependency: "direct overridden"
     description:
       name: vm_service
-      sha256: "6f82e9ee8e7339f5d8b699317f6f3afc17c80a68ebef1bc0d6f52a678c14b1e6"
+      sha256: "45caa6c5917fa127b5dbcfbd1fa60b14e583afdc08bfc96dda38886ca252eb60"
       url: "https://pub.dev"
     source: hosted
-    version: "15.0.1"
+    version: "15.0.2"
   web:
     dependency: transitive
     description:
@@ -893,6 +893,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  webview_flutter:
+    dependency: "direct main"
+    description:
+      name: webview_flutter
+      sha256: c3e4fe614b1c814950ad07186007eff2f2e5dd2935eba7b9a9a1af8e5885f1ba
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.13.0"
+  webview_flutter_android:
+    dependency: transitive
+    description:
+      name: webview_flutter_android
+      sha256: f6e6afef6e234801da77170f7a1847ded8450778caf2fe13979d140484be3678
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.7.0"
+  webview_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: webview_flutter_platform_interface
+      sha256: f0dc2dc3a2b1e3a6abdd6801b9355ebfeb3b8f6cde6b9dc7c9235909c4a1f147
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.13.1"
+  webview_flutter_wkwebview:
+    dependency: transitive
+    description:
+      name: webview_flutter_wkwebview
+      sha256: a3d461fe3467014e05f3ac4962e5fdde2a4bf44c561cb53e9ae5c586600fdbc3
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.22.0"
   win32:
     dependency: transitive
     description:
