@@ -105,8 +105,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ReportsScreen());
       case courseCreate:
         return MaterialPageRoute(builder: (_) => const CreateCourseScreen());
-      case accountDetail:
-        return MaterialPageRoute(builder: (_) => const AccountDetailScreen());
+      // case accountDetail:
+      //   return MaterialPageRoute(builder: (_) => const AccountDetailScreen(accountId: ,));
       case chapterDetails:
         final args = settings.arguments as String?;
         return MaterialPageRoute(

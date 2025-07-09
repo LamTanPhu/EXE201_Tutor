@@ -1,5 +1,5 @@
 class Account {
-  final String? id;
+  final String id;
   final String? fullName;
   final String? avatar;
   final String? email;
@@ -9,7 +9,7 @@ class Account {
   final int? balance;
 
   Account({
-    this.id,
+    required this.id,
     this.fullName,
     this.avatar,
     this.email,
@@ -21,7 +21,7 @@ class Account {
 
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
-      id: json['_id'] as String?,
+      id: json['_id'] as String,
       fullName: json['fullName'] as String?,
       avatar: json['avatar'] as String?,
       email: json['email'] as String?,

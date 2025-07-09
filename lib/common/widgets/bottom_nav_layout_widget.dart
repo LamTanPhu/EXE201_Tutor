@@ -10,7 +10,6 @@ import 'package:tutor/features/home/screens/about_us_screen.dart';
 import 'package:tutor/features/home/screens/home_screen.dart';
 import 'package:tutor/features/tutor/screens/certification_screen.dart';
 import 'package:tutor/features/tutor/screens/course_screen.dart';
-import 'package:tutor/features/tutor/screens/tutor_dashboard_screen.dart';
 
 class BottomNavLayoutWidget extends StatefulWidget {
   final Role role;

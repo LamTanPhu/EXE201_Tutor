@@ -15,13 +15,13 @@ class AccountDetail {
 
   factory AccountDetail.fromJson(Map<String, dynamic> json) {
     return AccountDetail(
-      account: Account.fromJson(json['data']['account']),
+      account: Account.fromJson(json['account']),
       certifications:
-          (json['data']['certifications'] as List)
+          (json['certifications'] as List)
               .map((e) => Certification.fromJson(e))
               .toList(),
       courses:
-          (json['data']['courses'] as List)
+          (json['courses'] as List)
               .map((e) => Course.fromJson(e))
               .toList(),
     );

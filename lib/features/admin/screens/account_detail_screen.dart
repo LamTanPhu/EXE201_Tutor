@@ -1,64 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/common/models/account.dart';
 import 'package:tutor/common/models/account_detail.dart';
-import 'package:tutor/common/models/certification.dart';
-import 'package:tutor/common/models/course.dart';
+import 'package:tutor/common/models/course_item.dart';
 import 'package:tutor/features/admin/widgets/certification_card.dart';
 import 'package:tutor/features/admin/widgets/course_card.dart';
+import 'package:tutor/services/api_service.dart';
 
 class AccountDetailScreen extends StatelessWidget {
-  const AccountDetailScreen({super.key});
+  //Pass accountId to fetch courses
+  final String accountId;
+  const AccountDetailScreen({super.key, required this.accountId});
 
   @override
   Widget build(BuildContext context) {
-    final mockAccount = Account(
-      id: '1',
-      fullName: 'John Doe',
-      email: 'john@example.com',
-      phone: '123456789',
-      status: 'Active',
-      role: 'Tutor',
-    );
-
-    final mockCerts = [
-      Certification(
-        id: 'c1',
-        name: 'TOEIC 900',
-        description: 'English proficiency certification',
-        image: ['https://via.placeholder.com/150'],
-        experience: 3,
-        isChecked: true,
-        isCanTeach: true,
-        createBy: 'admin',
-      ),
-    ];
-
-    final mockCourses = [
-      Course(
-        id: 'cs1',
-        name: 'Basic English',
-        description: 'Introduction to English',
-        image: 'https://via.placeholder.com/150',
-        price: 100,
-        isActive: true,
-        createdBy: 'tutor123',
-        createdAt: DateTime.now(),
-      ),
-    ];
-
-    final mockAccountDetail = AccountDetail(
-      account: mockAccount,
-      certifications: mockCerts,
-      courses: mockCourses,
-    );
-
-    final detail = mockAccountDetail;
-    final account = detail.account;
-
     return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
           title: const Text('Account Detail'),
           bottom: const TabBar(
             tabs: [
@@ -68,30 +26,47 @@ class AccountDetailScreen extends StatelessWidget {
             ],
           ),
         ),
-      body: Column(
-        children: [
-          const SizedBox(height: 16),
-          Center(
-            child: CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(
-                'https://ui-avatars.com/api/?name=${account.fullName}',
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: TabBarView(
+        body: FutureBuilder<AccountDetail>(
+          future: ApiService.getCourseByAccount(accountId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text('No data available'));
+            }
+
+            final detail = snapshot.data!;
+            final account = detail.account;
+
+            return Column(
               children: [
-                _buildInfoTab(account),
-                _buildCertsTab(detail),
-                _buildCoursesTab(detail),
+                const SizedBox(height: 16),
+                Center(
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: NetworkImage(
+                      account.avatar ??
+                          'https://ui-avatars.com/api/?name=${account.fullName}',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      _buildInfoTab(account),
+                      _buildCertsTab(detail),
+                      _buildCoursesTab(detail),
+                    ],
+                  ),
+                ),
               ],
-            ),
-          ),
-        ],
+            );
+          },
+        ),
       ),
-      )
     );
   }
 
@@ -106,26 +81,26 @@ class AccountDetailScreen extends StatelessWidget {
     ],
   );
 
-  Widget _buildCertsTab(AccountDetail detail) {
-    if (detail.certifications.isEmpty) {
+  Widget _buildCertsTab(AccountDetail item) {
+    if (item.certifications.isEmpty) {
       return const Center(child: Text("No certifications."));
     }
     return ListView(
       padding: const EdgeInsets.all(16),
       children:
-          detail.certifications
+          item.certifications
               .map((c) => CertificationCard(certification: c))
               .toList(),
     );
   }
 
-  Widget _buildCoursesTab(AccountDetail detail) {
-    if (detail.courses.isEmpty) {
+  Widget _buildCoursesTab(AccountDetail item) {
+    if (item.courses.isEmpty) {
       return const Center(child: Text("No courses."));
     }
     return ListView(
       padding: const EdgeInsets.all(16),
-      children: detail.courses.map((c) => CourseCard(course: c)).toList(),
+      children: item.courses.map((c) => CourseCard(course: c)).toList(),
     );
   }
 
