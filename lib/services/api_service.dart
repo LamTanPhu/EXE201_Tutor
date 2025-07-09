@@ -1622,6 +1622,43 @@ class ApiService {
     }
   }
 
+    // POST method: Create Order with VNPay Payment URL
+  static Future<Map<String, dynamic>> createOrderWithPaymentUrl(String courseId) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/orders'),
+        headers: headers,
+        body: jsonEncode({'courseId': courseId}),
+      );
+
+      print('Create Order with Payment URL API Response Status: ${response.statusCode}');
+      print('Create Order with Payment URL API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          print('JSON Parse Error: $e');
+          throw Exception('Invalid response format from server - ${response.body}');
+        }
+      } else if (response.statusCode == 400) {
+        throw Exception('Invalid request data - ${response.body}');
+      } else if (response.statusCode == 404) {
+        throw Exception('Course not found - ${response.body}');
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to create order with payment URL: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Create Order with Payment URL API Error: $e');
+      rethrow;
+    }
+  }
+
   //GET method: Get course by accountId
   static Future<AccountDetail> getCourseByAccount(String accountId) async {
     try {
@@ -1646,4 +1683,8 @@ class ApiService {
       rethrow;
     }
   }
+
+
+
+
 }

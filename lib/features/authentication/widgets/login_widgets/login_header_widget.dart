@@ -14,7 +14,7 @@ class LoginHeaderWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF34495E), // Softer dark gray
+              color: Color(0xFF2A6395), // Updated to darker blue
               letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
@@ -24,7 +24,7 @@ class LoginHeaderWidget extends StatelessWidget {
             'Log in to continue your learning journey.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16,
-              color: Color(0xFF7F8C8D), // Muted gray
+              color: Color(0xFF34495E),
               letterSpacing: 0.2,
             ),
             textAlign: TextAlign.center,

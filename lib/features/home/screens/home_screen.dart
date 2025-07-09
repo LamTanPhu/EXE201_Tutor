@@ -56,11 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchData() async {
     setState(() {
-      _isInitialLoading = true; // Set loading state at the start
+      _isInitialLoading = true;
     });
     try {
       final coursesData = await ApiService.getCourses();
       final courses = coursesData['data']['courses'];
+      print('Raw courses data: $courses'); // Debug the structure
 
       setState(() {
         if (_isTeacherMode) {
@@ -82,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'course': course['course'],
             'account': {'fullName': course['account']['fullName']},
           }).toList();
+          print('Processed items: $_items'); // Debug the items
           if (_sortOption == 'name') {
             _items.sort((a, b) =>
                 (a['course']['name'] ?? '').compareTo(b['course']['name'] ?? ''));
@@ -91,11 +93,11 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
         _filteredItems = List.from(_items);
-        _isInitialLoading = false; // Clear loading state after data is set
+        _isInitialLoading = false;
       });
     } catch (e) {
       setState(() {
-        _isInitialLoading = false; // Clear loading state on error
+        _isInitialLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching data: $e')),

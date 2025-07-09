@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tutor/services/api_service.dart';
 import 'package:tutor/features/home/widgets/home_grid_item_widget.dart';
 import 'package:tutor/features/home/widgets/home_bottom_nav_bar_widget.dart';
+import 'package:tutor/features/home/widgets/overview/header_widget.dart';
+import 'package:tutor/features/home/widgets/overview/welcome_section_widget.dart';
+import 'package:tutor/features/home/widgets/overview/featured_course_section_widget.dart';
+import 'package:tutor/features/home/widgets/overview/trending_post_section_widget.dart';
+import 'package:tutor/features/home/widgets/overview/top_learner_section_widget.dart';
+import 'package:tutor/features/home/widgets/overview/loading_overlay_widget.dart';
 import 'package:tutor/routes/app_routes.dart';
 
 class HomeOverviewScreen extends StatefulWidget {
@@ -14,6 +20,7 @@ class HomeOverviewScreen extends StatefulWidget {
 class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
   dynamic _featuredCourse;
   dynamic _trendingPost;
+  dynamic _topAccount;
   bool _isLoading = true;
   int _retryCount = 0;
   static const int _maxRetries = 3;
@@ -41,14 +48,18 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
     });
     try {
       final coursesData = await ApiService.getCourses();
-      final courses = coursesData['data']['courses'];
+      final courses = coursesData['data']['courses'] ?? [];
       final posts = await ApiService.getForumPosts();
+      final topAccountData = await ApiService.getTopAccountReport();
+      print('Top Account Raw Response: $topAccountData'); // Debug log
       setState(() {
         _featuredCourse = courses.isNotEmpty ? courses.first : null;
         _trendingPost = posts.isNotEmpty ? posts.first : null;
+        _topAccount = topAccountData != null && topAccountData is Map ? topAccountData : null;
         _isLoading = false;
       });
     } catch (e) {
+      print('Fetch Overview Data Error: $e'); // Debug log
       setState(() {
         _retryCount++;
       });
@@ -66,6 +77,10 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
       if (_retryCount < _maxRetries) {
         await Future.delayed(const Duration(seconds: 2));
         await _fetchOverviewData();
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -96,166 +111,88 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Tutor Platform',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline, color: Color(0xFF4A90E2)),
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.aboutUs);
-            },
-          ),
-        ],
-      ),
+      appBar: const HeaderWidget(),
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFFB0C4DE), Color(0xFFF5F6F5)],
-              ),
-            ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Welcome to Your Learning Journey',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+          Builder(
+            builder: (context) {
+              try {
+                return Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0xFFB0C4DE), Color(0xFFF5F6F5)],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Discover top courses and engaging discussions to enhance your skills.',
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const WelcomeSectionWidget(),
+                        const SizedBox(height: 30),
+                        FeaturedCourseSectionWidget(
+                          course: _featuredCourse,
+                          onTap: () {
+                            if (_featuredCourse != null) {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.courseDetails,
+                                arguments: {
+                                  'courseId': _featuredCourse['course']['_id'],
+                                  'courseData': {'course': _featuredCourse['course']},
+                                },
+                              );
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        TrendingPostSectionWidget(
+                          post: _trendingPost,
+                          onTap: () {
+                            if (_trendingPost != null) {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.forumDetails,
+                                arguments: _trendingPost['_id'],
+                              );
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        TopLearnerSectionWidget(
+                          account: _topAccount,
+                          onTap: () {
+                            if (_topAccount != null && _topAccount['email'] != null) {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.guest,
+                                arguments: _topAccount['email'],
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              } catch (e, stackTrace) {
+                print('Render Error in HomeOverviewScreen: $e\n$stackTrace'); // Debug log
+                return const Center(
+                  child: Text(
+                    'Error loading content. Please try again.',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey[600],
+                      color: Colors.red,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  const Text(
-                    'Featured Course',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 200, // Adjust height as needed
-                    child: _isLoading || _featuredCourse == null
-                        ? const Center(
-                      child: CircularProgressIndicator(color: Color(0xFF4A90E2)),
-                    )
-                        : HomeGridItemWidget(
-                      item: {
-                        'course': _featuredCourse['course'],
-                        'account': {'fullName': _featuredCourse['account']['fullName']},
-                      },
-                      isTeacherMode: false,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.courseDetails,
-                          arguments: {
-                            'courseId': _featuredCourse['course']['_id'],
-                            'courseData': {'course': _featuredCourse['course']},
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  const Text(
-                    'Trending Forum Post',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _isLoading || _trendingPost == null
-                      ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF4A90E2)),
-                  )
-                      : Card(
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.forumDetails,
-                          arguments: _trendingPost['_id'],
-                        );
-                      },
-                      child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF9B59B6), Color(0xFF8E44AD)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _trendingPost['title'] ?? 'No Title',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              _trendingPost['content'] ?? 'No Content',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                              ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                );
+              }
+            },
           ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(color: Color(0xFF4A90E2)),
-            ),
+          LoadingOverlayWidget(isLoading: _isLoading),
         ],
       ),
       bottomNavigationBar: HomeBottomNavBarWidget(
