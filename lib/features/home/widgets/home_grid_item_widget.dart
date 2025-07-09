@@ -41,14 +41,14 @@ class HomeGridItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FadeTransition(
-      opacity: const AlwaysStoppedAnimation(1.0), // Fade animation placeholder
+      opacity: const AlwaysStoppedAnimation(1.0),
       child: Card(
-        elevation: 4,
+        elevation: 6,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           onTap: onTap,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +56,7 @@ class HomeGridItemWidget extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Stack(
                     children: [
                       Container(
@@ -64,8 +64,8 @@ class HomeGridItemWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: isTeacherMode
-                                ? [Colors.blue[300]!, Colors.blue[500]!]
-                                : [Colors.purple[300]!, Colors.purple[500]!],
+                                ? [Color(0xFF4A90E2), Color(0xFF50E3C2)]
+                                : [Color(0xFF9B59B6), Color(0xFF8E44AD)],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
@@ -79,11 +79,11 @@ class HomeGridItemWidget extends StatelessWidget {
                           errorBuilder: (context, error, stackTrace) =>
                           const Center(
                               child: Icon(Icons.person,
-                                  size: 40, color: Colors.white)),
+                                  size: 50, color: Colors.white)),
                         )
                             : const Center(
                             child: Icon(Icons.person,
-                                size: 40, color: Colors.white))
+                                size: 50, color: Colors.white))
                             : item['course']['image'] != null
                             ? Image.network(
                           item['course']['image'],
@@ -91,33 +91,37 @@ class HomeGridItemWidget extends StatelessWidget {
                           errorBuilder: (context, error, stackTrace) =>
                           const Center(
                               child: Icon(Icons.school,
-                                  size: 40, color: Colors.white)),
+                                  size: 50, color: Colors.white)),
                         )
                             : const Center(
                             child: Icon(Icons.school,
-                                size: 40, color: Colors.white)),
+                                size: 50, color: Colors.white)),
                       ),
                       Positioned(
                         top: 8,
                         right: 8,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 3),
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(8),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.star, color: Colors.white, size: 12),
-                              SizedBox(width: 2),
+                              Icon(Icons.star, color: Colors.white, size: 14),
+                              SizedBox(width: 4),
                               Text(
                                 '4.8',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
@@ -140,25 +144,24 @@ class HomeGridItemWidget extends StatelessWidget {
                             ? item['account']['fullName'] ?? 'Unknown Tutor'
                             : item['course']['name'] ?? 'Unknown Course',
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
-                          letterSpacing: 0.2,
                         ),
-                        maxLines: 3,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
                       Text(
                         isTeacherMode
                             ? '${item['account']['role'] ?? 'Teacher'} • ${_getStatusText(item['account']['status'])}'
                             : 'By ${item['account']['fullName'] ?? 'Unknown'}',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           color: isTeacherMode
                               ? _getStatusColor(item['account']['status'])
                               : Colors.grey[600],
-                          letterSpacing: 0.2,
+                          fontWeight: FontWeight.w500,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -168,9 +171,9 @@ class HomeGridItemWidget extends StatelessWidget {
                         Text(
                           '${item['course']['price'] ?? 0} VND',
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: Color(0xFF2ECC71),
                           ),
                         ),
                       ] else ...[
@@ -178,9 +181,9 @@ class HomeGridItemWidget extends StatelessWidget {
                           Text(
                             '${item['certifications'][0]['experience'] ?? 0} years exp.',
                             style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.blue,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF4A90E2),
                             ),
                           ),
                         ],

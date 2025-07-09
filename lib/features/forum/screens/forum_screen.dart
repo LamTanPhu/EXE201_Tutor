@@ -5,6 +5,7 @@ import 'package:tutor/features/forum/widgets/forum_drawer_widget.dart';
 import 'package:tutor/features/forum/widgets/forum_post_list_widget.dart';
 import 'package:tutor/features/forum/widgets/create_post_sheet_widget.dart';
 import 'package:tutor/features/home/widgets/home_bottom_nav_bar_widget.dart';
+import 'package:tutor/routes/app_routes.dart';
 
 class ForumScreen extends StatefulWidget {
   const ForumScreen({super.key});
@@ -31,7 +32,10 @@ class _ForumScreenState extends State<ForumScreen> {
         _posts = [];
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading posts: $error')),
+        SnackBar(
+          content: Text('Error loading posts: $error'),
+          backgroundColor: Colors.red,
+        ),
       );
       return _posts;
     });
@@ -68,15 +72,18 @@ class _ForumScreenState extends State<ForumScreen> {
     });
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/home', arguments: true);
+        Navigator.pushReplacementNamed(context, AppRoutes.home, arguments: true);
         break;
       case 1:
-        Navigator.pushReplacementNamed(context, '/home', arguments: false);
+        Navigator.pushReplacementNamed(context, AppRoutes.home, arguments: false);
         break;
       case 2:
         break;
-      case 3:
-        Navigator.pushNamed(context, '/guest');
+      case 3: // Overview
+        Navigator.pushReplacementNamed(context, AppRoutes.overview);
+        break;
+      case 4: // Profile
+        Navigator.pushNamed(context, AppRoutes.guest);
         break;
     }
   }
@@ -84,16 +91,40 @@ class _ForumScreenState extends State<ForumScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: ForumAppBarWidget(),
       drawer: ForumDrawerWidget(),
-      body: ForumPostListWidget(_futurePosts, _posts, _formatDate),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(top: 4.0, bottom: 10.0, left: 8.0),
+              child: Text(
+                'Explore Discussions',
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ForumPostListWidget(_futurePosts, _posts, _formatDate),
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: HomeBottomNavBarWidget(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreatePostSheet,
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.deepPurple,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text('New Post', style: TextStyle(color: Colors.white)),
       ),
     );
   }

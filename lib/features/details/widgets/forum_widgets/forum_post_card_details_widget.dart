@@ -17,50 +17,53 @@ class PostCardDetailsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4.0,
+      elevation: 2.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              post['title'] ?? 'No title',
-              style: const TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Row(
+            // Upvote section (Reddit style)
+            Column(
               children: [
-                const Icon(Icons.person, size: 16.0, color: Colors.grey),
-                const SizedBox(width: 4.0),
-                Text(post['fullName'] ?? 'Unknown', style: const TextStyle(color: Colors.grey)),
-                const SizedBox(width: 8.0),
-                Text(formatDate(post['createdAt']), style: const TextStyle(fontSize: 12.0, color: Colors.grey)),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            Text(post['content'] ?? 'No content', style: const TextStyle(fontSize: 16.0, color: Colors.black54)),
-            const SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton.icon(
+                IconButton(
                   onPressed: isLiking ? null : onLike,
                   icon: isLiking
                       ? const SizedBox(
-                    width: 16, height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                      : const Icon(Icons.arrow_upward, size: 16.0),
-                  label: Text('${post['numberOfLikes'] ?? 0} Likes'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isLiking ? Colors.grey : Colors.green[600],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                  ),
+                      : const Icon(Icons.arrow_upward, size: 20),
                 ),
+                Text('${post['numberOfLikes'] ?? 0}', style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
+            ),
+            const SizedBox(width: 12),
+            // Post content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(post['title'] ?? 'No title',
+                      style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4.0),
+                  Row(
+                    children: [
+                      Text("u/${post['fullName'] ?? 'unknown'}",
+                          style: const TextStyle(fontSize: 12.0, color: Colors.grey)),
+                      const SizedBox(width: 8.0),
+                      Text(formatDate(post['createdAt']),
+                          style: const TextStyle(fontSize: 12.0, color: Colors.grey)),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(post['content'] ?? 'No content',
+                      style: const TextStyle(fontSize: 15.0, color: Colors.black87)),
+                ],
+              ),
             ),
           ],
         ),

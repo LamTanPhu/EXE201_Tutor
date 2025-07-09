@@ -14,6 +14,10 @@ class HomeBottomNavBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.dashboard),
+        //   label: 'Overview',
+        // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: 'Tutor',
@@ -27,15 +31,21 @@ class HomeBottomNavBarWidget extends StatelessWidget {
           label: 'Forum',
         ),
         BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard),
+          label: 'Overview',
+        ),
+        BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
           label: 'Profile',
         ),
       ],
       currentIndex: selectedIndex,
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
-      onTap: onItemTapped,
+      selectedItemColor: const Color(0xFF4A90E2),
+      unselectedItemColor: Colors.grey[600],
+      backgroundColor: Colors.white,
+      elevation: 8,
       type: BottomNavigationBarType.fixed,
+      onTap: onItemTapped,
     );
   }
 }

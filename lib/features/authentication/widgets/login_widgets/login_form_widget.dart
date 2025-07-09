@@ -18,6 +18,7 @@ class LoginFormWidget extends StatefulWidget {
 
 class _LoginFormWidgetState extends State<LoginFormWidget> {
   bool _isPressed = false;
+  bool _obscureText = true;
 
   void _onTapDown(TapDownDetails details) {
     setState(() {
@@ -38,81 +39,117 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
     });
   }
 
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: widget.emailController,
-          decoration: InputDecoration(
-            labelText: 'Email',
-            prefixIcon: const Icon(Icons.email_outlined, color: Colors.blue),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2), // Light overlay to stretch coloring
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        children: [
+          TextField(
+            controller: widget.emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF34495E)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.4),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 18,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF4CAF50)),
+              ),
             ),
-            filled: true,
-            fillColor: Colors.grey[100],
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 18,
-            ),
+            keyboardType: TextInputType.emailAddress,
+            style: const TextStyle(color: Color(0xFF34495E)),
           ),
-          keyboardType: TextInputType.emailAddress,
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: widget.passwordController,
-          decoration: InputDecoration(
-            labelText: 'Password',
-            prefixIcon: const Icon(Icons.lock_outline, color: Colors.blue),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            fillColor: Colors.grey[100],
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 18,
-            ),
-          ),
-          obscureText: true,
-        ),
-        const SizedBox(height: 24),
-        GestureDetector(
-          onTapDown: _onTapDown,
-          onTapUp: _onTapUp,
-          onTapCancel: _onTapCancel,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 100), // Reduced duration
-            transform: Matrix4.identity()..scale(_isPressed ? 0.98 : 1.0), // Slight scale
-            decoration: BoxDecoration(
-              color: _isPressed ? Colors.blue[700] : Colors.blue, // Simplified gradient
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.2),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+          const SizedBox(height: 16),
+          TextField(
+            controller: widget.passwordController,
+            decoration: InputDecoration(
+              labelText: 'Password',
+              prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF34495E)),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                  color: Color(0xFF34495E),
                 ),
-              ],
+                onPressed: _togglePasswordVisibility,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.4),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 18,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF4CAF50)),
+              ),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: const Center(
-              child: Text(
-                'Login',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+            obscureText: _obscureText,
+            style: const TextStyle(color: Color(0xFF34495E)),
+          ),
+          const SizedBox(height: 24),
+          GestureDetector(
+            onTapDown: _onTapDown,
+            onTapUp: _onTapUp,
+            onTapCancel: _onTapCancel,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 100),
+              transform: Matrix4.identity()..scale(_isPressed ? 0.98 : 1.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: _isPressed
+                      ? [Color(0xFF388E3C), Color(0xFF66BB6A)]
+                      : [Color(0xFF4CAF50), Color(0xFF81C784)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: const Center(
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

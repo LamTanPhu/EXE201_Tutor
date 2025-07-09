@@ -4,6 +4,7 @@ import 'package:tutor/features/home/widgets/home_search_bar_widget.dart';
 import 'package:tutor/features/home/widgets/home_filter_bottom_sheet_widget.dart';
 import 'package:tutor/features/home/widgets/home_grid_item_widget.dart';
 import 'package:tutor/features/home/widgets/home_bottom_nav_bar_widget.dart';
+import 'package:tutor/routes/app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isTeacherMode = true; // Default to tutor mode
+  bool _isTeacherMode = true;
   List<dynamic> _items = [];
   List<dynamic> _filteredItems = [];
   String _sortOption = 'name';
@@ -23,7 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _maxExperience = 5;
   int _currentExperienceFilter = 5;
   TextEditingController _searchController = TextEditingController();
-  int _selectedIndex = 0; // Track the selected tab
+  int _selectedIndex = 0;
+  bool _isInitialLoading = true; // Track initial data load
 
   final List<String> orderByOptions = ['Newest', 'Popularity', 'Ratings', 'Price'];
 
@@ -35,12 +37,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Check for navigation argument to set initial mode, safe to call here
+    final args = ModalRoute.of(context)?.settings.arguments as bool?;
+    if (args != null) {
+      setState(() {
+        _isTeacherMode = args;
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
   Future<void> _fetchData() async {
+    setState(() {
+      _isInitialLoading = true; // Set loading state at the start
+    });
     try {
       final coursesData = await ApiService.getCourses();
       final courses = coursesData['data']['courses'];
@@ -74,8 +91,12 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
         _filteredItems = List.from(_items);
+        _isInitialLoading = false; // Clear loading state after data is set
       });
     } catch (e) {
+      setState(() {
+        _isInitialLoading = false; // Clear loading state on error
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching data: $e')),
       );
@@ -118,21 +139,24 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (index) {
       case 0:
         setState(() {
-          _isTeacherMode = true; // Switch to Teacher mode
+          _isTeacherMode = true;
           _fetchData();
         });
         break;
       case 1:
         setState(() {
-          _isTeacherMode = false; // Switch to Course mode
+          _isTeacherMode = false;
           _fetchData();
         });
         break;
       case 2:
-        Navigator.pushNamed(context, '/forum'); // Navigate to ForumScreen
+        Navigator.pushNamed(context, AppRoutes.forum);
         break;
-      case 3:
-        Navigator.pushNamed(context, '/guest'); // Navigate to Profile
+      case 3: // Overview
+        Navigator.pushReplacementNamed(context, AppRoutes.overview);
+        break;
+      case 4: // Profile
+        Navigator.pushNamed(context, AppRoutes.guest);
         break;
     }
   }
@@ -140,20 +164,29 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(_isTeacherMode ? 'Teachers' : 'Courses'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        title: Text(
+          _isTeacherMode ? 'Teachers' : 'Courses',
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.tune),
+            icon: const Icon(Icons.tune, color: Colors.blueAccent),
             onPressed: () {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                backgroundColor: Colors.transparent,
+                backgroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
                 builder: (context) => HomeFilterBottomSheetWidget(
                   isTeacherMode: _isTeacherMode,
                   selectedOrderBy: _selectedOrderBy,
@@ -198,23 +231,22 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue[50]!,
-              Colors.white,
-            ],
+            colors: [Color(0xFF4A90E2), Color(0xFFF5F7FA)],
           ),
         ),
         child: Column(
           children: [
-            HomeSearchBarWidget(
-              controller: _searchController,
-            ),
+            HomeSearchBarWidget(controller: _searchController),
             Expanded(
-              child: _filteredItems.isEmpty
+              child: _isInitialLoading
+                  ? const Center(
+                child: CircularProgressIndicator(color: Color(0xFF4A90E2)),
+              )
+                  : _filteredItems.isEmpty
                   ? const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -225,8 +257,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       'No results found',
                       style: TextStyle(
                         color: Colors.grey,
-                        fontSize: 16,
-                        letterSpacing: 0.2,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -236,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(12),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.6,
+                  childAspectRatio: 0.75,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),

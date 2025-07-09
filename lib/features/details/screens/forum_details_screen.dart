@@ -4,6 +4,7 @@ import 'package:tutor/features/forum/widgets/forum_app_bar_widget.dart';
 import 'package:tutor/features/details/widgets/forum_widgets/forum_post_card_details_widget.dart';
 import 'package:tutor/features/details/widgets/forum_widgets/forum_comment_list_widget.dart';
 import 'package:tutor/features/details/widgets/forum_widgets/add_comment_sheet_widget.dart';
+import '../widgets/forum_widgets/add_comment_widget.dart';
 
 class ForumDetailsScreen extends StatefulWidget {
   final String postId;
@@ -48,11 +49,17 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
     setState(() => isLiking = true);
 
     try {
-      final response = await ApiService.likeForumPost(widget.postId);
-      final updatedPost = response['data'] ?? response;
+      // final response = await ApiService.likeForumPost(widget.postId);
+      // final updatedPost = response['data'] ?? response;
+      //
+      // setState(() {
+      //   futurePost = Future.value(updatedPost);
+      //   isLiking = false;
+      // });
+      await ApiService.likeForumPost(widget.postId);
 
       setState(() {
-        futurePost = Future.value(updatedPost);
+        futurePost = ApiService.getForumPostById(widget.postId);
         isLiking = false;
       });
 
@@ -167,41 +174,66 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
           final post = snapshot.data!;
           final feedback = post['feedback'] as List<dynamic>? ?? [];
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PostCardDetailsWidget(
-                  post: post,
-                  isLiking: isLiking,
-                  onLike: _handleLike,
-                  formatDate: formatDate,
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  'Comments (${feedback.length})',
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 160),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PostCardDetailsWidget(
+                          post: post,
+                          isLiking: isLiking,
+                          onLike: _handleLike,
+                          formatDate: formatDate,
+                        ),
+                        const SizedBox(height: 16.0),
+                        Text(
+                          'Comments (${feedback.length})',
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8.0),
+                        CommentListWidget(
+                          feedback: feedback,
+                          formatDate: formatDate,
+                        ),
+                        const SizedBox(height: 80),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8.0),
-                CommentListWidget(
-                  feedback: feedback,
-                  formatDate: formatDate,
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: AddCommentSectionWidget(
+                    controller: commentController,
+                    onSubmit: _submitComment,
+                    isSubmitting: isSubmitting,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: showAddCommentSheet,
-        backgroundColor: Colors.blue[700],
-        child: const Icon(Icons.comment, color: Colors.white),
-      ),
+      // Uncomment to use modal instead of inline:
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: showAddCommentSheet,
+      //   backgroundColor: Colors.blue[700],
+      //   child: const Icon(Icons.comment, color: Colors.white),
+      // ),
     );
   }
 

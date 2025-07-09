@@ -21,33 +21,37 @@ class AddCommentSheetWidget extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Add Comment', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-          const SizedBox(height: 16.0),
+          const Text('Add a Comment',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12.0),
           TextField(
             controller: controller,
-            maxLines: 3,
+            maxLines: 4,
             decoration: const InputDecoration(
-              labelText: 'Comment',
+              hintText: 'Write your thoughts...',
               border: OutlineInputBorder(),
               filled: true,
-              fillColor: Color(0xFFF5F5F5),
+              fillColor: Color(0xFFF0F0F0),
             ),
           ),
-          const SizedBox(height: 16.0),
-          ElevatedButton(
+          const SizedBox(height: 12.0),
+          ElevatedButton.icon(
             onPressed: isSubmitting ? null : onSubmit,
+            icon: isSubmitting
+                ? const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+                : const Icon(Icons.send),
+            label: const Text('Post Comment'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isSubmitting ? Colors.grey : Colors.blue[700],
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              backgroundColor: Colors.blue[700],
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
-            child: isSubmitting
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
-                : const Text('Submit Comment'),
           ),
-          const SizedBox(height: 16.0),
         ],
       ),
     );

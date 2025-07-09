@@ -46,13 +46,14 @@ class LoginScreen extends StatelessWidget {
         //get user role to navigate
         switch(role){
           case 'Admin':
-          Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard);
-          break;
+            Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard);
+            break;
           case 'Tutor':
-          Navigator.pushReplacementNamed(context, AppRoutes.tutorMain);
-          break;
+            Navigator.pushReplacementNamed(context, AppRoutes.tutorMain);
+            break;
           default:
-          Navigator.pushNamed(context, AppRoutes.home);
+            Navigator.pushReplacementNamed(context, AppRoutes.overview);
+            // Navigator.pushNamed(context, AppRoutes.home);
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -64,74 +65,65 @@ class LoginScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
-      body: ValueListenableBuilder<bool>(
-        valueListenable: isLoading,
-        builder: (context, loading, child) {
-          return Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.blue[50]!,
-                      Colors.white,
-                    ],
-                  ),
-                ),
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 40),
-                          const LoginHeaderWidget(),
-                          const SizedBox(height: 40),
-                          LoginFormWidget(
-                            emailController: emailController,
-                            passwordController: passwordController,
-                            onLogin: handleLogin,
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFB0C4DE), Color(0xFFF5F6F5)], // Softer, eye-friendly gradient
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 40),
+                        const LoginHeaderWidget(),
+                        const SizedBox(height: 40),
+                        LoginFormWidget(
+                          emailController: emailController,
+                          passwordController: passwordController,
+                          onLogin: handleLogin,
+                        ),
+                        const SizedBox(height: 24),
+                        LoginFooterWidget(
+                          onSignUp: () {
+                            Navigator.pushNamed(context, AppRoutes.signup);
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.tutor);
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFF4CAF50),
                           ),
-                          const SizedBox(height: 24),
-                          LoginFooterWidget(
-                            onSignUp: () {
-                              Navigator.pushNamed(context, AppRoutes.signup);
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.tutor);
-                            },
-                            child: const Text(
-                              'Become a Tutor? Sign Up as Tutor',
-                              style: TextStyle(color: Color(0xFF007BFF)),
+                          child: const Text(
+                            'Become a Tutor? Sign Up as Tutor',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(height: 40),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   ),
                 ),
-              ),
-              if (loading)
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-            ],
-          );
-        },
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -6,7 +6,7 @@ class LoginHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FadeTransition(
-      opacity: AlwaysStoppedAnimation(1.0), // Fade animation placeholder
+      opacity: const AlwaysStoppedAnimation(1.0),
       child: Column(
         children: [
           Text(
@@ -14,7 +14,7 @@ class LoginHeaderWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: Color(0xFF34495E), // Softer dark gray
               letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
@@ -24,7 +24,7 @@ class LoginHeaderWidget extends StatelessWidget {
             'Log in to continue your learning journey.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16,
-              color: Colors.grey[600],
+              color: Color(0xFF7F8C8D), // Muted gray
               letterSpacing: 0.2,
             ),
             textAlign: TextAlign.center,
