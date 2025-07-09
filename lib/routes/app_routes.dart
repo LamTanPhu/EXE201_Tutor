@@ -20,12 +20,14 @@ import 'package:tutor/features/details/screens/course_detail_screen.dart';
 import 'package:tutor/features/forum/screens/forum_screen.dart';
 import 'package:tutor/features/details/screens/forum_details_screen.dart';
 import 'package:tutor/features/GuestProfile/screens/guest_profile_screen.dart';
+import 'package:tutor/features/home/screens/home_overview_screen.dart';
 
 class AppRoutes {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String verifyOtp = '/verify-otp';
   static const String home = '/home';
+  static const String overview = '/overview';
   static const String aboutUs = '/about-us';
   static const String tutor = '/signup/tutor';
   static const String tutorInfo = '/tutor';
@@ -45,7 +47,7 @@ class AppRoutes {
   static const String chapterDetails = '/chapter-details';
   static const String forum = '/forum';
   static const String forumDetails = '/forum-details';
-  static const String guest = '/guest'; // New route for GuestProfileScreen
+  static const String guest = '/guest';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -58,6 +60,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => VerifyOtpScreen(email: args));
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
+      case overview:
+        return MaterialPageRoute(builder: (_) => const HomeOverviewScreen());
       case aboutUs:
         return MaterialPageRoute(builder: (_) => const AboutUsScreen());
       case tutor:

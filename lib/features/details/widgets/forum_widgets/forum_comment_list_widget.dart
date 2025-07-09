@@ -29,28 +29,43 @@ class CommentListWidget extends StatelessWidget {
 
     return Column(
       children: feedback.map((comment) {
-        return Card(
-          elevation: 2.0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-          margin: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6.0),
+          padding: const EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.blueGrey,
+                child: Icon(Icons.person, size: 16, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.person, size: 16.0, color: Colors.grey),
-                    const SizedBox(width: 4.0),
-                    Text(comment['fullName'] ?? 'Unknown', style: const TextStyle(color: Colors.grey)),
-                    const SizedBox(width: 8.0),
-                    Text(formatDate(comment['createdAt']), style: const TextStyle(fontSize: 12.0, color: Colors.grey)),
+                    Row(
+                      children: [
+                        Text(comment['fullName'] ?? 'Unknown',
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 8),
+                        Text(formatDate(comment['createdAt']),
+                            style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(comment['reply'] ?? '',
+                        style: const TextStyle(fontSize: 14, color: Colors.black87)),
                   ],
                 ),
-                const SizedBox(height: 8.0),
-                Text(comment['reply'] ?? 'No content', style: const TextStyle(fontSize: 14.0, color: Colors.black54)),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       }).toList(),

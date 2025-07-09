@@ -8,37 +8,37 @@ class HomeSearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FadeTransition(
-      opacity: const AlwaysStoppedAnimation(1.0), // Fade animation placeholder
+      opacity: const AlwaysStoppedAnimation(1.0),
       child: Container(
         margin: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: TextField(
           controller: controller,
           decoration: InputDecoration(
-            hintText: 'Find courses by subject, difficulty, duration, etc.',
+            hintText: 'Search tutors or courses...',
             hintStyle: TextStyle(
               color: Colors.grey[500],
-              fontSize: 14,
-              letterSpacing: 0.2,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
-            prefixIcon: const Icon(Icons.search, size: 20, color: Colors.blue),
+            prefixIcon: const Icon(Icons.search, size: 24, color: Color(0xFF4A90E2)),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(25),
               borderSide: BorderSide.none,
             ),
             filled: true,
-            fillColor: Colors.grey[100],
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+            fillColor: Colors.grey[50],
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           ),
         ),
       ),

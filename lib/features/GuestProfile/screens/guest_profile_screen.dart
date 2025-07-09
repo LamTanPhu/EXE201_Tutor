@@ -7,6 +7,7 @@ import 'package:tutor/common/models/account.dart';
 import 'package:tutor/features/home/widgets/home_bottom_nav_bar_widget.dart';
 import 'package:tutor/features/GuestProfile/widgets/avatar_edit_widget.dart';
 import 'package:tutor/features/GuestProfile/widgets/profile_form_widget.dart';
+import 'package:tutor/routes/app_routes.dart';
 
 class GuestProfileScreen extends StatefulWidget {
   const GuestProfileScreen({super.key});
@@ -134,6 +135,28 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
     super.dispose();
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      // Update selected index for visual feedback
+    });
+    switch (index) {
+      case 0: // Tutor mode
+        Navigator.pushReplacementNamed(context, AppRoutes.home, arguments: true);
+        break;
+      case 1: // Course mode
+        Navigator.pushReplacementNamed(context, AppRoutes.home, arguments: false);
+        break;
+      case 2: // Forum
+        Navigator.pushNamed(context, AppRoutes.forum);
+        break;
+      case 3: // Overview
+        Navigator.pushReplacementNamed(context, AppRoutes.overview);
+        break;
+      case 4: // Guest (no additional navigation needed, already here)
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,15 +195,8 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
         ),
       ),
       bottomNavigationBar: HomeBottomNavBarWidget(
-        selectedIndex: 3,
-        onItemTapped: (index) {
-          Navigator.pushReplacementNamed(context, [
-            '/home',
-            '/home',
-            '/forum',
-            '/guest',
-          ][index]);
-        },
+        selectedIndex: 4, // Updated to 4 for Profile
+        onItemTapped: _onItemTapped,
       ),
     );
   }

@@ -13,20 +13,19 @@ class HomeFilterSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
               color: Colors.black87,
-              letterSpacing: 0.2,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           content,
         ],
       ),

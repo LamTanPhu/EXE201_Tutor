@@ -58,13 +58,13 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
       maxChildSize: 0.9,
       minChildSize: 0.5,
       builder: (context, scrollController) => Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue[50]!, Colors.white],
+            colors: [Color(0xFFF5F7FA), Colors.white],
           ),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: SingleChildScrollView(
           controller: scrollController,
@@ -76,17 +76,17 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                 Text(
                   'Filters',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontSize: 24,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
-                    letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 HomeFilterSectionWidget(
                   title: 'Sort By',
                   content: Wrap(
-                    spacing: 8,
+                    spacing: 10,
+                    runSpacing: 10,
                     children: widget.orderByOptions.map((option) => HomeChipWidget(
                       label: option,
                       isSelected: widget.selectedOrderBy == option,
@@ -102,19 +102,20 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                       children: [
                         Text(
                           'Up to ${widget.currentPriceFilter.toInt()} VND',
-                          style: const TextStyle(fontSize: 14, color: Colors.black87),
+                          style: const TextStyle(fontSize: 16, color: Colors.black87),
                         ),
                         SliderTheme(
                           data: SliderTheme.of(context).copyWith(
-                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10), // Larger thumb
-                            overlayShape: const RoundSliderOverlayShape(overlayRadius: 15),
+                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+                            overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
+                            thumbColor: const Color(0xFF4A90E2),
                           ),
                           child: Slider(
                             value: widget.currentPriceFilter,
                             min: 0,
                             max: widget.maxPrice,
                             divisions: 50,
-                            activeColor: Colors.blue,
+                            activeColor: const Color(0xFF4A90E2),
                             inactiveColor: Colors.grey[300],
                             label: widget.currentPriceFilter.round().toString(),
                             onChanged: (value) {
@@ -136,19 +137,20 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                       children: [
                         Text(
                           'Up to ${widget.currentExperienceFilter} years',
-                          style: const TextStyle(fontSize: 14, color: Colors.black87),
+                          style: const TextStyle(fontSize: 16, color: Colors.black87),
                         ),
                         SliderTheme(
                           data: SliderTheme.of(context).copyWith(
-                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-                            overlayShape: const RoundSliderOverlayShape(overlayRadius: 15),
+                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+                            overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
+                            thumbColor: const Color(0xFF4A90E2),
                           ),
                           child: Slider(
                             value: widget.currentExperienceFilter.toDouble(),
                             min: 0,
                             max: widget.maxExperience.toDouble(),
                             divisions: widget.maxExperience,
-                            activeColor: Colors.blue,
+                            activeColor: const Color(0xFF4A90E2),
                             inactiveColor: Colors.grey[300],
                             label: widget.currentExperienceFilter.toString(),
                             onChanged: (value) {
@@ -162,7 +164,7 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                     ),
                   ),
                 ],
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 Row(
                   children: [
                     Expanded(
@@ -170,10 +172,10 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                         onPressed: widget.onClearFilters,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: Colors.blue,
-                          side: const BorderSide(color: Colors.blue),
+                          foregroundColor: const Color(0xFF4A90E2),
+                          side: const BorderSide(color: Color(0xFF4A90E2)),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
@@ -194,10 +196,10 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: const Color(0xFF4A90E2),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
@@ -206,7 +208,6 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
                           ),
                         ),
                       ),

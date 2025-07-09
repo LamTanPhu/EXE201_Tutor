@@ -7,14 +7,16 @@ class LoginFooterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: AlwaysStoppedAnimation(1.0), // Fade animation placeholder
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
       child: TextButton(
         onPressed: onSignUp,
+        style: TextButton.styleFrom(
+          foregroundColor: const Color(0xFF4CAF50),
+        ),
         child: const Text(
           'Don’t have an account? Sign Up',
           style: TextStyle(
-            color: Colors.blue,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
