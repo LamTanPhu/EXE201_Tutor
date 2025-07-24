@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:tutor/common/models/account.dart';
 import 'package:tutor/common/models/account_detail.dart';
-import 'package:tutor/common/models/course_item.dart';
-import 'package:tutor/features/admin/widgets/certification_card.dart';
-import 'package:tutor/features/admin/widgets/course_card.dart';
+import 'package:tutor/features/admin/widgets/account_header.dart';
+import 'package:tutor/features/admin/widgets/cert_tab_widget.dart';
+import 'package:tutor/features/admin/widgets/course_tab_widget.dart';
+import 'package:tutor/features/admin/widgets/infor_tab_widget.dart';
 import 'package:tutor/services/api_service.dart';
+import 'package:tutor/common/theme/app_colors.dart';
 
 class AccountDetailScreen extends StatelessWidget {
-  //Pass accountId to fetch courses
   final String accountId;
+
   const AccountDetailScreen({super.key, required this.accountId});
 
   @override
@@ -16,13 +17,40 @@ class AccountDetailScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text('Account Detail'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: "Infor"),
-              Tab(text: "Certifications"),
-              Tab(text: "Courses"),
+          title: const Text(
+            'Chi tiết tài khoản',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.white,
+            ),
+          ),
+          backgroundColor: AppColors.primary,
+          iconTheme: const IconThemeData(color: AppColors.white),
+          elevation: 0,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.primary, AppColors.lightPrimary],
+              ),
+            ),
+          ),
+          bottom: TabBar(
+            indicatorColor: AppColors.white,
+            indicatorWeight: 3,
+            labelColor: AppColors.white,
+            unselectedLabelColor: AppColors.white.withOpacity(0.7),
+            labelStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+            tabs: const [
+              Tab(text: "Thông tin"),
+              Tab(text: "Chứng chỉ"),
+              Tab(text: "Khóa học"),
             ],
           ),
         ),
@@ -30,35 +58,61 @@ class AccountDetailScreen extends StatelessWidget {
           future: ApiService.getCourseByAccount(accountId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              print(snapshot.data);
+                            print(snapshot.error);
+
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: AppColors.error,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Lỗi: ${snapshot.error}',
+                      style: const TextStyle(color: AppColors.error),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
             } else if (!snapshot.hasData) {
-              return const Center(child: Text('No data available'));
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 64,
+                      color: AppColors.subText,
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Không có dữ liệu',
+                      style: TextStyle(color: AppColors.text),
+                    ),
+                  ],
+                ),
+              );
             }
 
             final detail = snapshot.data!;
-            final account = detail.account;
-
             return Column(
               children: [
-                const SizedBox(height: 16),
-                Center(
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(
-                      account.avatar ??
-                          'https://ui-avatars.com/api/?name=${account.fullName}',
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                AccountHeaderWidget(account: detail.account),
                 Expanded(
                   child: TabBarView(
                     children: [
-                      _buildInfoTab(account),
-                      _buildCertsTab(detail),
-                      _buildCoursesTab(detail),
+                      InfoTabWidget(account: detail.account),
+                      CertsTabWidget(certifications: detail.certifications),
+                      CoursesTabWidget(courses: detail.courses),
                     ],
                   ),
                 ),
@@ -69,49 +123,4 @@ class AccountDetailScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildInfoTab(Account account) => ListView(
-    padding: const EdgeInsets.all(16),
-    children: [
-      _infoRow('Full Name', account.fullName ?? "N/A"),
-      _infoRow('Email', account.email ?? "N/A"),
-      _infoRow('Phone', account.phone ?? "N/A"),
-      _infoRow('Status', account.status ?? "N/A"),
-      _infoRow('Role', account.role ?? "N/A"),
-    ],
-  );
-
-  Widget _buildCertsTab(AccountDetail item) {
-    if (item.certifications.isEmpty) {
-      return const Center(child: Text("No certifications."));
-    }
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children:
-          item.certifications
-              .map((c) => CertificationCard(certification: c))
-              .toList(),
-    );
-  }
-
-  Widget _buildCoursesTab(AccountDetail item) {
-    if (item.courses.isEmpty) {
-      return const Center(child: Text("No courses."));
-    }
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: item.courses.map((c) => CourseCard(course: c)).toList(),
-    );
-  }
-
-  Widget _infoRow(String label, String value) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Row(
-      children: [
-        Text('$label:', style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(width: 8),
-        Expanded(child: Text(value)),
-      ],
-    ),
-  );
 }

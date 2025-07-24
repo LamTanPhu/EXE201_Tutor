@@ -66,22 +66,22 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
         _items = const [
           BottomNavigationBarItem(
             icon: Icon(Icons.show_chart),
-            label: 'Dasboard',
+            label: 'Báo cáo',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.library_books),
-            label: 'Courses',
+            label: 'Các khoá học',
           ),
 
           BottomNavigationBarItem(
             icon: Icon(Icons.manage_accounts),
-            label: 'Tutors',
+            label: 'Gia sư',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.check_circle),
-            label: 'Cert',
+            label: 'Chứng chỉ',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Hồ sơ'),
         ];
         break;
     }

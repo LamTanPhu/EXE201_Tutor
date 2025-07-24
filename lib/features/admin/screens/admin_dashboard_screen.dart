@@ -30,16 +30,22 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Admin Dashboard'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Bảng điều khiển'),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.builder(
           itemCount: items.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.2,),
-          itemBuilder: (context, index){
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1.2,
+          ),
+          itemBuilder: (context, index) {
             final item = items[index];
 
             return Card(
@@ -60,7 +66,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     Text(item['title'] as String),
                   ],
                 ),
-              )
+              ),
             );
           },
         ),
