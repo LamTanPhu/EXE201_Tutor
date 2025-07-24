@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutor/common/models/account.dart';
 import 'package:tutor/common/theme/app_colors.dart';
 import 'package:tutor/common/utils/currency.dart';
+import 'package:tutor/common/widgets/custom_loading.dart';
 import 'package:tutor/features/account/edit_profile.dart';
 import 'package:tutor/features/account/widgets/certification_card_widget.dart';
 import 'package:tutor/features/account/widgets/profile_avatar_widget.dart';
@@ -38,36 +39,37 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
     ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
   }
 
-    void _handleLogout(BuildContext context) {
+  void _handleLogout(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Đăng xuất'),
-        content: const Text('Bạn có chắc muốn đăng xuất?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Hủy'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Đăng xuất'),
+            content: const Text('Bạn có chắc muốn đăng xuất?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Hủy'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  try {
+                    await logout(context); // Call the logout function
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Lỗi khi đăng xuất: $e')),
+                      );
+                    }
+                  }
+                },
+                child: const Text(
+                  'Đăng xuất',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              try {
-                await logout(context); // Call the logout function
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Lỗi khi đăng xuất: $e')),
-                  );
-                }
-              }
-            },
-            child: const Text(
-              'Đăng xuất',
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -107,11 +109,26 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Tài khoản của bạn'),
-        backgroundColor: AppColors.white,
-        foregroundColor: AppColors.primary,
+        backgroundColor: AppColors.background,
+        shadowColor: AppColors.primary.withOpacity(0.2),
+        foregroundColor: AppColors.text,
+        iconTheme: const IconThemeData(color: AppColors.white),
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.primary, AppColors.lightPrimary],
+            ),
+          ),
+        ),
+
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Tài khoản của bạn',
+          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+        ),
         actions: [
           FutureBuilder<Account>(
             future: profile,
@@ -129,12 +146,12 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
         future: profile,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return CustomLoading();
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('No profile data found.'));
+            return const Center(child: Text('Không tìm thấy dữ liệu.'));
           }
 
           final profileData = snapshot.data!;
@@ -170,10 +187,7 @@ class _TutorProfileScreenState extends State<TutorProfileScreen> {
                   ),
                   const SizedBox(height: 24),
                   ListTile(
-                    leading: const Icon(
-                      Icons.logout,
-                      color: Colors.red,
-                    ),
+                    leading: const Icon(Icons.logout, color: Colors.red),
                     title: const Text(
                       'Đăng xuất',
                       style: TextStyle(color: Colors.red),
