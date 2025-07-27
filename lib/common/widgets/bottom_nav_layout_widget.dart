@@ -33,15 +33,15 @@ class _BottomNavLayoutWidgetState extends State<BottomNavLayoutWidget> {
       case Role.tutor:
         _pages = [
           //TutorDashboardScreen(),
-          CertificationScreen(),
+          //CertificationScreen(),
           CourseScreen(),
           TutorProfileScreen(),
         ];
         _items = const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Certifications',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.bookmark),
+          //   label: 'Certifications',
+          // ),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Courses'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ];

@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tutor/common/models/course.dart';
-import 'package:tutor/common/models/course_item.dart';
-import 'package:tutor/common/utils/currency.dart';
-import 'package:tutor/features/admin/widgets/course_card.dart';
 import 'package:tutor/common/theme/app_colors.dart';
-import 'package:tutor/features/admin/widgets/course_detail_dialog.dart';
+import 'package:tutor/common/utils/currency.dart';
 
 class CoursesTabWidget extends StatelessWidget {
   final List<Course> courses;
@@ -40,7 +38,7 @@ class CoursesTabWidget extends StatelessWidget {
     );
   }
 
-Widget _buildCourseCard(Course course, BuildContext context) {
+  Widget _buildCourseCard(Course course, BuildContext context) {
     return Card(
       color: AppColors.card,
       elevation: 4,
@@ -89,9 +87,9 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: course.image.isNotEmpty
+                        child: course.image?.isNotEmpty == true
                             ? CachedNetworkImage(
-                                imageUrl: course.image,
+                                imageUrl: course.image!,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: AppColors.background,
@@ -129,7 +127,7 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            course.name,
+                            course.name ?? 'Không có tên',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -162,30 +160,29 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, 
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: course.isActive == true
-                                      ? Colors.green.withOpacity(0.1)
-                                      : AppColors.error.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  course.isActive == true 
-                                      ? 'Hoạt động' 
-                                      : 'Không hoạt động',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: course.isActive == true
-                                        ? Colors.green[700]
-                                        : AppColors.error,
+                              if (course.isActive != null)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, 
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: course.isActive!
+                                        ? Colors.green.withOpacity(0.1)
+                                        : AppColors.error.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    course.isActive! ? 'Hoạt động' : 'Không hoạt động',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: course.isActive!
+                                          ? Colors.green[700]
+                                          : AppColors.error,
+                                    ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         ],
@@ -198,7 +195,9 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                 
                 // Mô tả khóa học
                 Text(
-                  course.description,
+                  course.description?.isNotEmpty == true
+                      ? course.description!
+                      : 'Không có mô tả',
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.subText,
@@ -211,29 +210,48 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                 const SizedBox(height: 12),
                 
                 // Thông tin thêm
-                Row(
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 8,
                   children: [
-                    if (course.createdAt != null) ...[
-                      Icon(
-                        Icons.calendar_today,
-                        size: 14,
-                        color: AppColors.subText,
+                    if (course.createdBy != null)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.person,
+                            size: 14,
+                            color: AppColors.subText,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Tạo bởi: ${course.createdBy}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.subText,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Tạo ngày: ${_formatDate(course.createdAt!)}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.subText,
-                        ),
+                    if (course.createdAt != null)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.calendar_today,
+                            size: 14,
+                            color: AppColors.subText,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Tạo ngày: ${_formatDate(course.createdAt!)}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.subText,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                    const Spacer(),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14,
-                      color: AppColors.primary,
-                    ),
                   ],
                 ),
               ],
@@ -286,9 +304,9 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: course.image.isNotEmpty
+                        child: course.image?.isNotEmpty == true
                             ? CachedNetworkImage(
-                                imageUrl: course.image,
+                                imageUrl: course.image!,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: AppColors.background,
@@ -322,7 +340,7 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            course.name,
+                            course.name ?? 'Không có tên',
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -331,31 +349,31 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8, 
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: course.isActive == true
-                                  ? Colors.green.withOpacity(0.1)
-                                  : AppColors.error.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              course.isActive == true 
-                                  ? 'Hoạt động' 
-                                  : 'Không hoạt động',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: course.isActive == true
-                                    ? Colors.green[700]
-                                    : AppColors.error,
+                          if (course.isActive != null) ...[
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8, 
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: course.isActive!
+                                    ? Colors.green.withOpacity(0.1)
+                                    : AppColors.error.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                course.isActive! ? 'Hoạt động' : 'Không hoạt động',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: course.isActive!
+                                      ? Colors.green[700]
+                                      : AppColors.error,
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ),
@@ -370,8 +388,10 @@ Widget _buildCourseCard(Course course, BuildContext context) {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildDetailRowDialog('Mô tả', course.description),
-                        _buildDetailRowDialog('Giá', '${CurrencyUtils.formatVND(course.price)} VNĐ'),
+                        _buildDetailRowDialog('Mô tả', course.description?.isNotEmpty == true ? course.description! : 'Không có mô tả'),
+                        _buildDetailRowDialog('Giá', CurrencyUtils.formatVND(course.price)),
+                        if (course.createdBy != null)
+                          _buildDetailRowDialog('Tạo bởi', course.createdBy!),
                         if (course.createdAt != null)
                           _buildDetailRowDialog('Ngày tạo', _formatDate(course.createdAt!)),
                       ],
@@ -405,9 +425,11 @@ Widget _buildCourseCard(Course course, BuildContext context) {
       ),
     );
   }
+
   String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+    return DateFormat('dd/MM/yyyy').format(date);
   }
+
   Widget _buildDetailRowDialog(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),

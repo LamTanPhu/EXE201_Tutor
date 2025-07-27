@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:tutor/common/models/tutor.dart';
 import 'package:tutor/common/widgets/custom_loading.dart';
+import 'package:tutor/common/widgets/custom_search_bar.dart';
 import 'package:tutor/features/admin/screens/account_detail_screen.dart';
 import 'package:tutor/services/api_service.dart';
 import 'package:tutor/common/theme/app_colors.dart';
@@ -10,10 +11,13 @@ class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({super.key});
 
   @override
-  State<AccountManagementScreen> createState() => _AccountManagementScreenState();
+  State<AccountManagementScreen> createState() =>
+      _AccountManagementScreenState();
 }
 
 class _AccountManagementScreenState extends State<AccountManagementScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
   String _searchQuery = '';
   late Future<List<Tutor>> _tutorsFuture;
 
@@ -27,6 +31,14 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     setState(() {
       _tutorsFuture = ApiService.getTutors();
     });
+  }
+
+  void _handleClearSearch() {
+    setState(() {
+      _searchController.clear();
+      _searchQuery = '';
+    });
+    // Load lại danh sách đầy đủ
   }
 
   List<Tutor> _filterTutors(List<Tutor> tutors) {
@@ -45,11 +57,8 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text(
-          'Danh sách gia sư', 
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.white,
-          ),
+          'Danh sách gia sư',
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.white),
         ),
         backgroundColor: AppColors.primary,
         iconTheme: const IconThemeData(color: AppColors.white),
@@ -75,40 +84,15 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
       body: Column(
         children: [
           // Thanh tìm kiếm
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.primary, AppColors.lightPrimary],
-              ),
-            ),
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: TextField(
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              style: const TextStyle(color: AppColors.text),
-              decoration: InputDecoration(
-                hintText: 'Tìm kiếm gia sư theo tên hoặc email...',
-                hintStyle: const TextStyle(color: AppColors.subText),
-                prefixIcon: const Icon(Icons.search, color: AppColors.primary),
-                filled: true,
-                fillColor: AppColors.white,
-                border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(25)),
-                  borderSide: BorderSide(color: AppColors.accent, width: 2),
-                ),
-              ),
-            ),
+          CustomSearchBar(
+            hintText: 'Tìm kiếm gia sư theo tên hoặc email...',
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+            onClear: _handleClearSearch,
           ),
-          
           // Danh sách gia sư
           Expanded(
             child: FutureBuilder<List<Tutor>>(
@@ -121,10 +105,14 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline, size: 64, color: AppColors.error),
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: AppColors.error,
+                        ),
                         const SizedBox(height: 16),
                         Text(
-                          'Lỗi: ${snapshot.error}', 
+                          'Lỗi: ${snapshot.error}',
                           style: const TextStyle(color: AppColors.error),
                           textAlign: TextAlign.center,
                         ),
@@ -145,14 +133,15 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.person_off, size: 64, color: AppColors.subText),
+                        Icon(
+                          Icons.person_off,
+                          size: 64,
+                          color: AppColors.subText,
+                        ),
                         SizedBox(height: 16),
                         Text(
-                          'Không tìm thấy gia sư nào', 
-                          style: TextStyle(
-                            color: AppColors.text,
-                            fontSize: 16,
-                          ),
+                          'Không tìm thấy gia sư nào',
+                          style: TextStyle(color: AppColors.text, fontSize: 16),
                         ),
                       ],
                     ),
@@ -160,20 +149,21 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                 }
 
                 final filteredTutors = _filterTutors(snapshot.data!);
-                
+
                 if (filteredTutors.isEmpty) {
                   return const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off, size: 64, color: AppColors.subText),
+                        Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: AppColors.subText,
+                        ),
                         SizedBox(height: 16),
                         Text(
                           'Không tìm thấy gia sư phù hợp',
-                          style: TextStyle(
-                            color: AppColors.text,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: AppColors.text, fontSize: 16),
                         ),
                       ],
                     ),
@@ -228,42 +218,45 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                 ),
               ],
             ),
-            child: tutor.account.avatar != null && tutor.account.avatar!.isNotEmpty
-                ? CircleAvatar(
-                    radius: 28,
-                    backgroundColor: AppColors.background,
-                    child: ClipOval(
-                      child: CachedNetworkImage(
-                        imageUrl: tutor.account.avatar!,
-                        width: 56,
-                        height: 56,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => const CircularProgressIndicator(
+            child:
+                tutor.account.avatar != null && tutor.account.avatar!.isNotEmpty
+                    ? CircleAvatar(
+                      radius: 28,
+                      backgroundColor: AppColors.background,
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: tutor.account.avatar!,
+                          width: 56,
+                          height: 56,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              (context, url) => const CircularProgressIndicator(
+                                color: AppColors.primary,
+                                strokeWidth: 2,
+                              ),
+                          errorWidget:
+                              (context, url, error) => const Icon(
+                                Icons.person,
+                                color: AppColors.subText,
+                                size: 32,
+                              ),
+                        ),
+                      ),
+                    )
+                    : CircleAvatar(
+                      radius: 28,
+                      backgroundColor: AppColors.lightPrimary,
+                      child: Text(
+                        (tutor.account.fullName?.isNotEmpty == true
+                            ? tutor.account.fullName![0].toUpperCase()
+                            : '?'),
+                        style: const TextStyle(
                           color: AppColors.primary,
-                          strokeWidth: 2,
-                        ),
-                        errorWidget: (context, url, error) => const Icon(
-                          Icons.person,
-                          color: AppColors.subText,
-                          size: 32,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
                         ),
                       ),
                     ),
-                  )
-                : CircleAvatar(
-                    radius: 28,
-                    backgroundColor: AppColors.lightPrimary,
-                    child: Text(
-                      (tutor.account.fullName?.isNotEmpty == true 
-                          ? tutor.account.fullName![0].toUpperCase()
-                          : '?'),
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
           ),
           title: Text(
             tutor.account.fullName ?? 'Chưa có tên',
@@ -279,20 +272,21 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
               const SizedBox(height: 4),
               Text(
                 tutor.account.email ?? 'Chưa có email',
-                style: const TextStyle(
-                  color: AppColors.subText, 
-                  fontSize: 13,
-                ),
+                style: const TextStyle(color: AppColors.subText, fontSize: 13),
               ),
               const SizedBox(height: 8),
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: tutor.account.status == 'Active'
-                          ? Colors.green.withOpacity(0.1)
-                          : AppColors.error.withOpacity(0.1),
+                      color:
+                          tutor.account.status == 'Active'
+                              ? Colors.green.withOpacity(0.1)
+                              : AppColors.error.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -303,18 +297,22 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                           height: 8,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: tutor.account.status == 'Active'
-                                ? Colors.green
-                                : AppColors.error,
+                            color:
+                                tutor.account.status == 'Active'
+                                    ? Colors.green
+                                    : AppColors.error,
                           ),
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          tutor.account.status == 'Active' ? 'Hoạt động' : 'Không hoạt động',
+                          tutor.account.status == 'Active'
+                              ? 'Hoạt động'
+                              : 'Không hoạt động',
                           style: TextStyle(
-                            color: tutor.account.status == 'Active'
-                                ? Colors.green[700]
-                                : AppColors.error,
+                            color:
+                                tutor.account.status == 'Active'
+                                    ? Colors.green[700]
+                                    : AppColors.error,
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
@@ -335,7 +333,9 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AccountDetailScreen(accountId: tutor.account.id),
+                builder:
+                    (context) =>
+                        AccountDetailScreen(accountId: tutor.account.id),
               ),
             );
           },

@@ -23,7 +23,7 @@ class SignupFooterWidget extends StatelessWidget {
           TextButton(
             onPressed: onLogin,
             child: const Text(
-              'Already have an account? Login',
+              'Đã các tài khoản? Đăng nhập',
               style: TextStyle(
                 color: Colors.blue,
                 fontSize: 16,

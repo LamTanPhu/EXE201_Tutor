@@ -78,7 +78,7 @@ class CourseCardWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      courseItem.course.name,
+                      courseItem.course.name ?? 'Không tìm thấy tên khoá học',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

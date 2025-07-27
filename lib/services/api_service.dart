@@ -694,14 +694,10 @@ class ApiService {
         headers: _getHeaders(),
       );
 
-      print('Account Details API Response Status: ${response.statusCode}');
-      print('Account Details API Response Body: ${response.body}');
-
       if (response.statusCode == 200) {
         try {
           return jsonDecode(response.body) as Map<String, dynamic>;
         } catch (e) {
-          print('JSON Parse Error: $e');
           throw Exception(
             'Invalid response format from server - ${response.body}',
           );
@@ -712,7 +708,6 @@ class ApiService {
         );
       }
     } catch (e) {
-      print('Account Details API Error: $e');
       rethrow;
     }
   }
@@ -1045,9 +1040,10 @@ class ApiService {
           'price': price,
         }),
       );
-
       if (response.statusCode == 201) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = jsonData['data']['course'];
+
         return Course.fromJson(data);
       } else {
         final errorData = jsonDecode(response.body) as Map<String, dynamic>;
@@ -1693,7 +1689,7 @@ class ApiService {
   }
 
   //UPDATE method: Update course
-  static Future<CourseItem> updateCourse(
+  static Future<Course> updateCourse(
     String courseId,
     String? name,
     String? description,
@@ -1714,10 +1710,11 @@ class ApiService {
         headers: headers,
         body: jsonEncode(courseData),
       );
+
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        final data = jsonData['data'];
-        return CourseItem.fromJson(data);
+        final data = jsonData['data']['course'];
+        return Course.fromJson(data);
       } else if (response.statusCode == 404) {
         throw Exception({response.body});
       } else if (response.statusCode == 500) {
@@ -1725,6 +1722,33 @@ class ApiService {
       } else {
         throw Exception(
           'Failed to update course: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //GET: Get certification by tutor
+  static Future<List<Certification>> getTutorCertifications() async {
+    try {
+      //get auth headers
+      final header = await _getAuthHeaders();
+      //call api
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/tutor/certifications'),
+        headers: header,
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        return jsonData.map((e) => Certification.fromJson(e)).toList();
+      } else if (response.statusCode == 404) {
+        throw Exception({response.body});
+      } else if (response.statusCode == 500) {
+        throw Exception('Internal server error - ${response.body}');
+      } else {
+        throw Exception(
+          'Failed to fetch account profile: ${response.statusCode} - ${response.body}',
         );
       }
     } catch (e) {

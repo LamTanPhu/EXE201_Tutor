@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tutor/common/widgets/custom_app_bar.dart';
+import 'package:tutor/common/widgets/input_field.dart';
 import 'package:tutor/routes/app_routes.dart';
 import 'package:tutor/services/api_service.dart';
 import 'package:tutor/features/authentication/widgets/signup_widgets/signup_header_widget.dart';
-import 'package:tutor/features/tutor/widgets/tutor_signup_form_widget.dart';
 import 'package:tutor/features/authentication/widgets/signup_widgets/signup_footer_widget.dart';
 
 class RegisterTutorScreen extends StatefulWidget {
@@ -17,7 +18,8 @@ class _RegisterTutorScreenState extends State<RegisterTutorScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   bool _showErrors = false;
   bool _showManualOtpLink = false;
   bool _isPasswordVisible = false;
@@ -40,7 +42,9 @@ class _RegisterTutorScreenState extends State<RegisterTutorScreen> {
         passwordController.text.length < 6 ||
         passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields with valid values')),
+        const SnackBar(
+          content: Text('Vui lòng nhập đầy đủ và hợp lệ các trường thông tin'),
+        ),
       );
       setState(() {
         _isLoading = false;
@@ -56,36 +60,35 @@ class _RegisterTutorScreenState extends State<RegisterTutorScreen> {
         phoneController.text.trim(),
       );
 
-      if (response['message']?.toLowerCase().contains('successfully') ?? false) {
+      if (response['message']?.toLowerCase().contains('successfully') ??
+          false) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Registration successful! Please check your email for OTP.'),
+            content: Text(
+              'Đăng ký thành công! Vui lòng kiểm tra email để lấy mã OTP.',
+            ),
           ),
         );
-        bool navigated = false;
-        try {
-          final result = await Navigator.pushNamed(
-            context,
-            AppRoutes.verifyOtp,
-            arguments: emailController.text.trim(),
-          );
-          navigated = result != null;
-        } catch (e) {
-          print('Navigation Error: $e');
-        }
-        if (!navigated) {
+        final result = await Navigator.pushNamed(
+          context,
+          AppRoutes.verifyOtp,
+          arguments: emailController.text.trim(),
+        );
+        if (result == null) {
           setState(() {
             _showManualOtpLink = true;
           });
         }
       } else {
-        throw Exception('Unexpected response: ${response['message'] ?? 'No message'}');
+        throw Exception(
+          'Phản hồi không mong đợi: ${response['message'] ?? 'Không có thông điệp'}',
+        );
       }
     } catch (e) {
-      print('Tutor Signup Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      print('Lỗi đăng ký Tutor: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
     } finally {
       setState(() {
         _isLoading = false;
@@ -96,12 +99,7 @@ class _RegisterTutorScreenState extends State<RegisterTutorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register as Tutor'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
+      appBar: CustomAppBar(title: 'Đăng ký làm gia sư'),
       body: Stack(
         children: [
           Container(
@@ -117,43 +115,77 @@ class _RegisterTutorScreenState extends State<RegisterTutorScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 40),
-                      const SignupHeaderWidget(), // Reuse from SignupScreen
+                      const SignupHeaderWidget(),
                       const SizedBox(height: 40),
-                      TutorSignupFormWidget(
-                        nameController: nameController,
-                        emailController: emailController,
-                        passwordController: passwordController,
-                        phoneController: phoneController,
-                        confirmPasswordController: confirmPasswordController,
-                        showErrors: _showErrors,
-                        isPasswordVisible: _isPasswordVisible,
-                        onTogglePasswordVisibility: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
-                        onChanged: () {
-                          if (_showErrors) {
-                            setState(() {});
-                          }
-                        },
-                        onSignup: handleRegisterTutor,
+                      InputFieldWidget(
+                        controller: nameController,
+                        label: 'Họ và tên',
+                        validator:
+                            (val) => InputValidators.required(val, 'họ và tên'),
                       ),
-                      const SizedBox(height: 24),
+                      InputFieldWidget(
+                        controller: emailController,
+                        label: 'Email',
+                        keyboardType: TextInputType.emailAddress,
+                        validator: InputValidators.email,
+                      ),
+                      InputFieldWidget(
+                        controller: phoneController,
+                        label: 'Số điện thoại',
+                        keyboardType: TextInputType.phone,
+                        validator: InputValidators.phone,
+                      ),
+                      InputFieldWidget(
+                        controller: passwordController,
+                        label: 'Mật khẩu',
+                        obscureText: true,
+                        validator:
+                            (val) =>
+                                InputValidators.minLength(val, 6, 'mật khẩu'),
+                      ),
+                      InputFieldWidget(
+                        controller: confirmPasswordController,
+                        label: 'Xác nhận mật khẩu',
+                        obscureText: true,
+                        validator: (val) {
+                          if (val != passwordController.text)
+                            return 'Mật khẩu không khớp';
+                          return InputValidators.required(
+                            val,
+                            'xác nhận mật khẩu',
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: handleRegisterTutor,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Đăng ký',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                       SignupFooterWidget(
                         showManualOtpLink: _showManualOtpLink,
                         email: emailController.text.trim(),
-                        onLogin: () {
-                          Navigator.pop(context);
-                        },
+                        onLogin: () => Navigator.pop(context),
                         onManualOtp: () {
                           if (emailController.text.trim().isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Please enter an email to verify OTP')),
+                              const SnackBar(
+                                content: Text(
+                                  'Vui lòng nhập email để xác thực OTP',
+                                ),
+                              ),
                             );
                             return;
                           }
@@ -171,8 +203,7 @@ class _RegisterTutorScreenState extends State<RegisterTutorScreen> {
               ),
             ),
           ),
-          if (_isLoading)
-            const Center(child: CircularProgressIndicator()),
+          if (_isLoading) const Center(child: CircularProgressIndicator()),
         ],
       ),
     );
