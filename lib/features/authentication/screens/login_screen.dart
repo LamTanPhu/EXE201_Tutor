@@ -31,11 +31,10 @@ class LoginScreen extends StatelessWidget {
         final accountId = user['id'];
 
         await SharedPrefs.saveToken(token); //save token
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('role', role); // save role
-        await prefs.setString('fullName', fullName); // save fullName
-        //save accountId
-        await prefs.setString('accountId', accountId);
+        await SharedPrefs.saveAccountId(accountId);
+        await SharedPrefs.saveFullName(fullName);
+        await SharedPrefs.saveRole(role);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tutor/common/models/statistic_data.dart';
+import 'package:tutor/common/theme/app_colors.dart';
 import 'package:tutor/common/widgets/custom_loading.dart';
 import 'package:tutor/common/widgets/dashboard_card.dart';
 import 'package:tutor/features/admin/widgets/revenue_widget.dart';
 import 'package:tutor/features/admin/widgets/top_account_widget.dart';
 import 'package:tutor/services/api_service.dart';
+import 'package:tutor/common/widgets/custom_app_bar.dart'; // Import CustomAppBar
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -35,6 +37,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
     final currentYear = DateTime.now().year;
 
     return Scaffold(
+      appBar: CustomAppBar(
+        title: 'Báo cáo & Thống kê',
+        showGradient: true,
+        automaticallyImplyLeading: false,
+        titleStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+        backgroundColor: AppColors.background,
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -50,37 +63,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
         ),
         child: CustomScrollView(
           slivers: [
-            // Custom App Bar with gradient
-            SliverAppBar(
-              expandedHeight: 120.0,
-              floating: false,
-              pinned: true,
-              automaticallyImplyLeading: false,
-              flexibleSpace: FlexibleSpaceBar(
-                title: const Text(
-                  'Báo cáo & Thống kê',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                background: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF1976D2),
-                        Color(0xFF42A5F5),
-                        Color(0xFF90CAF9),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // Content
             SliverToBoxAdapter(
               child: FutureBuilder<DashboardCombinedData>(
                 future: fetchDashboardData(),

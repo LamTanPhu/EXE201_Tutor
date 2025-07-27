@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tutor/common/theme/app_colors.dart';
+import 'package:tutor/common/utils/snackbar_helper.dart';
+import 'package:tutor/common/widgets/custom_app_bar.dart';
 import 'package:tutor/services/supabase_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -51,30 +54,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
     if (pickedFile != null) {
       final file = File(pickedFile.path);
-      final uploadedUrl = await SupabaseService.uploadImage(file);
-
-      //ìf the upload is successful, update the avatar URL
-      if (uploadedUrl != null) {
-        setState(() {
-          _avatarUrl = uploadedUrl;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to upload image')),
+      try {
+        final uploadedUrl = await SupabaseService.uploadImage(
+          file,
+          oldFilePath: _avatarUrl,
         );
+
+        if (uploadedUrl != null) {
+          setState(() {
+            _avatarUrl = uploadedUrl;
+          });
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(content: Text('Upload ảnh thành công')),
+          // );
+          SnackbarHelper.showSuccess(context, "Tải ảnh thành công");
+        }
+      } catch (e) {
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Lỗi upload ảnh: $e')),
+        // );
+        SnackbarHelper.showError(context, "Lỗi tải ảnh: $e");
+        print(e);
       }
-    }else{
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No image selected')),
-      );
+    } else {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text('Chưa chọn ảnh nào')),
+      // );
+      SnackbarHelper.showWarning(context, "Bạn chưa chọn ảnh nào");
     }
   }
 
-    ImageProvider _buildAvatarImage() {
+  ImageProvider _buildAvatarImage() {
     if (_avatarUrl == null || _avatarUrl!.isEmpty) {
-      return const AssetImage('assets/avatar.svg');
+      return const AssetImage('assets/cat.png');
     } else if (_avatarUrl!.startsWith('http')) {
       return NetworkImage(_avatarUrl!);
     } else {
@@ -82,12 +97,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Profile'),
+      // appBar: AppBar(
+      //   title: const Text('Chỉnh sửa hồ sơ'),
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.save),
+      //       onPressed: () {
+      //         if (_formKey.currentState!.validate()) {
+      //           widget.onSave(
+      //             _fullNameController.text,
+      //             _emailController.text,
+      //             _phoneController.text,
+      //             _avatarUrl ?? '',
+      //           );
+      //           Navigator.pop(context);
+      //         }
+      //       },
+      //     ),
+      //   ],
+      // ),
+      appBar: CustomAppBar(
+        title: 'Chỉnh sửa hồ sơ',
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -115,9 +148,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Stack(
                   children: [
                     CircleAvatar(
-                      radius: 40,
+                      radius: 60,
                       backgroundImage: _buildAvatarImage(),
-                      backgroundColor: Colors.grey.shade200,
+                      backgroundColor: AppColors.lightPrimary,
                     ),
                     Positioned(
                       bottom: 0,

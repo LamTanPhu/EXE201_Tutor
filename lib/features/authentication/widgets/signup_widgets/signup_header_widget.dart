@@ -10,7 +10,7 @@ class SignupHeaderWidget extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Join Us!',
+            'Tham gia với chúng tôi!',
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -21,7 +21,7 @@ class SignupHeaderWidget extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Create an account to start learning.',
+            'Hãy tạo một tài khoản để bắt đầu giảng dạy.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16,
               color: Colors.grey[600],
