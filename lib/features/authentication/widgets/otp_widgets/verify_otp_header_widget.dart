@@ -10,7 +10,7 @@ class VerifyOtpHeaderWidget extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Verify Your OTP',
+            'Xác thực OTP của bạn',
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -21,7 +21,7 @@ class VerifyOtpHeaderWidget extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Enter the OTP sent to your email.',
+            'Nhập OTP được gửi đến email của bạn.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16,
               color: Colors.grey[600],

@@ -38,7 +38,7 @@ class LoginScreen extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Login successful! Welcome, $fullName',
+              'Đăng nhập thành công! Chào mừng, $fullName',
             ),
           ),
         );
@@ -55,7 +55,7 @@ class LoginScreen extends StatelessWidget {
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text('Lỗi: $e')),
         );
       } finally {
         isLoading.value = false;
@@ -69,7 +69,7 @@ class LoginScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF4A90E2), Color(0xFFF5F7FA)], // Updated to bluish gradient
+            colors: [Color(0xFF4A90E2), Color(0xFFF5F7FA)],
           ),
         ),
         child: SafeArea(
@@ -103,10 +103,10 @@ class LoginScreen extends StatelessWidget {
                             Navigator.pushNamed(context, AppRoutes.tutor);
                           },
                           style: TextButton.styleFrom(
-                            foregroundColor: const Color(0xFF4A90E2), // Updated to blue
+                            foregroundColor: const Color(0xFF4A90E2),
                           ),
                           child: const Text(
-                            'Become a Tutor? Sign Up as Tutor',
+                            'Bạn muốn trở thành gia sư? Đăng ký ngay!',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,

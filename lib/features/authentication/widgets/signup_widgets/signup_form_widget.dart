@@ -55,7 +55,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> with SingleTickerPr
           TextField(
             controller: widget.nameController,
             decoration: InputDecoration(
-              labelText: 'Full Name',
+              labelText: 'Họ và tên',
               prefixIcon: const Icon(Icons.person_outline, color: Colors.blue),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -68,7 +68,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> with SingleTickerPr
                 vertical: 18,
               ),
               errorText: widget.showErrors && widget.nameController.text.trim().isEmpty
-                  ? 'Full name is required'
+                  ? 'Họ và tên là bắt buộc'
                   : null,
             ),
             onChanged: (_) => widget.onChanged(),
@@ -90,7 +90,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> with SingleTickerPr
                 vertical: 18,
               ),
               errorText: widget.showErrors && widget.emailController.text.trim().isEmpty
-                  ? 'Email is required'
+                  ? 'Email là bắt buộc'
                   : null,
             ),
             keyboardType: TextInputType.emailAddress,
@@ -100,7 +100,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> with SingleTickerPr
           TextField(
             controller: widget.passwordController,
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: 'Mật khẩu',
               prefixIcon: const Icon(Icons.lock_outline, color: Colors.blue),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -113,7 +113,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> with SingleTickerPr
                 vertical: 18,
               ),
               errorText: widget.showErrors && widget.passwordController.text.trim().isEmpty
-                  ? 'Password is required'
+                  ? 'Mật khẩu là bắt buộc'
                   : null,
             ),
             obscureText: true,
@@ -123,7 +123,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> with SingleTickerPr
           TextField(
             controller: widget.phoneController,
             decoration: InputDecoration(
-              labelText: 'Phone Number',
+              labelText: 'Số điện thoại',
               prefixIcon: const Icon(Icons.phone_outlined, color: Colors.blue),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -136,7 +136,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> with SingleTickerPr
                 vertical: 18,
               ),
               errorText: widget.showErrors && widget.phoneController.text.trim().isEmpty
-                  ? 'Phone number is required'
+                  ? 'Số điện thoại là bắt buộc'
                   : null,
             ),
             keyboardType: TextInputType.phone,
@@ -175,7 +175,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> with SingleTickerPr
                 onTap: () {}, // Handled by GestureDetector
                 child: const Center(
                   child: Text(
-                    'Sign Up',
+                    'Đăng ký',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

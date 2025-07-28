@@ -10,7 +10,7 @@ class ChapterDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chapter Details'),
+        title: const Text('Chi tiết chương'),
         centerTitle: true,
         elevation: 2,
         backgroundColor: Theme.of(context).primaryColor,
@@ -35,7 +35,7 @@ class ChapterDetailsScreen extends StatelessWidget {
                 children: [
                   const Icon(Icons.error_outline, color: Colors.red, size: 48),
                   const SizedBox(height: 8),
-                  Text('Error: ${snapshot.error}', style: Theme.of(context).textTheme.bodyMedium),
+                  Text('Lỗi: ${snapshot.error}', style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             );
@@ -46,7 +46,7 @@ class ChapterDetailsScreen extends StatelessWidget {
                 children: [
                   const Icon(Icons.info_outline, size: 48),
                   const SizedBox(height: 8),
-                  Text('No content available', style: Theme.of(context).textTheme.bodyMedium),
+                  Text('Không có nội dung', style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             );
@@ -70,7 +70,7 @@ class ChapterDetailsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Chapter Content',
+                          'Nội dung chương',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).primaryColor,
@@ -78,7 +78,7 @@ class ChapterDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          content['contentDescription'] ?? 'No description available',
+                          content['contentDescription'] ?? 'Không có mô tả',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             height: 1.5,
                           ),
@@ -100,9 +100,9 @@ class ChapterDetailsScreen extends StatelessWidget {
                           Icons.info,
                           color: Theme.of(context).primaryColor,
                         ),
-                        title: const Text('Status'),
+                        title: const Text('Trạng thái'),
                         subtitle: Text(
-                          content['isActive'] == true ? 'Active' : 'Inactive',
+                          content['isActive'] == true ? 'Hoạt động' : 'Không hoạt động',
                           style: TextStyle(
                             color: content['isActive'] == true ? Colors.green : Colors.red,
                           ),
@@ -114,11 +114,11 @@ class ChapterDetailsScreen extends StatelessWidget {
                           Icons.calendar_today,
                           color: Theme.of(context).primaryColor,
                         ),
-                        title: const Text('Created At'),
+                        title: const Text('Ngày tạo'),
                         subtitle: Text(
                           content['createdAt'] != null
                               ? content['createdAt'].toString().substring(0, 10)
-                              : 'N/A',
+                              : 'Không có thông tin',
                         ),
                       ),
                       const Divider(height: 1),
@@ -127,9 +127,9 @@ class ChapterDetailsScreen extends StatelessWidget {
                           Icons.person,
                           color: Theme.of(context).primaryColor,
                         ),
-                        title: const Text('Created By'),
+                        title: const Text('Người tạo'),
                         subtitle: Text(
-                          content['createdBy']?['_id'] ?? 'Unknown',
+                          content['createdBy']?['_id'] ?? 'Không xác định',
                         ),
                       ),
                     ],
@@ -153,7 +153,7 @@ class ChapterDetailsScreen extends StatelessWidget {
                           foregroundColor: Colors.white,
                         ),
                         child: const Text(
-                          'Previous Chapter',
+                          'Chương trước',
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
@@ -174,7 +174,7 @@ class ChapterDetailsScreen extends StatelessWidget {
                           foregroundColor: Colors.white,
                         ),
                         child: const Text(
-                          'Next Chapter',
+                          'Chương tiếp theo',
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),

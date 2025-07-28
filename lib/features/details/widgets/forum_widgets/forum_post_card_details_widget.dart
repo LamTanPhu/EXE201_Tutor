@@ -47,12 +47,12 @@ class PostCardDetailsWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(post['title'] ?? 'No title',
+                  Text(post['title'] ?? 'Không có tiêu đề',
                       style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4.0),
                   Row(
                     children: [
-                      Text("u/${post['fullName'] ?? 'unknown'}",
+                      Text("u/${post['fullName'] ?? 'không xác định'}",
                           style: const TextStyle(fontSize: 12.0, color: Colors.grey)),
                       const SizedBox(width: 8.0),
                       Text(formatDate(post['createdAt']),
@@ -60,7 +60,7 @@ class PostCardDetailsWidget extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8.0),
-                  Text(post['content'] ?? 'No content',
+                  Text(post['content'] ?? 'Không có nội dung',
                       style: const TextStyle(fontSize: 15.0, color: Colors.black87)),
                 ],
               ),

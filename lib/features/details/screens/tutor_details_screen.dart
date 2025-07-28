@@ -57,7 +57,7 @@ class _TutorProfileScreenState extends State<TutorDetailsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tutor Profile'),
+        title: const Text('Hồ sơ gia sư'),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -80,13 +80,13 @@ class _TutorProfileScreenState extends State<TutorDetailsScreen>
               return Center(child: Text(_errorMessage!));
             }
             if (_teacherData == null) {
-              return const Center(child: Text('No data available'));
+              return const Center(child: Text('Không có dữ liệu'));
             }
             return Column(
               children: [
                 TutorHeroWidget(
-                  fullName: _teacherData?['account']['fullName'] ?? 'Unknown Tutor',
-                  role: _teacherData?['account']['role'] ?? 'Tutor',
+                  fullName: _teacherData?['account']['fullName'] ?? 'Gia sư không xác định',
+                  role: _teacherData?['account']['role'] ?? 'Gia sư',
                 ),
                 Container(
                   color: Colors.white,
@@ -99,10 +99,10 @@ class _TutorProfileScreenState extends State<TutorDetailsScreen>
                     indicatorWeight: 3.0,
                     labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
                     tabs: const [
-                      Tab(text: 'Profile'),
-                      Tab(text: 'Courses'),
-                      Tab(text: 'Certifications'),
-                      Tab(text: 'Feedback'),
+                      Tab(text: 'Hồ sơ'),
+                      Tab(text: 'Khóa học'),
+                      Tab(text: 'Chứng chỉ'),
+                      Tab(text: 'Phản hồi'),
                     ],
                   ),
                 ),
@@ -144,13 +144,13 @@ class __ProfileTabState extends State<_ProfileTab> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context);
     return TutorProfileWidget(
-      fullName: widget.teacherData['account']['fullName'] ?? 'N/A',
-      role: widget.teacherData['account']['role'] ?? 'N/A',
+      fullName: widget.teacherData['account']['fullName'] ?? 'Không có thông tin',
+      role: widget.teacherData['account']['role'] ?? 'Không có thông tin',
       bio: widget.teacherData['account']['bio'] ??
-          'Experienced tutor with a passion for teaching and helping students succeed.',
-      email: widget.teacherData['account']['email'] ?? 'N/A',
-      phone: widget.teacherData['account']['phone'] ?? 'N/A',
-      status: widget.teacherData['account']['status'] ?? 'N/A',
+          'Gia sư giàu kinh nghiệm với đam mê giảng dạy và giúp học sinh thành công.',
+      email: widget.teacherData['account']['email'] ?? 'Không có thông tin',
+      phone: widget.teacherData['account']['phone'] ?? 'Không có thông tin',
+      status: widget.teacherData['account']['status'] ?? 'Không có thông tin',
     );
   }
 }

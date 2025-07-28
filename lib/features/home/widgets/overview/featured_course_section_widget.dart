@@ -17,18 +17,18 @@ class FeaturedCourseSectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Featured Course',
+          'Khóa học nổi bật',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
         course == null
             ? const Center(
           child: Text(
-            'No featured course available',
+            'Không có khóa học nổi bật nào',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey,

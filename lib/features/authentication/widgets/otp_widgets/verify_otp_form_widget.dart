@@ -117,7 +117,7 @@ class _VerifyOtpFormWidgetState extends State<VerifyOtpFormWidget> with SingleTi
                 onTap: () {}, // Handled by GestureDetector
                 child: const Center(
                   child: Text(
-                    'Verify OTP',
+                    'Xác thực OTP',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

@@ -16,14 +16,14 @@ class TopLearnerSectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Top Learner',
+          'Người học xuất sắc',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
         account == null || account['fullName'] == null || account['email'] == null
             ? Card(
           elevation: 6,
@@ -41,7 +41,7 @@ class TopLearnerSectionWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Text(
-              'No top learner available',
+              'Không có người học xuất sắc nào',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
@@ -72,7 +72,7 @@ class TopLearnerSectionWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    account['fullName'] ?? 'Unknown User',
+                    account['fullName'] ?? 'Người dùng không xác định',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -83,7 +83,7 @@ class TopLearnerSectionWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    account['email'] ?? 'No Email',
+                    account['email'] ?? 'Không có email',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.white70,
@@ -93,7 +93,7 @@ class TopLearnerSectionWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Completed Courses: ${account['completedCourses'] ?? 0}',
+                    'Khóa học đã hoàn thành: ${account['completedCourses'] ?? 0}',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.white70,

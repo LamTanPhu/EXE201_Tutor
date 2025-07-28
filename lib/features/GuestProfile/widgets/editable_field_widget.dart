@@ -35,7 +35,7 @@ class EditableFieldWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
-            controller.text.isNotEmpty ? controller.text : 'Not set',
+            controller.text.isNotEmpty ? controller.text : 'Chưa đặt',
             style: const TextStyle(fontSize: 16),
           ),
         ),

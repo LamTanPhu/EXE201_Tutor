@@ -9,7 +9,7 @@ class ForumDrawerWidget extends StatelessWidget {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue),
-            child: Text('Popular Tags'),
+            child: Text('Thẻ phổ biến'),
           ),
           ListTile(
             leading: const Icon(Icons.tag),
@@ -30,7 +30,7 @@ class ForumDrawerWidget extends StatelessWidget {
           const Divider(),
           const ListTile(
             leading: Icon(Icons.push_pin),
-            title: Text('Pinned Group'),
+            title: Text('Nhóm được ghim'),
           ),
         ],
       ),

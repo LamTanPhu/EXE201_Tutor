@@ -22,14 +22,14 @@ class AddCommentSheetWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Add a Comment',
+          const Text('Thêm bình luận',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12.0),
           TextField(
             controller: controller,
             maxLines: 4,
             decoration: const InputDecoration(
-              hintText: 'Write your thoughts...',
+              hintText: 'Viết suy nghĩ của bạn...',
               border: OutlineInputBorder(),
               filled: true,
               fillColor: Color(0xFFF0F0F0),
@@ -45,7 +45,7 @@ class AddCommentSheetWidget extends StatelessWidget {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
                 : const Icon(Icons.send),
-            label: const Text('Post Comment'),
+            label: const Text('Đăng bình luận'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue[700],
               padding: const EdgeInsets.symmetric(vertical: 12),

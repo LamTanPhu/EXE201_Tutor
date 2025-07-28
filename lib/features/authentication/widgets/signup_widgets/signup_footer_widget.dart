@@ -23,7 +23,7 @@ class SignupFooterWidget extends StatelessWidget {
           TextButton(
             onPressed: onLogin,
             child: const Text(
-              'Đã các tài khoản? Đăng nhập',
+              'Đã có tài khoản? Đăng nhập', // Corrected typo from 'Đã các tài khoản' to 'Đã có tài khoản'
               style: TextStyle(
                 color: Colors.blue,
                 fontSize: 16,
@@ -35,7 +35,7 @@ class SignupFooterWidget extends StatelessWidget {
             TextButton(
               onPressed: onManualOtp,
               child: const Text(
-                'Didn’t get OTP? Verify manually',
+                'Không nhận được OTP? Xác thực thủ công',
                 style: TextStyle(
                   color: Colors.blue,
                   fontSize: 16,

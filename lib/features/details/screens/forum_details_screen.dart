@@ -33,13 +33,13 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
     final difference = now.difference(date);
 
     if (difference.inDays > 30) {
-      return '${(difference.inDays / 30).floor()} months ago';
+      return '${(difference.inDays / 30).floor()} tháng trước';
     } else if (difference.inDays > 0) {
-      return '${difference.inDays} days ago';
+      return '${difference.inDays} ngày trước';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} hours ago';
+      return '${difference.inHours} giờ trước';
     } else {
-      return '${difference.inMinutes} minutes ago';
+      return '${difference.inMinutes} phút trước';
     }
   }
 
@@ -49,13 +49,6 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
     setState(() => isLiking = true);
 
     try {
-      // final response = await ApiService.likeForumPost(widget.postId);
-      // final updatedPost = response['data'] ?? response;
-      //
-      // setState(() {
-      //   futurePost = Future.value(updatedPost);
-      //   isLiking = false;
-      // });
       await ApiService.likeForumPost(widget.postId);
 
       setState(() {
@@ -66,7 +59,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Post liked successfully!'),
+            content: Text('Thích bài viết thành công!'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -77,7 +70,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to like post: ${e.toString().replaceAll('Exception: ', '')}'),
+            content: Text('Không thể thích bài viết: ${e.toString().replaceAll('Exception: ', '')}'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),
@@ -102,7 +95,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Comment added successfully!'),
+            content: Text('Thêm bình luận thành công!'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -113,7 +106,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add comment: ${e.toString().replaceAll('Exception: ', '')}'),
+            content: Text('Không thể thêm bình luận: ${e.toString().replaceAll('Exception: ', '')}'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),
@@ -156,7 +149,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
                 children: [
                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text('Error loading post details: ${snapshot.error ?? 'Unknown error'}'),
+                  Text('Lỗi tải chi tiết bài viết: ${snapshot.error ?? 'Lỗi không xác định'}'),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
@@ -164,7 +157,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
                         futurePost = ApiService.getForumPostById(widget.postId);
                       });
                     },
-                    child: const Text('Retry'),
+                    child: const Text('Thử lại'),
                   ),
                 ],
               ),
@@ -192,7 +185,7 @@ class ForumDetailsScreenState extends State<ForumDetailsScreen> {
                         ),
                         const SizedBox(height: 16.0),
                         Text(
-                          'Comments (${feedback.length})',
+                          'Bình luận (${feedback.length})',
                           style: const TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,

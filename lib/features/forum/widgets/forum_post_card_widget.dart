@@ -27,7 +27,7 @@ class ForumPostCardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                post['title'] ?? 'No title',
+                post['title'] ?? 'Không có tiêu đề',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
@@ -39,7 +39,7 @@ class ForumPostCardWidget extends StatelessWidget {
                   const Icon(Icons.person, size: 16.0),
                   const SizedBox(width: 4.0),
                   Text(
-                    post['fullName'] ?? 'Unknown',
+                    post['fullName'] ?? 'Không xác định',
                     style: const TextStyle(fontSize: 14.0),
                   ),
                   const SizedBox(width: 8.0),
@@ -51,7 +51,7 @@ class ForumPostCardWidget extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                post['content'] ?? 'No content',
+                post['content'] ?? 'Không có nội dung',
                 style: const TextStyle(fontSize: 14.0),
               ),
               const SizedBox(height: 8.0),

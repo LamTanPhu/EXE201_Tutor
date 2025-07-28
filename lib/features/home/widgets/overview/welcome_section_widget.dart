@@ -9,7 +9,7 @@ class WelcomeSectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Welcome to Your Learning Journey',
+          'Chào mừng bạn đến với hành trình học tập',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -18,7 +18,7 @@ class WelcomeSectionWidget extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         Text(
-          'Discover top courses and engaging discussions to enhance your skills.',
+          'Khám phá các khóa học hàng đầu và những cuộc thảo luận hấp dẫn để nâng cao kỹ năng của bạn.',
           style: TextStyle(
             fontSize: 16,
             color: Colors.grey[600],

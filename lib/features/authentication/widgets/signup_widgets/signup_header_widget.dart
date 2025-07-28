@@ -21,7 +21,7 @@ class SignupHeaderWidget extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Hãy tạo một tài khoản để bắt đầu giảng dạy.',
+            'Tạo tài khoản để bắt đầu hành trình học tập của bạn.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16,
               color: Colors.grey[600],

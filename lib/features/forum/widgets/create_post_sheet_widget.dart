@@ -26,7 +26,7 @@ class CreatePostSheetWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                'Create New Post',
+                'Tạo bài viết mới',
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -34,7 +34,7 @@ class CreatePostSheetWidget {
               TextField(
                 controller: _titleController,
                 decoration: const InputDecoration(
-                  labelText: 'Title',
+                  labelText: 'Tiêu đề',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -43,7 +43,7 @@ class CreatePostSheetWidget {
                 controller: _contentController,
                 maxLines: 5,
                 decoration: const InputDecoration(
-                  labelText: 'Content',
+                  labelText: 'Nội dung',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -60,16 +60,16 @@ class CreatePostSheetWidget {
                       Navigator.pop(context);
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error creating post: $e')),
+                        SnackBar(content: Text('Lỗi khi tạo bài viết: $e')),
                       );
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please fill in all fields')),
+                      const SnackBar(content: Text('Vui lòng điền đầy đủ các trường')),
                     );
                   }
                 },
-                child: const Text('Post'),
+                child: const Text('Đăng bài'),
               ),
               const SizedBox(height: 16.0),
             ],

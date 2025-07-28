@@ -12,10 +12,10 @@ class LoginFooterWidget extends StatelessWidget {
       child: TextButton(
         onPressed: onSignUp,
         style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFF4A90E2), // Updated to blue
+          foregroundColor: const Color(0xFF4A90E2),
         ),
         child: const Text(
-          'Don’t have an account? Sign Up',
+          'Chưa có tài khoản? Đăng ký',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,

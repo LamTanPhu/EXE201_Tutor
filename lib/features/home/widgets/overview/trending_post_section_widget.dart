@@ -16,18 +16,18 @@ class TrendingPostSectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Trending Forum Post',
+          'Bài viết nổi bật trên diễn đàn',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
         post == null
             ? const Center(
           child: Text(
-            'No trending post available',
+            'Không có bài viết nổi bật nào',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey,
@@ -56,7 +56,7 @@ class TrendingPostSectionWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    post['title'] ?? 'No Title',
+                    post['title'] ?? 'Không có tiêu đề',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class TrendingPostSectionWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    post['content'] ?? 'No Content',
+                    post['content'] ?? 'Không có nội dung',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.white70,

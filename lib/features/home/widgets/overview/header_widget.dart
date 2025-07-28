@@ -8,7 +8,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: const Text(
-        'Tutor Platform',
+        'Nền tảng Gia sư',
         style: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.bold,

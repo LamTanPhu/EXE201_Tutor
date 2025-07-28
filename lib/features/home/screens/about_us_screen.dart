@@ -12,7 +12,7 @@ class AboutUsScreen extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      throw 'Could not launch $url';
+      throw 'Không thể mở $url';
     }
   }
 
@@ -20,7 +20,7 @@ class AboutUsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About Us'),
+        title: const Text('Về chúng tôi'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -35,7 +35,7 @@ class AboutUsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'About Our Platform',
+                'Về nền tảng của chúng tôi',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -44,7 +44,7 @@ class AboutUsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Welcome to Tutorify, your trusted platform for connecting learners and educators worldwide.',
+                'Chào mừng bạn đến với Tutorify, nền tảng đáng tin cậy để kết nối người học và giáo viên trên toàn thế giới.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -55,7 +55,7 @@ class AboutUsScreen extends StatelessWidget {
 
               //our mission
               Text(
-                'Our Mission',
+                'Sứ mệnh của chúng tôi',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ class AboutUsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'To empower individuals through accessible, high-quality education by connecting passionate tutors with eager learners.',
+                'Trao quyền cho cá nhân thông qua giáo dục chất lượng cao, dễ tiếp cận bằng cách kết nối các gia sư nhiệt huyết với những người học ham hiểu biết.',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(fontSize: 14),
@@ -71,7 +71,7 @@ class AboutUsScreen extends StatelessWidget {
               const SizedBox(height: 16),
               //vision
               Text(
-                'Our Vision',
+                'Tầm nhìn của chúng tôi',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -79,8 +79,7 @@ class AboutUsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'To create a global learning community where knowledge is shared freely, fostering growth and opprotunity for all.',
-
+                'Tạo ra một cộng đồng học tập toàn cầu nơi kiến thức được chia sẻ tự do, thúc đẩy sự phát triển và cơ hội cho tất cả.',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(fontSize: 14),
@@ -89,7 +88,7 @@ class AboutUsScreen extends StatelessWidget {
 
               //contact
               Text(
-                'Get in Touch',
+                'Liên hệ với chúng tôi',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -97,7 +96,7 @@ class AboutUsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Have questions or want to learn more? Reach out to us!',
+                'Bạn có câu hỏi hoặc muốn tìm hiểu thêm? Hãy liên hệ với chúng tôi!',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(fontSize: 14),
@@ -109,7 +108,7 @@ class AboutUsScreen extends StatelessWidget {
                   TextButton(
                     onPressed: () => _launchUrl('https://your-website.com'),
                     child: const Text(
-                      'Visit Our Website',
+                      'Truy cập trang web của chúng tôi',
                       style: TextStyle(color: Color(0xFF007BFF)),
                     ),
                   ),
@@ -117,7 +116,7 @@ class AboutUsScreen extends StatelessWidget {
                   TextButton(
                     onPressed: () => _launchUrl('mailto:support@tutorapp.com'),
                     child: const Text(
-                      'Email Us',
+                      'Gửi email cho chúng tôi',
                       style: TextStyle(color: Color(0xFF007BFF)),
                     ),
                   ),
@@ -130,7 +129,7 @@ class AboutUsScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoutes.login);
                   },
-                  child: const Text('Back to Login'),
+                  child: const Text('Quay lại đăng nhập'),
                 ),
               ),
             ],
