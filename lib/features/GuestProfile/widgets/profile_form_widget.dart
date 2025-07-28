@@ -26,7 +26,7 @@ class ProfileFormWidget extends StatelessWidget {
     return Column(
       children: [
         EditableFieldWidget(
-          label: 'Full Name',
+          label: 'Họ và tên',
           controller: fullNameController,
           isEditing: isEditing,
         ),
@@ -38,14 +38,14 @@ class ProfileFormWidget extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         EditableFieldWidget(
-          label: 'Phone',
+          label: 'Điện thoại',
           controller: phoneController,
           isEditing: isEditing,
         ),
         const SizedBox(height: 12),
         if (isEditing)
           EditableFieldWidget(
-            label: 'Avatar URL',
+            label: 'URL ảnh đại diện',
             controller: avatarController,
             isEditing: isEditing,
           ),
@@ -53,7 +53,7 @@ class ProfileFormWidget extends StatelessWidget {
         ElevatedButton.icon(
           onPressed: isEditing ? onSave : onEditToggle,
           icon: Icon(isEditing ? Icons.save : Icons.edit_outlined),
-          label: Text(isEditing ? 'Save Changes' : 'Edit Profile'),
+          label: Text(isEditing ? 'Lưu thay đổi' : 'Chỉnh sửa hồ sơ'),
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(double.infinity, 48),
             shape: RoundedRectangleBorder(

@@ -16,7 +16,7 @@ class ForumPostListWidget extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError || posts.isEmpty) {
-          return const Center(child: Text('No posts available'));
+          return const Center(child: Text('Không có bài viết nào'));
         } else {
           return ListView.builder(
             padding: const EdgeInsets.all(8.0),

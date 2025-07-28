@@ -45,7 +45,7 @@ class CourseHeader extends StatelessWidget {
         const SizedBox(height: 16),
         // Course Title
         Text(
-          course['name'] ?? 'Unknown Course',
+          course['name'] ?? 'Khóa học không xác định',
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).primaryColor,
@@ -57,11 +57,11 @@ class CourseHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Price: ${course['price'] ?? 'N/A'} VND',
+              'Giá: ${course['price'] ?? 'Không có thông tin'} VND',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
-              'By ${course['instructor'] ?? 'N/A'}',
+              'Bởi ${course['instructor'] ?? 'Không có thông tin'}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],

@@ -19,7 +19,7 @@ class TutorCertificationsWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Certifications',
+                'Chứng chỉ',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -91,7 +91,7 @@ class TutorCertificationsWidget extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        cert['name'] ?? 'Unknown Certification',
+                                        cert['name'] ?? 'Chứng chỉ không xác định',
                                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -103,7 +103,7 @@ class TutorCertificationsWidget extends StatelessWidget {
                                       const SizedBox(height: 4),
                                       Expanded(
                                         child: Text(
-                                          cert['description'] ?? 'No description',
+                                          cert['description'] ?? 'Không có mô tả',
                                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                             fontSize: 14,
                                             color: Colors.grey[600],
@@ -116,7 +116,7 @@ class TutorCertificationsWidget extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'Experience: ${cert['experience'] ?? 0} years',
+                                        'Kinh nghiệm: ${cert['experience'] ?? 0} năm',
                                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                           fontSize: 14,
                                           color: Colors.grey[600],
@@ -138,7 +138,7 @@ class TutorCertificationsWidget extends StatelessWidget {
                 )
               else
                 Text(
-                  'No certifications available',
+                  'Không có chứng chỉ nào',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 14,
                     color: Colors.grey,

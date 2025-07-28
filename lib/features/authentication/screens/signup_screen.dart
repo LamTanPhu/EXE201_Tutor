@@ -31,7 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
         passwordController.text.trim().isEmpty ||
         phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields with valid values')),
+        const SnackBar(content: Text('Vui lòng điền đầy đủ các trường với giá trị hợp lệ')),
       );
       return;
     }
@@ -46,7 +46,7 @@ class _SignupScreenState extends State<SignupScreen> {
       if (response['message']?.contains('successfully') ?? false) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Registration successful! Please check your email for OTP.'),
+            content: Text('Đăng ký thành công! Vui lòng kiểm tra email để nhận OTP.'),
           ),
         );
         bool navigated = false;
@@ -58,7 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
           );
           navigated = result != null;
         } catch (e) {
-          print('Navigation Error: $e');
+          print('Lỗi điều hướng: $e');
         }
         if (!navigated) {
           setState(() {
@@ -66,12 +66,12 @@ class _SignupScreenState extends State<SignupScreen> {
           });
         }
       } else {
-        throw Exception('Unexpected response: ${response['message'] ?? 'No message'}');
+        throw Exception('Phản hồi không mong đợi: ${response['message'] ?? 'Không có thông báo'}');
       }
     } catch (e) {
-      print('Signup Error: $e');
+      print('Lỗi đăng ký: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text('Lỗi: $e')),
       );
     }
   }
@@ -80,7 +80,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        title: const Text('Đăng ký'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -130,7 +130,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     onManualOtp: () {
                       if (emailController.text.trim().isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter an email to verify OTP')),
+                          const SnackBar(content: Text('Vui lòng nhập email để xác thực OTP')),
                         );
                         return;
                       }

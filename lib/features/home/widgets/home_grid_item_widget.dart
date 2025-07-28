@@ -15,13 +15,13 @@ class HomeGridItemWidget extends StatelessWidget {
   String _getStatusText(String? status) {
     switch (status?.toLowerCase()) {
       case 'active':
-        return 'Available';
+        return 'Có sẵn';
       case 'inactive':
-        return 'Unavailable';
+        return 'Không có sẵn';
       case 'busy':
-        return 'Busy';
+        return 'Bận';
       default:
-        return 'Unknown';
+        return 'Không xác định';
     }
   }
 
@@ -171,8 +171,8 @@ class HomeGridItemWidget extends StatelessWidget {
                     children: [
                       Text(
                         isTeacherMode
-                            ? item['account']['fullName'] ?? 'Unknown Tutor'
-                            : item['course']['name'] ?? 'Unknown Course',
+                            ? item['account']['fullName'] ?? 'Gia sư không xác định'
+                            : item['course']['name'] ?? 'Khóa học không xác định',
                         style: TextStyle(
                           fontSize: baseFontSize * fontScaleFactor,
                           fontWeight: FontWeight.bold,
@@ -184,8 +184,8 @@ class HomeGridItemWidget extends StatelessWidget {
                       SizedBox(height: 8 * fontScaleFactor),
                       Text(
                         isTeacherMode
-                            ? '${item['account']['role'] ?? 'Teacher'} • ${_getStatusText(item['account']['status'])}'
-                            : 'By ${item['account']['fullName'] ?? 'Unknown'}',
+                            ? '${item['account']['role'] ?? 'Gia sư'} • ${_getStatusText(item['account']['status'])}'
+                            : 'Bởi ${item['account']['fullName'] ?? 'Không xác định'}',
                         style: TextStyle(
                           fontSize: (baseFontSize - 2) * fontScaleFactor,
                           color: isTeacherMode
@@ -211,7 +211,7 @@ class HomeGridItemWidget extends StatelessWidget {
                       ] else ...[
                         if (item['certifications']?.isNotEmpty ?? false) ...[
                           Text(
-                            '${item['certifications'][0]['experience'] ?? 0} years exp.',
+                            '${item['certifications'][0]['experience'] ?? 0} năm kinh nghiệm',
                             style: TextStyle(
                               fontSize: (baseFontSize - 2) * fontScaleFactor,
                               fontWeight: FontWeight.w600,

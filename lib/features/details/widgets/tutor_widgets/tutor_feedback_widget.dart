@@ -16,7 +16,7 @@ class TutorFeedbackWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Feedback',
+                'Phản hồi',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -26,7 +26,7 @@ class TutorFeedbackWidget extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'No feedback available yet.',
+                'Chưa có phản hồi nào.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 14,
                   color: Colors.grey,

@@ -33,7 +33,7 @@ class TutorProfileWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Profile',
+                'Hồ sơ',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -48,7 +48,7 @@ class TutorProfileWidget extends StatelessWidget {
                     radius: 30,
                     backgroundColor: Colors.grey[100],
                     child: Text(
-                      fullName.isNotEmpty ? fullName[0] : 'T',
+                      fullName.isNotEmpty ? fullName[0] : 'G',
                       style: const TextStyle(color: Colors.blue),
                     ),
                   ),
@@ -65,7 +65,7 @@ class TutorProfileWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Role: $role',
+                        'Vai trò: $role',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -78,7 +78,7 @@ class TutorProfileWidget extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Bio',
+                'Tiểu sử',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -97,7 +97,7 @@ class TutorProfileWidget extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'Contact Information',
+                'Thông tin liên hệ',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -106,12 +106,12 @@ class TutorProfileWidget extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               TutorContactInfoWidget(label: 'Email', value: email),
-              TutorContactInfoWidget(label: 'Phone', value: phone),
-              TutorContactInfoWidget(label: 'Status', value: status),
+              TutorContactInfoWidget(label: 'Điện thoại', value: phone),
+              TutorContactInfoWidget(label: 'Trạng thái', value: status),
               const SizedBox(height: 20),
               Center(
                 child: GradientButtonWidget(
-                  text: 'Contact Tutor',
+                  text: 'Liên hệ gia sư',
                   onTap: () {},
                 ),
               ),

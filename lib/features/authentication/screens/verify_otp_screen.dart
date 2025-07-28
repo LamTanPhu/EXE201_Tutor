@@ -21,19 +21,19 @@ class VerifyOtpScreen extends StatelessWidget {
           otpController.text,
         );
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('OTP verified successfully!')),
+          const SnackBar(content: Text('Xác thực OTP thành công!')),
         );
         Navigator.pushNamed(context, AppRoutes.login);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text('Lỗi: $e')),
         );
       }
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Verify OTP'),
+        title: const Text('Xác thực OTP'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,

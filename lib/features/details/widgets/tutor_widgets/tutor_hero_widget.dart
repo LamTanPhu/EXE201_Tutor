@@ -32,7 +32,7 @@ class TutorHeroWidget extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Created by: $fullName',
+            'Được tạo bởi: $fullName',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 14,
               color: Colors.white70,
@@ -46,7 +46,7 @@ class TutorHeroWidget extends StatelessWidget {
                 radius: 20,
                 backgroundColor: Colors.white,
                 child: Text(
-                  fullName.isNotEmpty ? fullName[0] : 'T',
+                  fullName.isNotEmpty ? fullName[0] : 'G',
                   style: const TextStyle(color: Colors.blue),
                 ),
               ),

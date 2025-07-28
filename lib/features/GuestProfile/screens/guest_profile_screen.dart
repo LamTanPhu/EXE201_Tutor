@@ -55,7 +55,7 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error fetching profile: $e')),
+          SnackBar(content: Text('Lỗi khi tải hồ sơ: $e')),
         );
       }
     }
@@ -66,7 +66,7 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
         _emailController.text.isEmpty ||
         _phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields')),
+        const SnackBar(content: Text('Vui lòng điền đầy đủ các trường bắt buộc')),
       );
       return;
     }
@@ -89,14 +89,14 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully')),
+          const SnackBar(content: Text('Cập nhật hồ sơ thành công')),
         );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating profile: $e')),
+          SnackBar(content: Text('Lỗi khi cập nhật hồ sơ: $e')),
         );
       }
     }
@@ -161,7 +161,7 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Hồ sơ'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -169,7 +169,7 @@ class _GuestProfileScreenState extends State<GuestProfileScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _profile == null
-          ? const Center(child: Text('Failed to load profile'))
+          ? const Center(child: Text('Không thể tải hồ sơ'))
           : SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(

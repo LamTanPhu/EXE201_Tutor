@@ -74,7 +74,7 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Filters',
+                  'Bộ lọc',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -83,7 +83,7 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                 ),
                 const SizedBox(height: 24),
                 HomeFilterSectionWidget(
-                  title: 'Sort By',
+                  title: 'Sắp xếp theo',
                   content: Wrap(
                     spacing: 10,
                     runSpacing: 10,
@@ -96,12 +96,12 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                 ),
                 if (!widget.isTeacherMode) ...[
                   HomeFilterSectionWidget(
-                    title: 'Price Range',
+                    title: 'Khoảng giá',
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Up to ${widget.currentPriceFilter.toInt()} VND',
+                          'Lên đến ${widget.currentPriceFilter.toInt()} VND',
                           style: const TextStyle(fontSize: 16, color: Colors.black87),
                         ),
                         SliderTheme(
@@ -131,12 +131,12 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                 ],
                 if (widget.isTeacherMode) ...[
                   HomeFilterSectionWidget(
-                    title: 'Experience Range',
+                    title: 'Khoảng kinh nghiệm',
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Up to ${widget.currentExperienceFilter} years',
+                          'Lên đến ${widget.currentExperienceFilter} năm',
                           style: const TextStyle(fontSize: 16, color: Colors.black87),
                         ),
                         SliderTheme(
@@ -180,7 +180,7 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         child: const Text(
-                          'Clear All',
+                          'Xóa tất cả',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -204,7 +204,7 @@ class _HomeFilterBottomSheetWidgetState extends State<HomeFilterBottomSheetWidge
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         child: const Text(
-                          'Apply',
+                          'Áp dụng',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

@@ -15,7 +15,7 @@ class CourseDescription extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Description',
+              'Mô tả',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),

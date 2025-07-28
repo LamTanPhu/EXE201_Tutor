@@ -38,7 +38,7 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load data after multiple retries')),
+        const SnackBar(content: Text('Không thể tải dữ liệu sau nhiều lần thử lại')),
       );
       return;
     }
@@ -65,10 +65,10 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error loading data: $e. Retrying ($_retryCount/$_maxRetries)...'),
+          content: Text('Lỗi tải dữ liệu: $e. Đang thử lại ($_retryCount/$_maxRetries)...'),
           action: _retryCount < _maxRetries
               ? SnackBarAction(
-            label: 'Retry',
+            label: 'Thử lại',
             onPressed: _fetchOverviewData,
           )
               : null,
@@ -181,7 +181,7 @@ class _HomeOverviewScreenState extends State<HomeOverviewScreen> {
                 print('Render Error in HomeOverviewScreen: $e\n$stackTrace'); // Debug log
                 return const Center(
                   child: Text(
-                    'Error loading content. Please try again.',
+                    'Lỗi tải nội dung. Vui lòng thử lại.',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.red,

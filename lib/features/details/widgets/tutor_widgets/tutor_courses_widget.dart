@@ -19,7 +19,7 @@ class TutorCoursesWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Courses',
+                'Khóa học',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -64,7 +64,7 @@ class TutorCoursesWidget extends StatelessWidget {
                           // Course Details
                           Expanded(
                             child: Text(
-                              course['name'] ?? 'Unnamed Course',
+                              course['name'] ?? 'Khóa học không có tên',
                               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -76,7 +76,7 @@ class TutorCoursesWidget extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '\$${course['price']?.toString() ?? '0'}',
+                            '${course['price']?.toString() ?? '0'} VNĐ',
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontSize: 16,
                               color: Colors.blue,
@@ -89,7 +89,7 @@ class TutorCoursesWidget extends StatelessWidget {
                 )
               else
                 const Text(
-                  'No courses available',
+                  'Không có khóa học nào',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
@@ -99,7 +99,7 @@ class TutorCoursesWidget extends StatelessWidget {
               const SizedBox(height: 20),
               Center(
                 child: GradientButtonWidget(
-                  text: 'Contact For Details',
+                  text: 'Liên hệ để biết chi tiết',
                   onTap: () {},
                 ),
               ),

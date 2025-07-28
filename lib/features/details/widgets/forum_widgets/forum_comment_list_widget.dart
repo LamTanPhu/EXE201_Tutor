@@ -20,7 +20,7 @@ class CommentListWidget extends StatelessWidget {
             children: [
               Icon(Icons.comment_outlined, size: 48, color: Colors.grey),
               SizedBox(height: 8),
-              Text('No comments yet', style: TextStyle(color: Colors.grey)),
+              Text('Chưa có bình luận', style: TextStyle(color: Colors.grey)),
             ],
           ),
         ),
@@ -52,7 +52,7 @@ class CommentListWidget extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(comment['fullName'] ?? 'Unknown',
+                        Text(comment['fullName'] ?? 'Không xác định',
                             style: const TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(width: 8),
                         Text(formatDate(comment['createdAt']),

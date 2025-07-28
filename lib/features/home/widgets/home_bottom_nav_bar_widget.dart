@@ -14,29 +14,25 @@ class HomeBottomNavBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
-        // BottomNavigationBarItem(
-        //   icon: Icon(Icons.dashboard),
-        //   label: 'Overview',
-        // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Tutor',
+          label: 'Gia sư',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.school),
-          label: 'Courses',
+          label: 'Khóa học',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.forum),
-          label: 'Forum',
+          label: 'Diễn đàn',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
-          label: 'Overview',
+          label: 'Tổng quan',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
-          label: 'Profile',
+          label: 'Hồ sơ',
         ),
       ],
       currentIndex: selectedIndex,

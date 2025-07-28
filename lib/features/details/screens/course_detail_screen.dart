@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tutor/services/api_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:url_launcher/url_launcher.dart'; // Added for browser fallback
+import 'package:url_launcher/url_launcher.dart';
 import 'package:tutor/features/details/widgets/course_widgets/course_header.dart';
 import 'package:tutor/features/details/widgets/course_widgets/course_description.dart';
 import 'package:tutor/features/details/widgets/course_widgets/course_chapters.dart';
@@ -11,14 +11,14 @@ import 'package:tutor/routes/app_routes.dart';
 // Hardcoded course data (to be replaced with API later)
 const Map<String, dynamic> defaultCourseData = {
   "course": {
-    "name": "Flutter Advanced Course",
+    "name": "Khóa học nâng cao Flutter",
     "image": "https://example.com/course.jpg",
     "price": "1500000",
-    "description": "Learn advanced Flutter techniques for building modern apps.",
+    "description": "Tìm hiểu các kỹ thuật nâng cao của Flutter để xây dựng ứng dụng hiện đại.",
     "isActive": true,
     "createdAt": "2023-10-01",
     "instructor": "John Doe",
-    "duration": "10 hours"
+    "duration": "10 giờ"
   }
 };
 
@@ -40,7 +40,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    print('Received courseId: ${widget.courseId}');
+    print('Nhận courseId: ${widget.courseId}');
   }
 
   Future<void> _initiatePayment() async {
@@ -61,29 +61,29 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           ..setNavigationDelegate(
             NavigationDelegate(
               onPageStarted: (url) {
-                print('WebView loading started: $url');
+                print('WebView bắt đầu tải: $url');
               },
               onProgress: (progress) {
-                print('WebView loading progress: $progress%');
+                print('Tiến trình tải WebView: $progress%');
               },
               onPageFinished: (url) {
-                print('WebView finished loading: $url');
+                print('WebView hoàn tất tải: $url');
                 setState(() => _isLoading = false);
                 if (url.contains('localhost:3000?orderId=')) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Payment completed successfully!')),
+                    const SnackBar(content: Text('Thanh toán thành công!')),
                   );
                   Navigator.pop(context);
                 }
               },
               onWebResourceError: (error) {
-                print('WebView error: ${error.errorType} - ${error.description} (URL: ${error.url})');
+                print('Lỗi WebView: ${error.errorType} - ${error.description} (URL: ${error.url})');
                 setState(() {
                   _isLoading = false;
                   _paymentUrl = null; // Reset to show content again
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Payment error: ${error.description}')),
+                  SnackBar(content: Text('Lỗi thanh toán: ${error.description}')),
                 );
               },
             ),
@@ -95,7 +95,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           await launchUrl(Uri.parse(paymentUrl));
           setState(() => _paymentUrl = null); // Reset after launching
         } else {
-          throw 'Could not launch $paymentUrl';
+          throw 'Không thể mở $paymentUrl';
         }
       }
     } catch (e) {
@@ -104,7 +104,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
         _paymentUrl = null; // Reset to show content on error
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error initiating payment: $e')),
+        SnackBar(content: Text('Lỗi khởi tạo thanh toán: $e')),
       );
     }
   }
@@ -115,7 +115,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Course Details'),
+        title: const Text('Chi tiết khóa học'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -138,23 +138,23 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               children: [
                 CourseHeader(course: course),
                 const SizedBox(height: 16),
-                CourseDescription(description: course['description'] ?? 'No description available'),
+                CourseDescription(description: course['description'] ?? 'Không có mô tả'),
                 const SizedBox(height: 16),
                 CourseChapters(courseId: widget.courseId),
                 const SizedBox(height: 16),
                 ListTile(
-                  title: const Text('Status'),
-                  subtitle: Text(course['isActive'] == true ? 'Active' : 'Inactive'),
+                  title: const Text('Trạng thái'),
+                  subtitle: Text(course['isActive'] == true ? 'Hoạt động' : 'Không hoạt động'),
                   leading: const Icon(Icons.info),
                 ),
                 ListTile(
-                  title: const Text('Duration'),
-                  subtitle: Text(course['duration'] ?? 'N/A'),
+                  title: const Text('Thời lượng'),
+                  subtitle: Text(course['duration'] ?? 'Không có thông tin'),
                   leading: const Icon(Icons.timer),
                 ),
                 ListTile(
-                  title: const Text('Created At'),
-                  subtitle: Text(course['createdAt'] ?? 'N/A'),
+                  title: const Text('Ngày tạo'),
+                  subtitle: Text(course['createdAt'] ?? 'Không có thông tin'),
                   leading: const Icon(Icons.calendar_today),
                 ),
                 const SizedBox(height: 16),
@@ -166,7 +166,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                         textStyle: const TextStyle(fontSize: 16),
                       ),
-                      child: const Text('Enroll Now'),
+                      child: const Text('Đăng ký ngay'),
                     ),
                   ),
               ],

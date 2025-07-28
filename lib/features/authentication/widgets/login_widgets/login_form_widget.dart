@@ -72,7 +72,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF4A90E2)), // Updated to blue
+                borderSide: const BorderSide(color: Color(0xFF4A90E2)),
               ),
             ),
             keyboardType: TextInputType.emailAddress,
@@ -82,7 +82,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
           TextField(
             controller: widget.passwordController,
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: 'Mật khẩu',
               prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF34495E)),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -103,7 +103,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF4A90E2)), // Updated to blue
+                borderSide: const BorderSide(color: Color(0xFF4A90E2)),
               ),
             ),
             obscureText: _obscureText,
@@ -120,8 +120,8 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: _isPressed
-                      ? [Color(0xFF2A6395), Color(0xFF4A90E2)] // Darker blue when pressed
-                      : [Color(0xFF4A90E2), Color(0xFF87CEFA)], // Lighter blue gradient
+                      ? [Color(0xFF2A6395), Color(0xFF4A90E2)]
+                      : [Color(0xFF4A90E2), Color(0xFF87CEFA)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -137,7 +137,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: const Center(
                 child: Text(
-                  'Login',
+                  'Đăng nhập',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,

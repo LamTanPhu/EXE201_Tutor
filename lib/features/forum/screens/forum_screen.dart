@@ -33,7 +33,7 @@ class _ForumScreenState extends State<ForumScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error loading posts: $error'),
+          content: Text('Lỗi tải bài viết: $error'),
           backgroundColor: Colors.red,
         ),
       );
@@ -47,13 +47,13 @@ class _ForumScreenState extends State<ForumScreen> {
     final difference = now.difference(date);
 
     if (difference.inDays > 30) {
-      return '${(difference.inDays / 30).floor()} months ago';
+      return '${(difference.inDays / 30).floor()} tháng trước';
     } else if (difference.inDays > 0) {
-      return '${difference.inDays} days ago';
+      return '${difference.inDays} ngày trước';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} hours ago';
+      return '${difference.inHours} giờ trước';
     } else {
-      return '${difference.inMinutes} minutes ago';
+      return '${difference.inMinutes} phút trước';
     }
   }
 
@@ -102,7 +102,7 @@ class _ForumScreenState extends State<ForumScreen> {
             const Padding(
               padding: EdgeInsets.only(top: 4.0, bottom: 10.0, left: 8.0),
               child: Text(
-                'Explore Discussions',
+                'Khám phá thảo luận',
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class _ForumScreenState extends State<ForumScreen> {
         onPressed: _showCreatePostSheet,
         backgroundColor: Colors.deepPurple,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('New Post', style: TextStyle(color: Colors.white)),
+        label: const Text('Bài viết mới', style: TextStyle(color: Colors.white)),
       ),
     );
   }

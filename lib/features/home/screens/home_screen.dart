@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> _items = [];
   List<dynamic> _filteredItems = [];
   String _sortOption = 'name';
-  String _selectedOrderBy = 'Newest';
+  String _selectedOrderBy = 'Mới nhất';
   double _maxPrice = 5000000;
   double _currentPriceFilter = 5000000;
   int _maxExperience = 5;
@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _isInitialLoading = true; // Track initial data load
 
-  final List<String> orderByOptions = ['Newest', 'Popularity', 'Ratings', 'Price'];
+  final List<String> orderByOptions = ['Mới nhất', 'Phổ biến', 'Xếp hạng', 'Giá'];
 
   @override
   void initState() {
@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _isInitialLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching data: $e')),
+        SnackBar(content: Text('Lỗi tải dữ liệu: $e')),
       );
     }
   }
@@ -169,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          _isTeacherMode ? 'Teachers' : 'Courses',
+          _isTeacherMode ? 'Gia sư' : 'Khóa học',
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   onClearFilters: () {
                     setState(() {
-                      _selectedOrderBy = 'Newest';
+                      _selectedOrderBy = 'Mới nhất';
                       _currentPriceFilter = _maxPrice;
                       _currentExperienceFilter = _maxExperience;
                       _searchController.clear();
@@ -256,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icon(Icons.search_off, size: 48, color: Colors.grey),
                     SizedBox(height: 16),
                     Text(
-                      'No results found',
+                      'Không tìm thấy kết quả',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 18,

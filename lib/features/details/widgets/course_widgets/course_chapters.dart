@@ -16,9 +16,9 @@ class CourseChapters extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('Lỗi: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No chapters available'));
+          return const Center(child: Text('Không có chương nào'));
         }
 
         final chapters = snapshot.data!;
@@ -31,7 +31,7 @@ class CourseChapters extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Chapters',
+                  'Các chương',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 8),
@@ -44,11 +44,11 @@ class CourseChapters extends StatelessWidget {
                     return FutureBuilder<List<dynamic>>(
                       future: ApiService.getChapterContent(chapter['_id'] as String),
                       builder: (context, contentSnapshot) {
-                        String content = 'No content available yet.';
+                        String content = 'Chưa có nội dung.';
                         if (contentSnapshot.connectionState == ConnectionState.done &&
                             contentSnapshot.hasData &&
                             contentSnapshot.data!.isNotEmpty) {
-                          content = contentSnapshot.data![0]['contentDescription'] ?? 'No content available';
+                          content = contentSnapshot.data![0]['contentDescription'] ?? 'Không có nội dung';
                         }
                         return _ChapterItem(
                           chapter: chapter,
@@ -122,7 +122,7 @@ class _ChapterItemState extends State<_ChapterItem> with SingleTickerProviderSta
       leading: CircleAvatar(
         child: Text('${widget.chapterNumber}'),
       ),
-      title: Text(widget.chapter['title'] ?? 'Untitled Chapter'),
+      title: Text(widget.chapter['title'] ?? 'Chương không có tiêu đề'),
       trailing: RotationTransition(
         turns: _arrowAnimation,
         child: const Icon(Icons.expand_more),
@@ -149,7 +149,7 @@ class _ChapterItemState extends State<_ChapterItem> with SingleTickerProviderSta
                     arguments: widget.chapterId,
                   );
                 },
-                child: const Text('View Details'),
+                child: const Text('Xem chi tiết'),
               ),
             ],
           ),
